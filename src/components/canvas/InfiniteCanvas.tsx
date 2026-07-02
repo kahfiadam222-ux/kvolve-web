@@ -8,6 +8,8 @@ import { useAssetDrop } from "@/hooks/useAssetDrop";
 import { randomCursorColor, throttle } from "@/lib/utils";
 import { MultiplayerCursors } from "./MultiplayerCursors";
 import { CanvasToolbar } from "./CanvasToolbar";
+import { BlockPalette } from "./BlockPalette";
+import { CodeInspector } from "./CodeInspector";
 
 /**
  * InfiniteCanvas — titik temu React <-> PixiJS.
@@ -87,7 +89,13 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
     >
       {/* Overlay DOM di atas <canvas>; keduanya tidak boleh mencuri event pointer kanvas. */}
       <MultiplayerCursors />
-      {ready && <CanvasToolbar engineRef={engineRef} />}
+      {ready && (
+        <>
+          <BlockPalette engineRef={engineRef} />
+          <CodeInspector />
+          <CanvasToolbar engineRef={engineRef} />
+        </>
+      )}
     </div>
   );
 }

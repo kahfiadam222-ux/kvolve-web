@@ -27,8 +27,10 @@ export interface CanvasObject {
   /**
    * Payload spesifik per tipe:
    * - image      : { src, name, naturalWidth, naturalHeight }
-   * - pdf-page   : { name, pageIndex, totalPages }
-   * - html-block : { tag, props, styles, children } — dikonsumsi Live Code Inspector (W-FR-3.3)
+   * - pdf-page   : { src, name, pageIndex, totalPages, text }
+   *                (src = raster PNG halaman; text = hasil ekstraksi pdfjs)
+   * - html-block : { kind, tag, label, styles } — dikonsumsi codegen
+   *                Live Code Inspector (W-FR-3.3) & Export .zip (W-FR-3.4)
    */
   data: Record<string, unknown>;
 }

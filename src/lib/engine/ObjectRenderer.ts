@@ -32,6 +32,7 @@ interface RendererDeps {
  */
 export class ObjectRenderer {
   private nodes = new Map<string, Container>();
+  private selectionRings = new Map<string, Graphics>();
 
   constructor(
     private world: Container,
@@ -44,8 +45,9 @@ export class ObjectRenderer {
     // 1) Hapus node yang objeknya sudah tidak ada.
     for (const [id, node] of this.nodes) {
       if (!objects.has(id)) {
-        node.destroy({ children: true });
+        node.destroy({ children: true }); // ring (child) ikut hancur
         this.nodes.delete(id);
+        this.selectionRings.delete(id);
       }
     }
 
@@ -94,9 +96,13 @@ export class ObjectRenderer {
       case "image":
         return this.buildImage(obj);
       case "pdf-page":
-        return this.buildPlaceholderCard(obj, "PDF");
+        // Halaman hasil raster pdfjs punya data.src (PNG) — render sebagai
+        // gambar; kartu placeholder tinggal fallback untuk data lama.
+        return obj.data.src
+          ? this.buildImage(obj)
+          : this.buildPlaceholderCard(obj, "PDF");
       case "html-block":
-        return this.buildPlaceholderCard(obj, "HTML");
+        return this.buildHtmlBlock(obj);
     }
   }
 
@@ -167,6 +173,95 @@ export class ObjectRenderer {
     node.addChild(name);
 
     return node;
+  }
+
+  /**
+   * Visual Layout Block (W-FR-3.2) — representasi kanvas dari elemen web.
+   * Visual dibangun dari preset kind saat node dibuat; perubahan label/style
+   * pasca-buat belum tercermin (menyusul bersama panel edit properti).
+   */
+  private buildHtmlBlock(obj: CanvasObject): Container {
+    const node = new Container();
+    const kind = String(obj.data.kind ?? "container");
+    const label = String(obj.data.label ?? "");
+    const font = "system-ui, sans-serif";
+
+    if (kind === "button") {
+      node.addChild(
+        new Graphics().roundRect(0, 0, obj.width, obj.height, 8).fill(0x0d9488),
+      );
+      const text = new Text({
+        text: label,
+        style: { fontFamily: font, fontSize: 14, fontWeight: "600", fill: 0xffffff },
+      });
+      text.anchor.set(0.5);
+      text.position.set(obj.width / 2, obj.height / 2);
+      node.addChild(text);
+    } else if (kind === "input") {
+      node.addChild(
+        new Graphics()
+          .roundRect(0, 0, obj.width, obj.height, 8)
+          .fill(0xffffff)
+          .stroke({ width: 1, color: 0xd6d3d1 }),
+      );
+      const placeholder = new Text({
+        text: label,
+        style: { fontFamily: font, fontSize: 14, fill: 0xa8a29e },
+      });
+      placeholder.anchor.set(0, 0.5);
+      placeholder.position.set(12, obj.height / 2);
+      node.addChild(placeholder);
+    } else {
+      node.addChild(
+        new Graphics()
+          .roundRect(0, 0, obj.width, obj.height, 12)
+          .fill({ color: 0xfafaf9, alpha: 0.85 })
+          .stroke({ width: 1, color: 0xd6d3d1 }),
+      );
+      const tag = new Text({
+        text: label.toUpperCase(),
+        style: {
+          fontFamily: font,
+          fontSize: 10,
+          fontWeight: "700",
+          fill: 0xa8a29e,
+          letterSpacing: 1,
+        },
+      });
+      tag.position.set(10, 8);
+      node.addChild(tag);
+    }
+
+    return node;
+  }
+
+  // ----------------------------------------------------------- selection
+
+  /**
+   * Cincin seleksi sebagai child node agar ikut bergerak saat drag.
+   * Dipanggil CanvasEngine setiap `selectedIds` di store berubah;
+   * Live Code Inspector (W-FR-3.3) membaca seleksi yang sama.
+   */
+  setSelection(ids: ReadonlySet<string>): void {
+    for (const [id, ring] of this.selectionRings) {
+      if (!ids.has(id)) {
+        ring.destroy();
+        this.selectionRings.delete(id);
+      }
+    }
+
+    const objects = useCanvasStore.getState().objects;
+    for (const id of ids) {
+      if (this.selectionRings.has(id)) continue;
+      const node = this.nodes.get(id);
+      const o = objects.get(id);
+      if (!node || !o) continue;
+      const ring = new Graphics()
+        .roundRect(-3, -3, o.width + 6, o.height + 6, 6)
+        .stroke({ width: 2, color: 0x0d9488, alpha: 0.9 });
+      this.selectionRings.set(id, ring);
+      node.addChild(ring);
+    }
   }
 
   // ---------------------------------------------------------------- drag

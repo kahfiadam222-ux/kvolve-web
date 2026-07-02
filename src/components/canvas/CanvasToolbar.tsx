@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react";
 import type { CanvasEngine } from "@/lib/engine/CanvasEngine";
+import { exportSiteZip } from "@/lib/export/exportZip";
 import { useCanvasStore } from "@/stores/canvasStore";
 
 /**
@@ -15,6 +16,10 @@ export function CanvasToolbar({
   engineRef: RefObject<CanvasEngine | null>;
 }) {
   const scale = useCanvasStore((s) => s.camera.scale);
+  const hasBlocks = useCanvasStore((s) => {
+    for (const o of s.objects.values()) if (o.type === "html-block") return true;
+    return false;
+  });
 
   const btn =
     "grid h-8 w-8 place-items-center rounded-full text-stone-600 transition-colors hover:bg-stone-100 hover:text-ink";
@@ -46,6 +51,22 @@ export function CanvasToolbar({
         onClick={() => engineRef.current?.zoomBy(1.25)}
       >
         +
+      </button>
+
+      <span className="mx-1 h-4 w-px bg-stone-200" aria-hidden />
+
+      <button
+        type="button"
+        disabled={!hasBlocks}
+        title={
+          hasBlocks
+            ? "Ekspor blok HTML menjadi index.html + style.css (W-FR-3.4)"
+            : "Sisipkan blok HTML dulu dari palet di kiri"
+        }
+        className="rounded-full px-3 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent-soft disabled:cursor-not-allowed disabled:text-stone-300 disabled:hover:bg-transparent"
+        onClick={() => void exportSiteZip(useCanvasStore.getState().objects)}
+      >
+        Ekspor .zip
       </button>
 
       <span className="mx-1 h-4 w-px bg-stone-200" aria-hidden />

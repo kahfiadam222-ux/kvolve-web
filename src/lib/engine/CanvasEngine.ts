@@ -102,6 +102,15 @@ export class CanvasEngine {
       isPanGesture: () => this.spaceDown || this.panning,
     });
 
+    // Klik kiri di area kosong = kosongkan seleksi. Objek menghentikan
+    // propagasi pointerdown-nya, jadi handler stage hanya menerima klik
+    // yang benar-benar jatuh di kanvas kosong.
+    this.app.stage.on("pointerdown", (e) => {
+      if (e.button === 0 && !this.spaceDown) {
+        useCanvasStore.getState().clearSelection();
+      }
+    });
+
     this.bindDomEvents(host);
     this.bindStore();
 
@@ -311,6 +320,14 @@ export class CanvasEngine {
       { fireImmediately: true },
     );
     this.cleanups.push(unsub);
+
+    // selectedIds -> cincin seleksi (dipakai bersama Live Code Inspector).
+    const unsubSelection = useCanvasStore.subscribe(
+      (s) => s.selectedIds,
+      (ids) => this.renderer?.setSelection(ids),
+      { fireImmediately: true },
+    );
+    this.cleanups.push(unsubSelection);
   }
 
   private applyCamera(cam: { x: number; y: number; scale: number }): void {
