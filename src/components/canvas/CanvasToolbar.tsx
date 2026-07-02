@@ -22,22 +22,29 @@ export function CanvasToolbar({
   });
 
   const btn =
-    "grid h-8 w-8 place-items-center rounded-full text-stone-600 transition-colors hover:bg-stone-100 hover:text-ink";
+    "grid h-8 w-8 place-items-center rounded-full text-stone-400 transition-colors hover:bg-white/10 hover:text-ink";
 
   return (
-    <div className="pointer-events-auto absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full border border-stone-200 bg-white/90 px-2 py-1.5 shadow-lg shadow-stone-900/5 backdrop-blur">
+    <div className="pointer-events-auto absolute bottom-5 left-1/2 flex -translate-x-1/2 animate-fade-up items-center gap-1 rounded-full border border-glass-border bg-glass px-2 py-1.5 shadow-float backdrop-blur-md">
       <button
         type="button"
         className={btn}
         aria-label="Perkecil"
         onClick={() => engineRef.current?.zoomBy(0.8)}
       >
-        −
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
+          <path
+            d="M2 6h8"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
       </button>
 
       <button
         type="button"
-        className="min-w-14 rounded-full px-2 py-1 text-center text-xs font-medium tabular-nums text-stone-600 transition-colors hover:bg-stone-100"
+        className="min-w-14 rounded-full px-2 py-1 text-center text-xs font-medium tabular-nums text-stone-300 transition-colors hover:bg-white/10"
         title="Kembali ke 100%"
         onClick={() => engineRef.current?.resetView()}
       >
@@ -50,10 +57,17 @@ export function CanvasToolbar({
         aria-label="Perbesar"
         onClick={() => engineRef.current?.zoomBy(1.25)}
       >
-        +
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
+          <path
+            d="M6 2v8M2 6h8"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
       </button>
 
-      <span className="mx-1 h-4 w-px bg-stone-200" aria-hidden />
+      <span className="mx-1 h-4 w-px bg-white/10" aria-hidden />
 
       <button
         type="button"
@@ -63,16 +77,26 @@ export function CanvasToolbar({
             ? "Ekspor blok HTML menjadi index.html + style.css (W-FR-3.4)"
             : "Sisipkan blok HTML dulu dari palet di kiri"
         }
-        className="rounded-full px-3 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent-soft disabled:cursor-not-allowed disabled:text-stone-300 disabled:hover:bg-transparent"
+        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent-soft disabled:cursor-not-allowed disabled:text-stone-600 disabled:hover:bg-transparent"
         onClick={() => void exportSiteZip(useCanvasStore.getState().objects)}
       >
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
+          <path
+            d="M6 1.5v6m0 0L3.5 5M6 7.5 8.5 5M2 10.5h8"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         Ekspor .zip
       </button>
 
-      <span className="mx-1 h-4 w-px bg-stone-200" aria-hidden />
+      <span className="mx-1 h-4 w-px bg-white/10" aria-hidden />
 
-      <p className="hidden pr-2 text-[11px] text-stone-400 sm:block">
-        Scroll: zoom · Klik kanan / Spasi + geser: pan · Seret file ke kanvas
+      <p className="hidden items-center gap-1.5 whitespace-nowrap pr-2 text-[11px] text-stone-500 sm:flex">
+        <kbd>Scroll</kbd> zoom · <kbd>Spasi</kbd>+geser pan · seret file ke
+        kanvas
       </p>
     </div>
   );

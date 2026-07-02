@@ -59,14 +59,14 @@ export function CodeInspector() {
           {copied === what ? "Tersalin ✓" : "Salin"}
         </button>
       </div>
-      <pre className="overflow-x-auto rounded-lg bg-stone-50 p-3 text-[11px] leading-relaxed text-stone-700">
+      <pre className="scrollbar-thin overflow-x-auto rounded-lg bg-black/30 p-3 font-mono text-[11px] leading-relaxed text-stone-300 ring-1 ring-inset ring-white/[0.06]">
         <code>{text}</code>
       </pre>
     </section>
   );
 
   return (
-    <aside className="pointer-events-auto absolute right-4 top-4 flex max-h-[calc(100%-7.5rem)] w-80 flex-col gap-3 overflow-y-auto rounded-2xl border border-stone-200 bg-white/95 p-4 shadow-lg shadow-stone-900/5 backdrop-blur">
+    <aside className="scrollbar-thin pointer-events-auto absolute right-4 top-4 flex max-h-[calc(100%-7.5rem)] w-80 animate-slide-in-right flex-col gap-3 overflow-y-auto rounded-2xl border border-glass-border bg-glass p-4 shadow-float backdrop-blur-md">
       <header className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-ink">
           Live Code
@@ -77,7 +77,7 @@ export function CodeInspector() {
         <button
           type="button"
           aria-label="Tutup panel"
-          className="grid h-6 w-6 place-items-center rounded-full text-stone-400 transition-colors hover:bg-stone-100 hover:text-ink"
+          className="grid h-6 w-6 place-items-center rounded-full text-stone-400 transition-colors hover:bg-white/10 hover:text-ink"
           onClick={clearSelection}
         >
           ×

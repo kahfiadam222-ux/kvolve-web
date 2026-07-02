@@ -258,7 +258,7 @@ export class ObjectRenderer {
       if (!node || !o) continue;
       const ring = new Graphics()
         .roundRect(-3, -3, o.width + 6, o.height + 6, 6)
-        .stroke({ width: 2, color: 0x0d9488, alpha: 0.9 });
+        .stroke({ width: 2, color: 0x2dd4bf, alpha: 0.9 });
       this.selectionRings.set(id, ring);
       node.addChild(ring);
     }
