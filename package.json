@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "collab:dev": "HOST=localhost PORT=1234 npx y-websocket"
+    "collab:dev": "npx y-websocket"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
