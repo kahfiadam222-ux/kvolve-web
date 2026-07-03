@@ -1,7 +1,12 @@
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { useCanvasStore } from "@/stores/canvasStore";
-import type { CanvasObject, CollabUser, RemoteCursor } from "@/types/canvas";
+import type {
+  ArtboardState,
+  CanvasObject,
+  CollabUser,
+  RemoteCursor,
+} from "@/types/canvas";
 
 /**
  * CollabProvider — lapisan real-time Kvolve (W-FR-2.2 + rekomendasi CRDT PRD).
@@ -28,16 +33,19 @@ export class CollabProvider {
   readonly doc = new Y.Doc();
   readonly provider: WebsocketProvider;
   private readonly yObjects: Y.Map<CanvasObject>;
+  private readonly yMeta: Y.Map<ArtboardState>;
   private cleanups: Array<() => void> = [];
 
   constructor(wsUrl: string, projectId: string, user: CollabUser) {
     this.provider = new WebsocketProvider(wsUrl, `kvolve:${projectId}`, this.doc);
     this.yObjects = this.doc.getMap<CanvasObject>("objects");
+    this.yMeta = this.doc.getMap<ArtboardState>("meta");
 
     // Identitas lokal untuk ditampilkan sebagai label kursor di klien lain.
     this.provider.awareness.setLocalStateField("user", user);
 
     this.bindObjects();
+    this.bindArtboard();
     this.bindCursors();
   }
 
@@ -75,6 +83,55 @@ export class CollabProvider {
         // Objek hasil applyRemote memakai referensi yang sama dengan isi
         // Y.Map, jadi perbandingan referensi ini sekaligus memutus gema.
         if (this.yObjects.get(id) !== obj) this.yObjects.set(id, obj);
+      }
+    }, LOCAL_ORIGIN);
+  }
+
+  // ---------------------------------------------- artboard (Y <-> store)
+
+  /**
+   * Artboard (ukuran halaman Studio Desain) ikut disinkronkan agar semua
+   * peserta bekerja di halaman yang sama. Berbeda dengan objects, state
+   * pre-sync TIDAK diterapkan ke store: dokumen lokal selalu kosong
+   * sebelum sinkronisasi pertama, dan menerapkannya akan menghapus
+   * artboard hasil pemulihan localStorage.
+   */
+  private bindArtboard(): void {
+    // Remote -> store.
+    const applyRemote = (
+      _events?: Y.YMapEvent<ArtboardState>,
+      tx?: Y.Transaction,
+    ): void => {
+      if (tx?.origin === LOCAL_ORIGIN) return;
+      useCanvasStore.getState().setArtboard(this.yMeta.get("artboard") ?? null);
+    };
+    this.yMeta.observe(applyRemote);
+    this.cleanups.push(() => this.yMeta.unobserve(applyRemote));
+
+    // Store -> remote (gema diputus lewat perbandingan referensi).
+    const unsub = useCanvasStore.subscribe(
+      (s) => s.artboard,
+      (ab) => this.pushLocalArtboard(ab),
+    );
+    this.cleanups.push(unsub);
+
+    // Setelah sinkronisasi pertama: bila dokumen bersama belum punya
+    // artboard, tawarkan milik lokal (pemulihan localStorage) ke peserta.
+    const onSync = (synced: boolean): void => {
+      if (!synced) return;
+      const local = useCanvasStore.getState().artboard;
+      if (local && !this.yMeta.has("artboard")) this.pushLocalArtboard(local);
+    };
+    this.provider.on("sync", onSync);
+    this.cleanups.push(() => this.provider.off("sync", onSync));
+  }
+
+  private pushLocalArtboard(ab: ArtboardState | null): void {
+    this.doc.transact(() => {
+      if (!ab) {
+        this.yMeta.delete("artboard");
+      } else if (this.yMeta.get("artboard") !== ab) {
+        this.yMeta.set("artboard", ab);
       }
     }, LOCAL_ORIGIN);
   }
