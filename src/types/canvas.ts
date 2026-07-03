@@ -27,12 +27,29 @@ export interface CanvasObject {
   /**
    * Payload spesifik per tipe:
    * - image      : { src, name, naturalWidth, naturalHeight }
-   * - pdf-page   : { src, name, pageIndex, totalPages, text }
-   *                (src = raster PNG halaman; text = hasil ekstraksi pdfjs)
+   * - pdf-page   : { src, name, pageIndex, totalPages, text, textRuns }
+   *                (src = raster PNG halaman; text = teks gabungan;
+   *                 textRuns = potongan teks berposisi untuk lapisan anotasi
+   *                 "ketik ulang di atas PDF", W-FR-3.1)
    * - html-block : { kind, tag, label, styles } — dikonsumsi codegen
    *                Live Code Inspector (W-FR-3.3) & Export .zip (W-FR-3.4)
    */
   data: Record<string, unknown>;
+}
+
+/**
+ * Potongan teks PDF berposisi (W-FR-3.1). Koordinat & ukuran dalam PAGE-LOCAL
+ * world px (relatif pojok kiri-atas halaman); proyeksi ke layar memakai posisi
+ * halaman + kamera. `text` awalnya hasil ekstraksi pdfjs, lalu bisa diketik
+ * ulang oleh pengguna via lapisan anotasi DOM di atas raster halaman.
+ */
+export interface PdfTextRun {
+  x: number;
+  y: number;
+  w: number;
+  /** Tinggi baris ≈ ukuran font (world px). */
+  h: number;
+  text: string;
 }
 
 /**

@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { useCanvasStore } from "@/stores/canvasStore";
-import type { CanvasObject } from "@/types/canvas";
+import type { CanvasObject, PdfTextRun } from "@/types/canvas";
 
 /**
  * Asset Ingestion (W-FR-2.3): File lokal -> CanvasObject di world space.
@@ -57,9 +57,10 @@ const PDF_RENDER_RESOLUTION = 2; // raster 2x lebar world agar tajam saat zoom
  * tiap halaman menjadi satu objek `pdf-page` (raster PNG via pdfjs-dist),
  * digelar berjajar horizontal dari titik jatuh.
  *
- * Teks tiap halaman ikut diekstrak (`page.getTextContent`) dan disimpan di
- * `data.text` — fondasi untuk lapisan anotasi "ketik ulang di atas PDF"
- * pada iterasi berikutnya.
+ * Teks tiap halaman diekstrak berikut POSISINYA (`page.getTextContent` +
+ * matriks transform tiap item) menjadi `data.textRuns` (page-local world px),
+ * yang menjadi sumber lapisan anotasi "ketik ulang di atas PDF" (W-FR-3.1).
+ * `data.text` tetap disimpan sebagai teks gabungan.
  *
  * pdfjs-dist di-import dinamis supaya ±400KB lib + worker-nya baru diunduh
  * ketika pengguna pertama kali menjatuhkan PDF, bukan saat kanvas dibuka.
@@ -101,9 +102,30 @@ export async function ingestPdf(
         ),
       );
 
+      // Ekstraksi teks + posisi. Viewport pada skala WORLD (bukan skala
+      // raster) agar koordinat item langsung dalam page-local world px.
+      const worldScale = PDF_PAGE_WORLD_WIDTH / base.width;
+      const textViewport = page.getViewport({ scale: worldScale });
       const textContent = await page.getTextContent();
-      const text = textContent.items
-        .map((it) => ("str" in it ? it.str : ""))
+
+      const textRuns: PdfTextRun[] = [];
+      for (const it of textContent.items) {
+        if (!("str" in it) || it.str.trim() === "") continue;
+        // transform item (PDF space) -> viewport (device/world px, origin kiri-atas).
+        const m = pdfjs.Util.transform(textViewport.transform, it.transform);
+        const h = Math.hypot(m[2], m[3]); // tinggi baris ≈ ukuran font
+        const w = it.width * worldScale;
+        textRuns.push({
+          x: Math.round(m[4]),
+          y: Math.round(m[5] - h), // m[5] = baseline; naik satu tinggi ke atas kotak
+          w: Math.round(w),
+          h: Math.round(h),
+          text: it.str,
+        });
+      }
+
+      const text = textRuns
+        .map((r) => r.text)
         .join(" ")
         .replace(/\s+/g, " ")
         .trim();
@@ -129,6 +151,7 @@ export async function ingestPdf(
           pageIndex: pageNo - 1,
           totalPages: doc.numPages,
           text,
+          textRuns,
         },
       });
 
