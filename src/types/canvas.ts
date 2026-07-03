@@ -45,6 +45,16 @@ export interface CameraState {
   scale: number;
 }
 
+/**
+ * Artboard = area kerja utama (bounding box kanvas) yang dipilih lewat
+ * Studio Desain. Digambar sebagai "halaman" putih di world space dengan
+ * pojok kiri-atas di (0,0); kanvas di sekelilingnya tetap tak terbatas.
+ */
+export interface ArtboardState {
+  width: number;
+  height: number;
+}
+
 /** Kursor pengguna lain (W-FR-2.2), posisi dalam world space. */
 export interface RemoteCursor {
   clientId: number;

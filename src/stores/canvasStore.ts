@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import type { CameraState, CanvasObject, RemoteCursor } from "@/types/canvas";
+import type {
+  ArtboardState,
+  CameraState,
+  CanvasObject,
+  RemoteCursor,
+} from "@/types/canvas";
 
 /**
  * Zustand = state lokal kanvas yang cepat (sesuai rekomendasi arsitektur PRD).
@@ -20,11 +25,14 @@ import type { CameraState, CanvasObject, RemoteCursor } from "@/types/canvas";
 
 interface CanvasStore {
   camera: CameraState;
+  /** Area kerja pilihan Studio Desain; null = belum dipilih (kanvas bebas). */
+  artboard: ArtboardState | null;
   objects: ReadonlyMap<string, CanvasObject>;
   selectedIds: ReadonlySet<string>;
   remoteCursors: RemoteCursor[];
 
   setCamera: (camera: CameraState) => void;
+  setArtboard: (artboard: ArtboardState | null) => void;
 
   addObject: (obj: CanvasObject) => void;
   updateObject: (id: string, patch: Partial<CanvasObject>) => void;
@@ -41,11 +49,13 @@ interface CanvasStore {
 export const useCanvasStore = create<CanvasStore>()(
   subscribeWithSelector((set) => ({
     camera: { x: 0, y: 0, scale: 1 },
+    artboard: null,
     objects: new Map(),
     selectedIds: new Set(),
     remoteCursors: [],
 
     setCamera: (camera) => set({ camera }),
+    setArtboard: (artboard) => set({ artboard }),
 
     addObject: (obj) =>
       set((s) => {
