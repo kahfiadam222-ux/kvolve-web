@@ -1,0 +1,262 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createProject } from "@/lib/projects/localProjects";
+import {
+  storyTimeLeft,
+  type Story,
+  type UserProfile,
+} from "@/lib/profile/profileData";
+
+/**
+ * StoryBar (PRD 3 — Ephemeral Stories) — barisan Story Bubbles dengan cincin
+ * gradasi glossy di bagian atas profil. Klik bubble membuka Story Viewer
+ * vertikal 9:16 dengan progress bar auto-advance dan tombol "Remix from
+ * Story" (Ide Tambahan A) yang fork proyek asal ke ruang kerja pengguna.
+ *
+ * `stories` yang diterima sudah difilter aktif (< 24 jam) oleh pemanggil.
+ */
+export function StoryBar({
+  profile,
+  stories,
+}: {
+  profile: UserProfile;
+  stories: Story[];
+}) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <>
+      <div className="scrollbar-thin -mx-1 flex gap-4 overflow-x-auto px-1 pb-1">
+        {/* Bubble "tambah story" (owner) — placeholder aksi buat story. */}
+        <AddStoryBubble />
+
+        {stories.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => setOpenIndex(i)}
+            className="group flex w-16 shrink-0 flex-col items-center gap-1.5"
+            title={`Story · sisa ${storyTimeLeft(s)}`}
+          >
+            <span className="rounded-full bg-gradient-to-tr from-accent via-teal-300 to-fuchsia-400 p-[2px] transition-transform group-hover:scale-105">
+              <span className="block rounded-full bg-canvas p-[2px]">
+                <span
+                  className="grid h-12 w-12 place-items-center rounded-full text-[10px] font-semibold text-white/90"
+                  style={{ background: s.gradient ?? "linear-gradient(135deg,#334155,#0f172a)" }}
+                >
+                  {s.kind === "text" ? "Aa" : ""}
+                </span>
+              </span>
+            </span>
+            <span className="max-w-16 truncate text-[10px] text-stone-400">
+              {s.projectName ?? (s.kind === "text" ? "Status" : "Snapshot")}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {openIndex !== null && (
+        <StoryViewer
+          profile={profile}
+          stories={stories}
+          startIndex={openIndex}
+          onClose={() => setOpenIndex(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function AddStoryBubble() {
+  return (
+    <div
+      className="flex w-16 shrink-0 flex-col items-center gap-1.5"
+      title="Buat story dari snapshot kanvas (menyusul)"
+    >
+      <span className="grid h-[52px] w-[52px] place-items-center rounded-full border-2 border-dashed border-white/15 text-stone-400 transition-colors hover:border-accent/50 hover:text-accent">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
+          <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </span>
+      <span className="text-[10px] text-stone-500">Kamu</span>
+    </div>
+  );
+}
+
+const STORY_DURATION_MS = 5000;
+
+function StoryViewer({
+  profile,
+  stories,
+  startIndex,
+  onClose,
+}: {
+  profile: UserProfile;
+  stories: Story[];
+  startIndex: number;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const [index, setIndex] = useState(startIndex);
+  const [progress, setProgress] = useState(0);
+  const story = stories[index];
+
+  const next = useRef<() => void>(() => {});
+  next.current = () => {
+    if (index < stories.length - 1) {
+      setIndex((i) => i + 1);
+      setProgress(0);
+    } else {
+      onClose();
+    }
+  };
+
+  const prev = (): void => {
+    if (index > 0) {
+      setIndex((i) => i - 1);
+      setProgress(0);
+    }
+  };
+
+  // Auto-advance: progress bar terisi lalu pindah story berikutnya.
+  useEffect(() => {
+    const start = performance.now();
+    let raf = 0;
+    const tick = (t: number): void => {
+      const p = Math.min(1, (t - start) / STORY_DURATION_MS);
+      setProgress(p);
+      if (p >= 1) next.current();
+      else raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [index]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") next.current();
+      if (e.key === "ArrowLeft") prev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const remix = (): void => {
+    // Ide Tambahan A: fork proyek asal ke ruang kerja sendiri, lalu buka.
+    const base = story.projectName ?? "Story";
+    const project = createProject(`Remix — ${base}`);
+    router.push(`/canvas/${project.id}`);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/80 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Story ${profile.name}`}
+    >
+      <div className="absolute inset-0" onClick={onClose} aria-hidden />
+
+      <div className="relative flex aspect-[9/16] max-h-[calc(100dvh-2rem)] w-auto max-w-[min(28rem,100%)] flex-col overflow-hidden rounded-3xl border border-glass-border shadow-float">
+        {/* Latar story */}
+        <div
+          className="absolute inset-0"
+          style={{ background: story.gradient ?? "linear-gradient(160deg,#1e293b,#0f172a)" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
+
+        {/* Progress bars per story */}
+        <div className="relative z-10 flex gap-1 p-3">
+          {stories.map((s, i) => (
+            <span key={s.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/25">
+              <span
+                className="block h-full bg-white"
+                style={{
+                  width: i < index ? "100%" : i === index ? `${progress * 100}%` : "0%",
+                }}
+              />
+            </span>
+          ))}
+        </div>
+
+        {/* Header */}
+        <div className="relative z-10 flex items-center gap-2 px-3">
+          <span
+            className="grid h-8 w-8 place-items-center rounded-full text-xs font-bold text-white ring-2 ring-white/20"
+            style={{ background: profile.avatarGradient }}
+          >
+            {profile.initials}
+          </span>
+          <span className="text-sm font-medium text-white drop-shadow">{profile.name}</span>
+          <span className="text-xs text-white/70">· sisa {storyTimeLeft(story)}</span>
+          <button
+            type="button"
+            aria-label="Tutup story"
+            onClick={onClose}
+            className="ml-auto grid h-8 w-8 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Konten */}
+        <div className="relative z-10 flex flex-1 items-center justify-center p-6 text-center">
+          {story.kind === "text" ? (
+            <p className="text-xl font-semibold leading-snug text-white drop-shadow-lg">
+              {story.text}
+            </p>
+          ) : (
+            <div className="rounded-2xl border border-white/20 bg-black/20 px-4 py-3 backdrop-blur-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
+                Snapshot kanvas
+              </p>
+              <p className="mt-1 text-lg font-semibold text-white drop-shadow">
+                {story.projectName ?? "Progres terbaru"}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Zona navigasi kiri/kanan (tap) */}
+        <button
+          type="button"
+          aria-label="Story sebelumnya"
+          onClick={prev}
+          className="absolute inset-y-0 left-0 z-0 w-1/3"
+        />
+        <button
+          type="button"
+          aria-label="Story berikutnya"
+          onClick={() => next.current()}
+          className="absolute inset-y-0 right-0 z-0 w-1/3"
+        />
+
+        {/* Aksi: Remix from Story */}
+        {story.projectId && (
+          <div className="relative z-10 p-4">
+            <button
+              type="button"
+              onClick={remix}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/15 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/25 active:scale-[0.98]"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path
+                  d="M4 7h11a4 4 0 0 1 0 8H9m0 0 3-3m-3 3 3 3M4 7l3-3M4 7l3 3"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Remix ke ruang kerja saya
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
