@@ -6,10 +6,12 @@ import { CanvasEngine } from "@/lib/engine/CanvasEngine";
 import { CollabProvider } from "@/lib/collab/CollabProvider";
 import { useAssetDrop } from "@/hooks/useAssetDrop";
 import { randomCursorColor, throttle } from "@/lib/utils";
+import { useCanvasStore } from "@/stores/canvasStore";
 import { MultiplayerCursors } from "./MultiplayerCursors";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { BlockPalette } from "./BlockPalette";
 import { CodeInspector } from "./CodeInspector";
+import { DesignStudio } from "@/components/studio/DesignStudio";
 
 /**
  * InfiniteCanvas — titik temu React <-> PixiJS.
@@ -24,6 +26,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
   const engineRef = useRef<CanvasEngine | null>(null);
   const collabRef = useRef<CollabProvider | null>(null);
   const [ready, setReady] = useState(false);
+  const [studioOpen, setStudioOpen] = useState(false);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -50,6 +53,8 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         }
 
         setReady(true);
+        // Sambut pengguna dengan Studio Desain bila area kerja belum dipilih.
+        setStudioOpen(useCanvasStore.getState().artboard === null);
       })
       .catch((err) => console.error("[Kvolve] Gagal inisialisasi engine:", err));
 
@@ -93,7 +98,15 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         <>
           <BlockPalette engineRef={engineRef} />
           <CodeInspector />
-          <CanvasToolbar engineRef={engineRef} />
+          <CanvasToolbar
+            engineRef={engineRef}
+            onOpenStudio={() => setStudioOpen(true)}
+          />
+          <DesignStudio
+            engineRef={engineRef}
+            open={studioOpen}
+            onClose={() => setStudioOpen(false)}
+          />
         </>
       )}
     </div>
