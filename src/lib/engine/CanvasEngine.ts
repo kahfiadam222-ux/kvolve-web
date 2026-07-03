@@ -45,6 +45,8 @@ export class CanvasEngine {
   private host: HTMLElement | null = null;
   private grid: TilingSprite | null = null;
   private renderer: ObjectRenderer | null = null;
+  /** "Halaman" area kerja pilihan Studio Desain (di bawah semua objek). */
+  private artboardG: Graphics | null = null;
 
   private spaceDown = false;
   private panning = false;
@@ -102,6 +104,15 @@ export class CanvasEngine {
       isPanGesture: () => this.spaceDown || this.panning,
     });
 
+    // Klik kiri di area kosong = kosongkan seleksi. Objek menghentikan
+    // propagasi pointerdown-nya, jadi handler stage hanya menerima klik
+    // yang benar-benar jatuh di kanvas kosong.
+    this.app.stage.on("pointerdown", (e) => {
+      if (e.button === 0 && !this.spaceDown) {
+        useCanvasStore.getState().clearSelection();
+      }
+    });
+
     this.bindDomEvents(host);
     this.bindStore();
 
@@ -156,8 +167,47 @@ export class CanvasEngine {
   }
 
   resetView(): void {
+    // Bila artboard sudah dipilih, "reset" berarti pas-kan ke area kerja.
+    if (useCanvasStore.getState().artboard) {
+      this.fitToArtboard();
+      return;
+    }
     this.world.scale.set(1);
     this.world.position.set(0, 0);
+    this.commitCamera();
+  }
+
+  /**
+   * API Studio Desain: ubah ukuran area kerja (bounding box kanvas utama)
+   * secara dinamis. Halaman digambar ulang lewat subscription store, lalu
+   * kamera di-pas-kan agar seluruh artboard terlihat.
+   */
+  setArtboard(width: number, height: number): void {
+    useCanvasStore.getState().setArtboard({ width, height });
+    this.fitToArtboard(width, height);
+  }
+
+  /** Pas-kan kamera ke artboard dengan margin nyaman di sekelilingnya. */
+  fitToArtboard(width?: number, height?: number): void {
+    const ab =
+      width && height
+        ? { width, height }
+        : useCanvasStore.getState().artboard;
+    if (!ab) return;
+
+    const pad = 72;
+    const sw = this.app.screen.width;
+    const sh = this.app.screen.height;
+    const scale = clamp(
+      Math.min((sw - pad * 2) / ab.width, (sh - pad * 2) / ab.height),
+      MIN_SCALE,
+      MAX_SCALE,
+    );
+    this.world.scale.set(scale);
+    this.world.position.set(
+      (sw - ab.width * scale) / 2,
+      (sh - ab.height * scale) / 2,
+    );
     this.commitCamera();
   }
 
@@ -268,12 +318,18 @@ export class CanvasEngine {
     });
 
     // --- Spacebar sebagai modifier pan ------------------------------
-    const isTypingTarget = (t: EventTarget | null): boolean =>
+    // Abaikan Space bila fokus ada di elemen interaktif atau di dalam
+    // overlay/modal DOM: mem-preventDefault di sana akan membajak aktivasi
+    // <button> (Space = klik) dan malah memicu mode pan di belakang modal.
+    const isInteractiveTarget = (t: EventTarget | null): boolean =>
       t instanceof HTMLElement &&
-      (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+      (t.tagName === "INPUT" ||
+        t.tagName === "TEXTAREA" ||
+        t.isContentEditable ||
+        t.closest('button, a, select, [role="dialog"]') !== null);
 
     const onKeyDown = (e: KeyboardEvent): void => {
-      if (e.code !== "Space" || isTypingTarget(e.target)) return;
+      if (e.code !== "Space" || isInteractiveTarget(e.target)) return;
       e.preventDefault(); // cegah halaman ikut scroll
       if (!this.spaceDown) {
         this.spaceDown = true;
@@ -311,6 +367,49 @@ export class CanvasEngine {
       { fireImmediately: true },
     );
     this.cleanups.push(unsub);
+
+    // selectedIds -> cincin seleksi (dipakai bersama Live Code Inspector).
+    const unsubSelection = useCanvasStore.subscribe(
+      (s) => s.selectedIds,
+      (ids) => this.renderer?.setSelection(ids),
+      { fireImmediately: true },
+    );
+    this.cleanups.push(unsubSelection);
+
+    // artboard (Studio Desain) -> halaman putih di world space.
+    const unsubArtboard = useCanvasStore.subscribe(
+      (s) => s.artboard,
+      (ab) => this.drawArtboard(ab),
+      { fireImmediately: true },
+    );
+    this.cleanups.push(unsubArtboard);
+  }
+
+  private drawArtboard(
+    ab: { width: number; height: number } | null,
+  ): void {
+    if (!ab) {
+      this.artboardG?.destroy();
+      this.artboardG = null;
+      this.viewDirty = true;
+      return;
+    }
+
+    if (!this.artboardG) {
+      this.artboardG = new Graphics();
+      this.artboardG.zIndex = -1_000_000; // selalu di bawah objek
+      this.artboardG.eventMode = "none"; // klik tembus ke stage (deselect)
+      this.world.addChild(this.artboardG);
+    }
+
+    // Halaman putih ala design studio + garis tepi halus agar terangkat
+    // dari latar gelap. Objek di atasnya tetap interaktif seperti biasa.
+    this.artboardG
+      .clear()
+      .rect(0, 0, ab.width, ab.height)
+      .fill(0xffffff)
+      .stroke({ width: 1, color: 0x000000, alpha: 0.35 });
+    this.viewDirty = true;
   }
 
   private applyCamera(cam: { x: number; y: number; scale: number }): void {
@@ -324,7 +423,9 @@ export class CanvasEngine {
   private createGridTexture(): Texture {
     const g = new Graphics()
       .circle(GRID_TEX_SIZE / 2, GRID_TEX_SIZE / 2, 1.5)
-      .fill({ color: 0xb9b9b2, alpha: 0.9 });
+      // Titik redup di atas latar gelap (bg-canvas #161614) — cukup terlihat
+      // sebagai orientasi tanpa bersaing dengan konten.
+      .fill({ color: 0x4a4a45, alpha: 0.9 });
     return this.app.renderer.generateTexture({
       target: g,
       frame: new Rectangle(0, 0, GRID_TEX_SIZE, GRID_TEX_SIZE),

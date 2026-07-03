@@ -27,8 +27,10 @@ export interface CanvasObject {
   /**
    * Payload spesifik per tipe:
    * - image      : { src, name, naturalWidth, naturalHeight }
-   * - pdf-page   : { name, pageIndex, totalPages }
-   * - html-block : { tag, props, styles, children } — dikonsumsi Live Code Inspector (W-FR-3.3)
+   * - pdf-page   : { src, name, pageIndex, totalPages, text }
+   *                (src = raster PNG halaman; text = hasil ekstraksi pdfjs)
+   * - html-block : { kind, tag, label, styles } — dikonsumsi codegen
+   *                Live Code Inspector (W-FR-3.3) & Export .zip (W-FR-3.4)
    */
   data: Record<string, unknown>;
 }
@@ -41,6 +43,16 @@ export interface CameraState {
   x: number;
   y: number;
   scale: number;
+}
+
+/**
+ * Artboard = area kerja utama (bounding box kanvas) yang dipilih lewat
+ * Studio Desain. Digambar sebagai "halaman" putih di world space dengan
+ * pojok kiri-atas di (0,0); kanvas di sekelilingnya tetap tak terbatas.
+ */
+export interface ArtboardState {
+  width: number;
+  height: number;
 }
 
 /** Kursor pengguna lain (W-FR-2.2), posisi dalam world space. */

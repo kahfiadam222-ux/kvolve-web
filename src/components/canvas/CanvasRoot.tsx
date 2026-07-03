@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { KvolveMark } from "@/components/brand/KvolveMark";
 
 /**
  * PixiJS mengakses window/WebGL saat modulnya dievaluasi, jadi seluruh
@@ -10,10 +11,9 @@ import dynamic from "next/dynamic";
 const InfiniteCanvas = dynamic(() => import("./InfiniteCanvas"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-canvas">
-      <p className="animate-pulse text-sm text-stone-500">
-        Menyiapkan kanvas…
-      </p>
+    <div className="bg-dotgrid flex h-full w-full flex-col items-center justify-center gap-4 bg-canvas">
+      <KvolveMark className="h-10 w-10 animate-pulse-soft" />
+      <p className="text-sm text-stone-500">Menyiapkan kanvas…</p>
     </div>
   ),
 });

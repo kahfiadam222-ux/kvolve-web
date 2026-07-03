@@ -48,40 +48,96 @@ export async function ingestImage(
   bitmap.close();
 }
 
+const PDF_PAGE_WORLD_WIDTH = 420; // lebar halaman di kanvas (world px)
+const PDF_PAGE_GAP = 24; // jarak antar halaman saat digelar berjajar
+const PDF_RENDER_RESOLUTION = 2; // raster 2x lebar world agar tajam saat zoom
+
 /**
- * Skeleton W-FR-3.1 (PDF Visual Annotation).
+ * PDF Visual Annotation (W-FR-3.1) — PDF multi-halaman dirender nyata:
+ * tiap halaman menjadi satu objek `pdf-page` (raster PNG via pdfjs-dist),
+ * digelar berjajar horizontal dari titik jatuh.
  *
- * Implementasi penuh (modul berikutnya):
- *   1. `import * as pdfjs from "pdfjs-dist"` +
- *      `pdfjs.GlobalWorkerOptions.workerSrc = new URL(
- *         "pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString()`
- *   2. `getDocument(await file.arrayBuffer())` -> render tiap halaman ke
- *      OffscreenCanvas -> jadikan Texture Pixi per halaman.
- *   3. `page.getTextContent()` untuk lapisan teks yang bisa diketik ulang.
+ * Teks tiap halaman ikut diekstrak (`page.getTextContent`) dan disimpan di
+ * `data.text` — fondasi untuk lapisan anotasi "ketik ulang di atas PDF"
+ * pada iterasi berikutnya.
  *
- * Untuk boilerplate ini, PDF muncul sebagai kartu placeholder agar seluruh
- * pipeline drop -> store -> render -> sync bisa diuji ujung-ke-ujung.
+ * pdfjs-dist di-import dinamis supaya ±400KB lib + worker-nya baru diunduh
+ * ketika pengguna pertama kali menjatuhkan PDF, bukan saat kanvas dibuka.
  */
 export async function ingestPdf(
   file: File,
   dropX: number,
   dropY: number,
 ): Promise<void> {
-  const width = 420; // proporsi A4 sebagai default placeholder
-  const height = Math.round(width * 1.414);
+  const pdfjs = await import("pdfjs-dist");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/build/pdf.worker.min.mjs",
+    import.meta.url,
+  ).toString();
 
-  addToCanvas({
-    id: nanoid(),
-    type: "pdf-page",
-    x: dropX - width / 2,
-    y: dropY - height / 2,
-    width,
-    height,
-    rotation: 0,
-    zIndex: Date.now(),
-    locked: false,
-    data: { name: file.name, pageIndex: 0, totalPages: 1 },
-  });
+  const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() })
+    .promise;
+
+  try {
+    let offsetX = 0;
+    for (let pageNo = 1; pageNo <= doc.numPages; pageNo++) {
+      const page = await doc.getPage(pageNo);
+      const base = page.getViewport({ scale: 1 });
+      const viewport = page.getViewport({
+        scale: (PDF_PAGE_WORLD_WIDTH * PDF_RENDER_RESOLUTION) / base.width,
+      });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas 2D context tidak tersedia");
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      const blob = await new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("toBlob menghasilkan null"))),
+          "image/png",
+        ),
+      );
+
+      const textContent = await page.getTextContent();
+      const text = textContent.items
+        .map((it) => ("str" in it ? it.str : ""))
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const width = PDF_PAGE_WORLD_WIDTH;
+      const height = Math.round(width * (base.height / base.width));
+
+      addToCanvas({
+        id: nanoid(),
+        type: "pdf-page",
+        x: dropX - width / 2 + offsetX,
+        y: dropY - height / 2,
+        width,
+        height,
+        rotation: 0,
+        zIndex: Date.now(),
+        locked: false,
+        // MVP: src = blob URL lokal (catatan yang sama dengan gambar di atas:
+        // untuk kolaborasi lintas-perangkat, unggah ke Supabase Storage).
+        data: {
+          src: URL.createObjectURL(blob),
+          name: file.name,
+          pageIndex: pageNo - 1,
+          totalPages: doc.numPages,
+          text,
+        },
+      });
+
+      offsetX += width + PDF_PAGE_GAP;
+      page.cleanup();
+    }
+  } finally {
+    await doc.destroy();
+  }
 }
 
 function addToCanvas(obj: CanvasObject): void {
