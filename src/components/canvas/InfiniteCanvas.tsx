@@ -5,6 +5,11 @@ import { nanoid } from "nanoid";
 import { CanvasEngine } from "@/lib/engine/CanvasEngine";
 import { CollabProvider } from "@/lib/collab/CollabProvider";
 import { useAssetDrop } from "@/hooks/useAssetDrop";
+import {
+  loadArtboard,
+  saveArtboard,
+  touchProject,
+} from "@/lib/projects/localProjects";
 import { randomCursorColor, throttle } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { MultiplayerCursors } from "./MultiplayerCursors";
@@ -35,6 +40,22 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
     const engine = new CanvasEngine();
     let cancelled = false;
 
+    // Pulihkan artboard proyek INI sebelum engine hidup (store bersifat
+    // singleton — tanpa reset, ukuran proyek sebelumnya bocor ke sini).
+    useCanvasStore.getState().setArtboard(loadArtboard(projectId));
+    touchProject(projectId);
+
+    // Setiap perubahan artboard (Studio Desain / sinkronisasi remote)
+    // dipersistenkan per proyek agar bertahan saat dibuka kembali; bila
+    // peserta lain yang memilihkan ukurannya, Studio lokal ikut menutup.
+    const unsubArtboard = useCanvasStore.subscribe(
+      (s) => s.artboard,
+      (ab) => {
+        saveArtboard(projectId, ab);
+        if (ab) setStudioOpen(false);
+      },
+    );
+
     engine
       .init(host)
       .then(() => {
@@ -53,18 +74,31 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         }
 
         setReady(true);
-        // Sambut pengguna dengan Studio Desain bila area kerja belum dipilih.
-        setStudioOpen(useCanvasStore.getState().artboard === null);
+        // Sambut pengguna dengan Studio Desain bila area kerja belum
+        // dipilih; bila sudah (dipulihkan), pas-kan kamera ke halamannya.
+        const artboard = useCanvasStore.getState().artboard;
+        setStudioOpen(artboard === null);
+        if (artboard) engine.fitToArtboard();
       })
       .catch((err) => console.error("[Kvolve] Gagal inisialisasi engine:", err));
 
     return () => {
       cancelled = true;
       setReady(false);
+      unsubArtboard();
       collabRef.current?.destroy();
       collabRef.current = null;
       engineRef.current = null;
       engine.destroy();
+      // Reset seluruh state global per-proyek setelah collab mati (agar
+      // reset ini tidak terdorong ke dokumen Y.js sebagai penghapusan).
+      // Tanpa ini, artboard/objek/kamera proyek lama bocor ke proyek lain
+      // karena store Zustand adalah singleton level modul.
+      const store = useCanvasStore.getState();
+      store.setArtboard(null);
+      store.replaceAllObjects([]);
+      store.clearSelection();
+      store.setCamera({ x: 0, y: 0, scale: 1 });
     };
   }, [projectId]);
 
