@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { generateFragment } from "@/lib/codegen/htmlCodegen";
+import { BlockProperties } from "./BlockProperties";
 
 /**
  * Live Code Inspector (W-FR-3.3) — panel kanan yang men-generate HTML/CSS
@@ -69,7 +70,7 @@ export function CodeInspector() {
     <aside className="scrollbar-thin pointer-events-auto absolute right-4 top-4 flex max-h-[calc(100%-7.5rem)] w-80 animate-slide-in-right flex-col gap-3 overflow-y-auto rounded-2xl border border-glass-border bg-glass p-4 shadow-float backdrop-blur-md">
       <header className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-ink">
-          Live Code
+          Inspektur
           <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
             {String(selected.data.kind ?? "block")}
           </span>
@@ -83,6 +84,8 @@ export function CodeInspector() {
           ×
         </button>
       </header>
+
+      <BlockProperties block={selected} />
 
       {section("html", "HTML", code.html)}
       {section("css", "CSS", code.css)}
