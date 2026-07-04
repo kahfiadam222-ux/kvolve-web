@@ -110,7 +110,7 @@ export function ProjectGallery() {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2 text-sm font-semibold text-orange-950 shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
             <path

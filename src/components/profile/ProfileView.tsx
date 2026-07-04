@@ -134,7 +134,7 @@ export function ProfileView({ username }: { username: string }) {
                     className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
                       following
                         ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
-                        : "bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 text-white shadow-card hover:shadow-glow"
+                        : "bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 text-orange-950 shadow-card hover:shadow-glow"
                     }`}
                   >
                     {following ? "Mengikuti ✓" : "Ikuti"}

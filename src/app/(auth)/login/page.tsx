@@ -186,7 +186,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={enterAsGuest}
-              className="mt-3 w-full rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2.5 text-sm font-semibold text-white shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
+              className="mt-3 w-full rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2.5 text-sm font-semibold text-orange-950 shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
             >
               {existingGuest && !guestName
                 ? `Lanjut sebagai ${existingGuest}`
