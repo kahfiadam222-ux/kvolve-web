@@ -75,14 +75,14 @@ export interface UserProfile {
 export const STORY_TTL_MS = 24 * 60 * 60 * 1000; // 24 jam (PRD 3)
 const HOUR = 60 * 60 * 1000;
 
-// Gradasi vivid "kaca oren berbaur" — dirancang untuk kartu KACA GELAP
-// (glass-soft) shell aplikasi, senada dengan LiquidBackdrop (amber/rust).
+// Gradasi pastel Crystal OS — sama dengan palet ProjectGallery.tsx, dipakai
+// untuk kartu kaca TERANG shell aplikasi.
 const THUMB_GRADIENTS = [
-  "linear-gradient(135deg,#fbbf24,#f97316)",
-  "linear-gradient(135deg,#f97316,#ea580c)",
-  "linear-gradient(135deg,#fdba74,#f59e0b)",
-  "linear-gradient(135deg,#fb923c,#c2410c)",
-  "linear-gradient(135deg,#fde68a,#f97316)",
+  "linear-gradient(135deg,#dbeafe,#93c5fd)",
+  "linear-gradient(135deg,#ccfbf1,#5eead4)",
+  "linear-gradient(135deg,#e0e7ff,#a5b4fc)",
+  "linear-gradient(135deg,#d1fae5,#6ee7b7)",
+  "linear-gradient(135deg,#fce7f3,#f9a8d4)",
 ];
 
 const gradientFor = (seed: string): string => {
@@ -130,7 +130,7 @@ export function getProfile(username: string, now: number = Date.now()): UserProf
     bio: isOwner
       ? "Membangun Kvolve — infinite canvas untuk desain, PDF & layout HTML. Kolaborasi tanpa batas."
       : "Kreator di ekosistem Kvolve.",
-    avatarGradient: "linear-gradient(135deg,#fbbf24,#ea580c)",
+    avatarGradient: "linear-gradient(135deg,#3B82F6,#14B8A6)",
     initials: initialsFrom(name),
     verified: isOwner,
     followers: isOwner ? 1284 : 42,
@@ -170,7 +170,7 @@ function seededStories(
       id: `${username}-s1`,
       kind: "snapshot",
       createdAt: now - 2 * HOUR,
-      gradient: "linear-gradient(160deg,#c2410c,#fb923c)",
+      gradient: "linear-gradient(160deg,#2563EB,#60A5FA)",
       projectId: first?.id,
       projectName: first?.name,
     },
@@ -184,7 +184,7 @@ function seededStories(
       id: `${username}-s3`,
       kind: "snapshot",
       createdAt: now - 20 * HOUR,
-      gradient: "linear-gradient(160deg,#92400e,#f59e0b)",
+      gradient: "linear-gradient(160deg,#0D9488,#5EEAD4)",
       projectId: featured[1]?.id,
       projectName: featured[1]?.name,
     },

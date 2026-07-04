@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { KvolveMark } from "@/components/brand/KvolveMark";
-import { LiquidBackdrop } from "@/components/brand/LiquidBackdrop";
+import { CrystalBackdrop } from "@/components/brand/CrystalBackdrop";
 import { getGuestUser, signInAsGuest } from "@/lib/auth/appUser";
 import {
   createBrowserSupabase,
@@ -121,15 +121,15 @@ export default function LoginPage() {
   };
 
   const providerBtn =
-    "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-2.5 text-sm font-medium text-ink transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-glass-border disabled:hover:bg-glass-soft";
+    "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-2.5 text-sm font-medium text-ink transition-all hover:border-accent/30 hover:bg-black/[0.03] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-glass-border disabled:hover:bg-glass-soft";
 
   return (
     <main className="relative grid min-h-dvh place-items-center px-6 py-10 text-ink">
-      <LiquidBackdrop />
+      <CrystalBackdrop />
 
       <div className="glass-sheen relative grid w-full max-w-4xl animate-fade-up overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl backdrop-saturate-150 lg:grid-cols-2">
         {/* ------------------------------------------------ Panel branding */}
-        <div className="relative flex flex-col justify-between gap-8 border-b border-glass-border bg-black/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
+        <div className="relative flex flex-col justify-between gap-8 border-b border-glass-border bg-canvas-soft p-8 lg:border-b-0 lg:border-r lg:p-10">
           <div>
             <KvolveMark className="h-10 w-10" />
             <h1 className="mt-6 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -180,13 +180,13 @@ export default function LoginPage() {
                 onKeyDown={(e) => e.key === "Enter" && enterAsGuest()}
                 placeholder={existingGuest ?? "mis. Kahfi"}
                 maxLength={40}
-                className="mt-1.5 w-full rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
+                className="mt-1.5 w-full rounded-xl border border-glass-border bg-white/60 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
               />
             </label>
             <button
               type="button"
               onClick={enterAsGuest}
-              className="mt-3 w-full rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2.5 text-sm font-semibold text-orange-950 shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
+              className="mt-3 w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:from-blue-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-[0.98]"
             >
               {existingGuest && !guestName
                 ? `Lanjut sebagai ${existingGuest}`
@@ -195,9 +195,9 @@ export default function LoginPage() {
           </div>
 
           <div className="my-6 flex items-center gap-3 text-xs text-stone-500">
-            <span className="h-px flex-1 bg-white/10" />
+            <span className="h-px flex-1 bg-glass-border-subtle" />
             atau dengan akun
-            <span className="h-px flex-1 bg-white/10" />
+            <span className="h-px flex-1 bg-glass-border-subtle" />
           </div>
 
           {/* ------------------------------------------------ OAuth */}
@@ -254,7 +254,7 @@ export default function LoginPage() {
                 onKeyDown={(e) => e.key === "Enter" && void signInWithEmail()}
                 placeholder="nama@perusahaan.com"
                 disabled={!isSupabaseConfigured}
-                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35"
+                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-white/60 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35"
               />
               <button
                 type="button"
@@ -268,14 +268,14 @@ export default function LoginPage() {
           </div>
 
           {!isSupabaseConfigured && (
-            <p className="mt-3 rounded-lg bg-white/[0.04] px-3 py-2 text-[11px] leading-relaxed text-stone-500">
+            <p className="mt-3 rounded-lg bg-canvas-soft px-3 py-2 text-[11px] leading-relaxed text-stone-500">
               Login akun belum aktif — isi{" "}
-              <code className="text-stone-400">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
+              <code className="text-stone-600">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
               &{" "}
-              <code className="text-stone-400">
+              <code className="text-stone-600">
                 NEXT_PUBLIC_SUPABASE_ANON_KEY
               </code>{" "}
-              di <code className="text-stone-400">.env.local</code> untuk
+              di <code className="text-stone-600">.env.local</code> untuk
               mengaktifkan Google/GitHub/email.
             </p>
           )}

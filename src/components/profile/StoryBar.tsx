@@ -49,7 +49,7 @@ export function StoryBar({
                 className="absolute inset-0 rounded-full animate-[spin_5s_linear_infinite] motion-reduce:animate-none"
                 style={{
                   background:
-                    "conic-gradient(from 0deg, #fde68a, #fb923c, #ea580c, #f59e0b, #fde68a)",
+                    "conic-gradient(from 0deg, #93c5fd, #60a5fa, #2563eb, #5eead4, #93c5fd)",
                 }}
               />
               <span className="absolute inset-[2px] rounded-full bg-canvas" />
@@ -102,7 +102,7 @@ function AddStoryBubble() {
       className="group flex w-16 shrink-0 flex-col items-center gap-1.5"
       title="Buka proyek, lalu klik tombol Story di toolbar kanvas untuk membagikan snapshot"
     >
-      <span className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-white/15 text-stone-400 transition-all duration-200 group-hover:scale-105 group-hover:border-accent/50 group-hover:text-accent">
+      <span className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-slate-300 text-stone-400 transition-all duration-200 group-hover:scale-105 group-hover:border-accent/50 group-hover:text-accent">
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
           <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>

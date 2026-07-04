@@ -58,7 +58,7 @@ export function BlockProperties({ block }: { block: CanvasObject }) {
         <ColorField
           label="Latar"
           value={styles.backgroundColor}
-          fallback="#f97316"
+          fallback="#2563eb"
           onChange={(v) => setStyle("backgroundColor", v)}
         />
         {showText && (

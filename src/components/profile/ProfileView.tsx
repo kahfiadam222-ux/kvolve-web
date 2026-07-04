@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { KvolveMark } from "@/components/brand/KvolveMark";
-import { LiquidBackdrop } from "@/components/brand/LiquidBackdrop";
+import { CrystalBackdrop } from "@/components/brand/CrystalBackdrop";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import {
   activeStories,
@@ -46,7 +46,7 @@ export function ProfileView({ username }: { username: string }) {
 
   return (
     <div className="relative min-h-dvh text-ink">
-      <LiquidBackdrop />
+      <CrystalBackdrop />
 
       <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/60 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
@@ -93,7 +93,7 @@ export function ProfileView({ username }: { username: string }) {
                 className="h-24 sm:h-28"
                 style={{
                   background:
-                    "linear-gradient(120deg,#fbbf24 0%,#f97316 55%,#ea580c 100%)",
+                    "linear-gradient(120deg,#3B82F6 0%,#2563EB 55%,#14B8A6 100%)",
                 }}
               />
 
@@ -134,7 +134,7 @@ export function ProfileView({ username }: { username: string }) {
                     className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
                       following
                         ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
-                        : "bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 text-orange-950 shadow-card hover:shadow-glow"
+                        : "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-glow hover:from-blue-500 hover:to-blue-400"
                     }`}
                   >
                     {following ? "Mengikuti ✓" : "Ikuti"}

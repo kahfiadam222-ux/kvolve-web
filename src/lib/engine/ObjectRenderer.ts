@@ -218,7 +218,7 @@ export class ObjectRenderer {
         fontFamily: "system-ui, sans-serif",
         fontSize: 11,
         fontWeight: "700",
-        fill: 0xf97316,
+        fill: 0x2563eb,
         letterSpacing: 1,
       },
     });
@@ -260,7 +260,7 @@ export class ObjectRenderer {
       node.addChild(
         new Graphics()
           .roundRect(0, 0, obj.width, obj.height, radius)
-          .fill(cssHex(styles.backgroundColor, 0xf97316)),
+          .fill(cssHex(styles.backgroundColor, 0x2563eb)),
       );
       const text = new Text({
         text: label,
@@ -339,7 +339,7 @@ export class ObjectRenderer {
       if (!node || !o) continue;
       const ring = new Graphics()
         .roundRect(-3, -3, o.width + 6, o.height + 6, 6)
-        .stroke({ width: 2, color: 0xf97316, alpha: 0.9 });
+        .stroke({ width: 2, color: 0x2563eb, alpha: 0.9 });
       this.selectionRings.set(id, ring);
       node.addChild(ring);
     }

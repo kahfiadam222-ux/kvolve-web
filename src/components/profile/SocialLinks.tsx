@@ -17,7 +17,7 @@ export function SocialLinks({ socials }: { socials: SocialLink[] }) {
             target="_blank"
             rel="noopener noreferrer"
             title={`${PLATFORM_LABEL[s.platform]} · ${s.handle}`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-glass-border bg-glass-soft px-2.5 py-1 text-xs text-stone-300 transition-all hover:border-accent/40 hover:bg-white/[0.08] hover:text-accent"
+            className="inline-flex items-center gap-1.5 rounded-full border border-glass-border bg-glass-soft px-2.5 py-1 text-xs text-ink-muted transition-all hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
           >
             <span className="shrink-0">{SOCIAL_ICONS[s.platform]}</span>
             <span className="max-w-28 truncate">{s.handle}</span>
