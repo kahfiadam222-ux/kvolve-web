@@ -8,6 +8,26 @@ import type { CanvasObject, PdfTextRun } from "@/types/canvas";
  */
 
 const MAX_INITIAL_SIZE = 480; // sisi terpanjang saat pertama dijatuhkan (world px)
+const MAX_ASSET_DIM = 1600; // sisi terpanjang aset yang di-embed (px raster)
+
+/**
+ * Gambar di-embed sebagai DATA URL (bukan blob URL) dengan downscale:
+ * - bertahan setelah reload (blob URL mati bersama sesi halaman), dan
+ * - benar-benar sampai ke kolaborator karena ikut tersinkron via Y.js.
+ * PNG dipertahankan (transparansi); selainnya JPEG 0.85. Langkah lanjut
+ * saat Supabase aktif: unggah ke Storage dan simpan URL publiknya.
+ */
+async function bitmapToDataUrl(bitmap: ImageBitmap, mime: string): Promise<string> {
+  const scale = Math.min(1, MAX_ASSET_DIM / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas 2D context tidak tersedia");
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const isPng = mime === "image/png";
+  return canvas.toDataURL(isPng ? "image/png" : "image/jpeg", 0.85);
+}
 
 export async function ingestImage(
   file: File,
@@ -22,10 +42,7 @@ export async function ingestImage(
   const width = Math.round(bitmap.width * ratio);
   const height = Math.round(bitmap.height * ratio);
 
-  // MVP: objectURL lokal (instan, zero-upload). Langkah berikutnya untuk
-  // kolaborasi lintas-perangkat: unggah ke Supabase Storage, lalu simpan
-  // URL publiknya di data.src agar peserta lain bisa memuat gambar yang sama.
-  const src = URL.createObjectURL(file);
+  const src = await bitmapToDataUrl(bitmap, file.type);
 
   addToCanvas({
     id: nanoid(),
@@ -95,12 +112,9 @@ export async function ingestPdf(
       if (!ctx) throw new Error("Canvas 2D context tidak tersedia");
       await page.render({ canvasContext: ctx, viewport }).promise;
 
-      const blob = await new Promise<Blob>((resolve, reject) =>
-        canvas.toBlob(
-          (b) => (b ? resolve(b) : reject(new Error("toBlob menghasilkan null"))),
-          "image/png",
-        ),
-      );
+      // Data URL (JPEG — halaman berlatar putih) agar raster halaman
+      // bertahan setelah reload dan tersinkron ke kolaborator via Y.js.
+      const src = canvas.toDataURL("image/jpeg", 0.85);
 
       // Ekstraksi teks + posisi. Viewport pada skala WORLD (bukan skala
       // raster) agar koordinat item langsung dalam page-local world px.
@@ -143,10 +157,8 @@ export async function ingestPdf(
         rotation: 0,
         zIndex: Date.now(),
         locked: false,
-        // MVP: src = blob URL lokal (catatan yang sama dengan gambar di atas:
-        // untuk kolaborasi lintas-perangkat, unggah ke Supabase Storage).
         data: {
-          src: URL.createObjectURL(blob),
+          src,
           name: file.name,
           pageIndex: pageNo - 1,
           totalPages: doc.numPages,

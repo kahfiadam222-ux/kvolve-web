@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { ArtboardState } from "@/types/canvas";
+import type { ArtboardState, CanvasObject } from "@/types/canvas";
 
 /**
  * localProjects — penyimpanan proyek MVP berbasis localStorage
@@ -24,6 +24,9 @@ export interface ProjectMeta {
 const PROJECTS_KEY = "kvolve:projects";
 const SEEDED_KEY = "kvolve:seeded";
 const artboardKey = (projectId: string) => `kvolve:artboard:${projectId}`;
+const objectsKey = (projectId: string) => `kvolve:objects:${projectId}`;
+/** Batas ukuran serialisasi objek per proyek (aset di-embed sebagai data URL). */
+const MAX_OBJECTS_JSON = 4_500_000; // ~4.5MB — di bawah kuota umum localStorage
 
 const hasStorage = (): boolean => typeof window !== "undefined";
 
@@ -103,6 +106,7 @@ export function deleteProject(id: string): void {
   if (hasStorage()) {
     try {
       window.localStorage.removeItem(artboardKey(id));
+      window.localStorage.removeItem(objectsKey(id));
     } catch {
       /* abaikan */
     }
@@ -170,6 +174,56 @@ export function saveArtboard(
     }
   } catch {
     /* abaikan */
+  }
+}
+
+// --------------------------------------------------------------- objek
+
+/**
+ * Objek kanvas tersimpan per proyek — desain bertahan setelah reload,
+ * termasuk mode offline (tanpa server kolaborasi). Saat kolaborasi aktif,
+ * dokumen Y.js bersama tetap menjadi sumber kebenaran (lihat
+ * CollabProvider.bindObjects); simpanan ini menjadi benih saat dokumen
+ * bersama masih kosong.
+ */
+export function loadObjects(projectId: string): CanvasObject[] {
+  if (!hasStorage()) return [];
+  try {
+    const raw = window.localStorage.getItem(objectsKey(projectId));
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (o): o is CanvasObject =>
+        typeof o === "object" &&
+        o !== null &&
+        typeof (o as CanvasObject).id === "string" &&
+        typeof (o as CanvasObject).type === "string" &&
+        typeof (o as CanvasObject).x === "number" &&
+        typeof (o as CanvasObject).y === "number",
+    );
+  } catch {
+    return [];
+  }
+}
+
+export function saveObjects(
+  projectId: string,
+  objects: readonly CanvasObject[],
+): void {
+  if (!hasStorage()) return;
+  try {
+    const json = JSON.stringify(objects);
+    if (json.length > MAX_OBJECTS_JSON) {
+      // Terlalu besar untuk localStorage — jangan menimpa simpanan lama
+      // dengan kegagalan; sekadar catat agar terlihat saat debug.
+      console.warn(
+        `[Kvolve] Objek proyek ${projectId} melebihi batas simpan lokal (${Math.round(json.length / 1024)}KB) — tidak dipersistenkan.`,
+      );
+      return;
+    }
+    window.localStorage.setItem(objectsKey(projectId), json);
+  } catch {
+    /* kuota penuh — desain tetap hidup di sesi ini */
   }
 }
 

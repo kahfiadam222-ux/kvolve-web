@@ -8,7 +8,9 @@ import { getCachedDisplayName } from "@/lib/auth/appUser";
 import { useAssetDrop } from "@/hooks/useAssetDrop";
 import {
   loadArtboard,
+  loadObjects,
   saveArtboard,
+  saveObjects,
   touchProject,
 } from "@/lib/projects/localProjects";
 import { randomCursorColor, throttle } from "@/lib/utils";
@@ -43,10 +45,25 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
     const engine = new CanvasEngine();
     let cancelled = false;
 
-    // Pulihkan artboard proyek INI sebelum engine hidup (store bersifat
-    // singleton — tanpa reset, ukuran proyek sebelumnya bocor ke sini).
+    // Pulihkan artboard + objek proyek INI sebelum engine hidup (store
+    // singleton — tanpa reset, isi proyek sebelumnya bocor ke sini).
     useCanvasStore.getState().setArtboard(loadArtboard(projectId));
+    useCanvasStore.getState().replaceAllObjects(loadObjects(projectId));
     touchProject(projectId);
+
+    // Persistenkan objek per proyek — debounced supaya drag 60fps tidak
+    // menulis localStorage tiap frame; di-flush saat unmount.
+    let saveTimer: ReturnType<typeof setTimeout> | null = null;
+    const unsubObjects = useCanvasStore.subscribe(
+      (s) => s.objects,
+      (objects) => {
+        if (saveTimer) clearTimeout(saveTimer);
+        saveTimer = setTimeout(
+          () => saveObjects(projectId, [...objects.values()]),
+          600,
+        );
+      },
+    );
 
     // Setiap perubahan artboard (Studio Desain / sinkronisasi remote)
     // dipersistenkan per proyek agar bertahan saat dibuka kembali; bila
@@ -91,6 +108,12 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
       cancelled = true;
       setReady(false);
       unsubArtboard();
+      // Flush simpanan objek terakhir SEBELUM store direset di bawah.
+      unsubObjects();
+      if (saveTimer) clearTimeout(saveTimer);
+      saveObjects(projectId, [
+        ...useCanvasStore.getState().objects.values(),
+      ]);
       collabRef.current?.destroy();
       collabRef.current = null;
       engineRef.current = null;
