@@ -35,7 +35,7 @@ import { PRESET_ICONS } from "./PresetIcons";
  * sehingga bounding box area kerja berubah dinamis tanpa reload.
  */
 
-type TabId = "custom" | (typeof PRESET_CATEGORIES)[number]["id"];
+export type TabId = "custom" | (typeof PRESET_CATEGORIES)[number]["id"];
 
 const CATEGORY_ICON: Record<string, PresetIconKey> = {
   social: "instagram",
@@ -50,13 +50,16 @@ const pxToCm = (px: number): number =>
 export function DesignStudio({
   engineRef,
   open,
+  initialTab,
   onClose,
 }: {
   engineRef: RefObject<CanvasEngine | null>;
   open: boolean;
+  /** Kategori awal (mis. dari kartu Studio Desain di dashboard). */
+  initialTab?: TabId;
   onClose: () => void;
 }) {
-  const [tab, setTab] = useState<TabId>("custom");
+  const [tab, setTab] = useState<TabId>(initialTab ?? "custom");
   const [flipped, setFlipped] = useState(false);
   const [unit, setUnit] = useState<"px" | "cm">("px");
   // Sumber kebenaran = piksel (wPx/hPx). Draft string hanya untuk mengetik

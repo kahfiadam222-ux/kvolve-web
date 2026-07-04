@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.47.10",
+    "framer-motion": "^12.42.2",
     "jszip": "^3.10.1",
     "nanoid": "^5.0.9",
     "next": "^15.1.6",

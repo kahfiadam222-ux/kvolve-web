@@ -9,141 +9,261 @@
   }
 
   body {
+    background-color: #F8FAFC;
+    color: #111827;
     text-rendering: optimizeLegibility;
-    /* Alternates Inter yang lebih ramah UI (a & g satu tingkat, angka rapi). */
     font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background: rgb(249 115 22 / 0.28);
-    color: #fed7aa;
+    background: rgba(37, 99, 235, 0.15);
+    color: #1d4ed8;
   }
 
   :focus-visible {
-    outline: 2px solid theme("colors.accent.DEFAULT");
+    outline: 2px solid #2563EB;
     outline-offset: 2px;
+    border-radius: 4px;
   }
 
   kbd {
-    padding: 1px 6px;
+    padding: 2px 7px;
     border-radius: 6px;
-    border: 1px solid rgb(255 255 255 / 0.14);
+    border: 1px solid rgba(148, 163, 184, 0.4);
     border-bottom-width: 2px;
-    background: rgb(255 255 255 / 0.08);
+    background: rgba(255, 255, 255, 0.7);
     font-family: inherit;
-    font-size: 0.85em;
+    font-size: 0.82em;
     font-weight: 500;
-    color: #d6d3d1;
+    color: #475569;
+    backdrop-filter: blur(8px);
   }
 }
 
 @layer utilities {
-  /* Motif identitas Kvolve: grid titik kanvas gelap (workspace editor). */
+  /* ─── Background patterns ─────────────────────────────────────────────── */
+
+  /* Crystal dot grid for canvas workspace (light version) */
   .bg-dotgrid {
     background-image: radial-gradient(
       circle,
-      rgb(255 255 255 / 0.09) 1px,
+      rgba(148, 163, 184, 0.25) 1px,
       transparent 1px
     );
     background-size: 22px 22px;
   }
 
-  /* Teks gradasi — kata kunci judul, warna bercampur ala kaca oren cair
-     (amber → oranye → rust), TANPA sentuhan teal/violet/fuchsia. */
+  /* Subtle graph paper grid */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* ─── Typography ──────────────────────────────────────────────────────── */
+
+  /* Crystal gradient text — ocean blue to fresh mint */
   .text-gradient {
-    background-image: linear-gradient(90deg, #fbbf24, #f97316 55%, #c2410c);
+    background-image: linear-gradient(135deg, #2563EB 0%, #0ea5e9 45%, #14B8A6 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Kilau kaca "glossy" — highlight diagonal lembut di sudut kiri-atas
-     panel, mensimulasikan cahaya memantul di permukaan air/kaca. Statis
-     (murah): ::before, bukan animasi. Pasang bersama class relative. */
+  /* Subtle muted gradient text */
+  .text-gradient-soft {
+    background-image: linear-gradient(135deg, #475569 0%, #64748B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ─── Crystal Glass System ───────────────────────────────────────────── */
+  /* 
+   * Crystal Glass panels simulate real glass:
+   * - White translucent base
+   * - Backdrop blur for depth
+   * - Top edge highlight (light reflection)
+   * - Subtle border for glass edge
+   * - Multi-layer shadow for elevation
+   */
+
+  .crystal-panel {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px) saturate(1.8);
+    -webkit-backdrop-filter: blur(30px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 2px 4px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.06),
+      0 24px 48px rgba(0, 0, 0, 0.08);
+  }
+
+  .crystal-panel-soft {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.60);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.85) inset,
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Glass reflection — diagonal light streak across panels */
   .glass-sheen {
     position: relative;
     isolation: isolate;
+    overflow: hidden;
   }
   .glass-sheen::before {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     border-radius: inherit;
     background: linear-gradient(
       135deg,
-      rgb(255 255 255 / 0.14),
-      transparent 45%
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.05) 40%,
+      transparent 60%
     );
     pointer-events: none;
   }
 
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #3c3c50 transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #3c3c50;
-    border-radius: 3px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
+  /* Edge highlight — bright top+left rim of glass */
+  .glass-edge {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      -1px 0 0 rgba(255, 255, 255, 0.5) inset;
   }
 
-  /* Skeleton shimmer — kilau lembut yang lebih hidup daripada pulse;
-     hanya menganimasikan background-position (murah). */
+  /* Glass card — interactive elevated panel */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 16px rgba(0, 0, 0, 0.06);
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .glass-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 4px 8px rgba(0, 0, 0, 0.06),
+      0 12px 32px rgba(0, 0, 0, 0.10),
+      0 0 0 1px rgba(37, 99, 235, 0.12);
+  }
+
+  /* Dark glass — for canvas editor overlay panels (stays dark) */
+  .glass-dark {
+    background: rgba(17, 24, 39, 0.65);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.07) inset,
+      0 2px 4px rgba(0, 0, 0, 0.4),
+      0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ─── Scrollbars ──────────────────────────────────────────────────────── */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+
+  /* Dark scrollbar for canvas editor */
+  .scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(71, 85, 105, 0.5) transparent;
+  }
+  .scrollbar-dark::-webkit-scrollbar { width: 5px; height: 5px; }
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.5);
+    border-radius: 3px;
+  }
+
+  /* ─── Shimmer loading ─────────────────────────────────────────────────── */
   .bg-shimmer {
     background-image: linear-gradient(
       100deg,
-      transparent 30%,
-      rgb(255 255 255 / 0.06) 50%,
-      transparent 70%
+      rgba(248, 250, 252, 0) 30%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(248, 250, 252, 0) 70%
     );
     background-size: 200% 100%;
-    animation: shimmer 1.8s ease-in-out infinite;
+    animation: shimmer 2s ease-in-out infinite;
   }
   @keyframes shimmer {
-    from {
-      background-position: 200% 0;
-    }
-    to {
-      background-position: -200% 0;
-    }
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
   }
 
-  /* Riak air saat tombol ditekan (lihat RippleLayer) — lingkaran yang
-     membesar dari titik klik lalu memudar, warna oren keemasan bening
-     seperti tetes air kena cahaya. Transform+opacity saja: murah di GPU. */
+  /* ─── Ripple (water click) ────────────────────────────────────────────── */
   .kv-water-ripple {
     position: absolute;
     border-radius: 9999px;
     background: radial-gradient(
       circle,
-      rgb(255 237 213 / 0.7) 0%,
-      rgb(251 146 60 / 0.4) 45%,
+      rgba(219, 234, 254, 0.8) 0%,
+      rgba(37, 99, 235, 0.3) 45%,
       transparent 72%
     );
     transform: scale(0);
     animation: kv-water-ripple 0.65s ease-out forwards;
   }
   @keyframes kv-water-ripple {
-    0% {
-      transform: scale(0);
-      opacity: 0.9;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 0;
-    }
+    0%  { transform: scale(0); opacity: 0.8; }
+    100%{ transform: scale(1); opacity: 0; }
+  }
+
+  /* ─── Hover effects ───────────────────────────────────────────────────── */
+  .hover-lift {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Magnetic button — subtle scale on hover */
+  .btn-magnetic {
+    transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-magnetic:hover { transform: scale(1.02); }
+  .btn-magnetic:active { transform: scale(0.97); }
+
+  /* ─── Dock active indicator ───────────────────────────────────────────── */
+  .dock-indicator {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, #2563EB, #14B8A6);
   }
 }
 
-/* Aksesibilitas: pengguna yang memilih reduksi gerak mendapat UI tenang —
-   semua animasi/transisi dipersingkat hingga praktis nonaktif. */
+/* ─── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

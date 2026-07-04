@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { nanoid } from "nanoid";
 import { CanvasEngine } from "@/lib/engine/CanvasEngine";
 import { CollabProvider } from "@/lib/collab/CollabProvider";
@@ -13,6 +14,7 @@ import {
   saveObjects,
   touchProject,
 } from "@/lib/projects/localProjects";
+import { PRESET_CATEGORIES } from "@/lib/presets/canvasPresets";
 import { randomCursorColor, throttle } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { MultiplayerCursors } from "./MultiplayerCursors";
@@ -21,7 +23,7 @@ import { BlockPalette } from "./BlockPalette";
 import { CodeInspector } from "./CodeInspector";
 import { PdfTextLayer } from "./PdfTextLayer";
 import { SelectionToolbar } from "./SelectionToolbar";
-import { DesignStudio } from "@/components/studio/DesignStudio";
+import { DesignStudio, type TabId } from "@/components/studio/DesignStudio";
 
 /**
  * InfiniteCanvas — titik temu React <-> PixiJS.
@@ -37,6 +39,25 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
   const collabRef = useRef<CollabProvider | null>(null);
   const [ready, setReady] = useState(false);
   const [studioOpen, setStudioOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Handoff dari kartu Studio Desain di dashboard: `?studio=<kategori>`
+  // membuka Studio Desain langsung ke kategori itu. Dibaca SEKALI (lazy
+  // init) agar tak ikut re-render bila searchParams berubah nanti.
+  const [initialStudioTab] = useState<TabId | undefined>(() => {
+    const raw = searchParams.get("studio");
+    return raw && PRESET_CATEGORIES.some((c) => c.id === raw)
+      ? (raw as TabId)
+      : undefined;
+  });
+
+  // Bersihkan query param setelah dibaca agar reload tidak membuka ulang.
+  useEffect(() => {
+    if (!initialStudioTab) return;
+    router.replace(`/canvas/${projectId}`, { scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -97,9 +118,10 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
 
         setReady(true);
         // Sambut pengguna dengan Studio Desain bila area kerja belum
-        // dipilih; bila sudah (dipulihkan), pas-kan kamera ke halamannya.
+        // dipilih, ATAU bila datang dari kartu Studio Desain dashboard
+        // (initialStudioTab); bila sudah ada artboard, pas-kan kamera.
         const artboard = useCanvasStore.getState().artboard;
-        setStudioOpen(artboard === null);
+        setStudioOpen(artboard === null || Boolean(initialStudioTab));
         if (artboard) engine.fitToArtboard();
       })
       .catch((err) => console.error("[Kvolve] Gagal inisialisasi engine:", err));
@@ -170,6 +192,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
           <DesignStudio
             engineRef={engineRef}
             open={studioOpen}
+            initialTab={initialStudioTab}
             onClose={() => setStudioOpen(false)}
           />
         </>
