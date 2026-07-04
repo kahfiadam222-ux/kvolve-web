@@ -53,7 +53,7 @@ export function SelectionToolbar() {
       style={{ left: `${centerX}px`, top: `${y}px` }}
     >
       {bbox.count > 1 && (
-        <span className="px-2 text-[11px] font-medium text-stone-400">
+        <span className="px-2 text-[11px] font-medium text-ink-muted">
           {bbox.count} objek
         </span>
       )}
@@ -62,7 +62,7 @@ export function SelectionToolbar() {
         title="Duplikat (Ctrl/Cmd + D)"
         aria-label="Duplikat objek terpilih"
         onClick={() => duplicateSelected()}
-        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-stone-300 transition-colors hover:bg-white/10 hover:text-ink"
+        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
           <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.7" />
@@ -70,7 +70,7 @@ export function SelectionToolbar() {
         </svg>
         Duplikat
       </button>
-      <span className="mx-0.5 h-4 w-px bg-white/10" aria-hidden />
+      <span className="mx-0.5 h-4 w-px bg-glass-border-subtle" aria-hidden />
       <button
         type="button"
         title="Hapus (Del)"

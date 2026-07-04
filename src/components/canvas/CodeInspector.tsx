@@ -49,7 +49,7 @@ export function CodeInspector() {
   const section = (what: "html" | "css", title: string, text: string) => (
     <section>
       <div className="mb-1.5 flex items-center justify-between">
-        <h3 className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
+        <h3 className="text-[11px] font-bold uppercase tracking-wider text-ink-subtle">
           {title}
         </h3>
         <button
@@ -60,7 +60,7 @@ export function CodeInspector() {
           {copied === what ? "Tersalin ✓" : "Salin"}
         </button>
       </div>
-      <pre className="scrollbar-thin overflow-x-auto rounded-lg bg-black/30 p-3 font-mono text-[11px] leading-relaxed text-stone-300 ring-1 ring-inset ring-white/[0.06]">
+      <pre className="scrollbar-thin overflow-x-auto rounded-lg bg-slate-900 p-3 font-mono text-[11px] leading-relaxed text-slate-200 ring-1 ring-inset ring-white/[0.06]">
         <code>{text}</code>
       </pre>
     </section>
@@ -78,7 +78,7 @@ export function CodeInspector() {
         <button
           type="button"
           aria-label="Tutup panel"
-          className="grid h-6 w-6 place-items-center rounded-full text-stone-400 transition-colors hover:bg-white/10 hover:text-ink"
+          className="grid h-6 w-6 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
           onClick={clearSelection}
         >
           ×

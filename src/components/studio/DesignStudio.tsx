@@ -179,7 +179,7 @@ export function DesignStudio({
     flipped ? [h, w] : [w, h];
 
   const inputCls =
-    "w-full rounded-xl border border-glass-border bg-black/25 px-3 py-2 text-sm tabular-nums text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20";
+    "w-full rounded-xl border border-glass-border bg-white/70 px-3 py-2 text-sm tabular-nums text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20";
 
   return (
     <div
@@ -199,14 +199,14 @@ export function DesignStudio({
         className="relative flex max-h-[min(40rem,calc(100dvh-2rem))] w-full max-w-3xl animate-fade-up overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl"
       >
         {/* ------------------------------------------------ rail kategori */}
-        <aside className="flex w-44 shrink-0 flex-col border-r border-glass-border bg-black/20 p-3">
+        <aside className="flex w-44 shrink-0 flex-col border-r border-glass-border bg-canvas-soft p-3">
           <div className="flex items-center gap-2 px-1.5 pb-4 pt-1">
             <KvolveMark className="h-6 w-6" />
             <div>
               <p className="text-[13px] font-semibold leading-tight">
                 Studio Desain
               </p>
-              <p className="text-[10px] text-stone-500">Pilih ukuran kanvas</p>
+              <p className="text-[10px] text-ink-subtle">Pilih ukuran kanvas</p>
             </div>
           </div>
 
@@ -231,7 +231,7 @@ export function DesignStudio({
           <button
             type="button"
             onClick={onClose}
-            className="mt-auto rounded-lg px-1.5 py-1 text-left text-[11px] text-stone-500 transition-colors hover:text-stone-300"
+            className="mt-auto rounded-lg px-1.5 py-1 text-left text-[11px] text-ink-subtle transition-colors hover:text-ink-muted"
           >
             Lewati — mulai kanvas bebas
           </button>
@@ -256,7 +256,7 @@ export function DesignStudio({
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-medium transition-all ${
                     flipped
                       ? "border-accent/50 bg-accent-soft text-accent"
-                      : "border-glass-border text-stone-400 hover:bg-white/[0.06] hover:text-stone-200"
+                      : "border-glass-border text-ink-muted hover:bg-black/5 hover:text-ink"
                   }`}
                 >
                   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
@@ -276,7 +276,7 @@ export function DesignStudio({
                 type="button"
                 aria-label="Tutup Studio Desain"
                 onClick={onClose}
-                className="grid h-7 w-7 place-items-center rounded-full text-stone-400 transition-colors hover:bg-white/10 hover:text-ink"
+                className="grid h-7 w-7 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
               >
                 ×
               </button>
@@ -286,7 +286,7 @@ export function DesignStudio({
           {tab === "custom" ? (
             <div className="max-w-sm animate-fade-in">
               <div
-                className="inline-flex rounded-lg border border-glass-border bg-black/25 p-0.5"
+                className="inline-flex rounded-lg border border-glass-border bg-canvas-soft p-0.5"
                 role="group"
                 aria-label="Satuan ukuran"
               >
@@ -298,8 +298,8 @@ export function DesignStudio({
                     onClick={() => switchUnit(u)}
                     className={`rounded-md px-3.5 py-1 text-xs font-medium transition-colors ${
                       unit === u
-                        ? "bg-white/10 text-ink"
-                        : "text-stone-500 hover:text-stone-300"
+                        ? "bg-white text-ink shadow-sm"
+                        : "text-ink-subtle hover:text-ink-muted"
                     }`}
                   >
                     {u}
@@ -308,7 +308,7 @@ export function DesignStudio({
               </div>
 
               <div className="mt-4 flex items-end gap-2">
-                <label className="min-w-0 flex-1 text-xs text-stone-400">
+                <label className="min-w-0 flex-1 text-xs text-ink-muted">
                   Lebar ({unit})
                   <input
                     type="number"
@@ -324,11 +324,11 @@ export function DesignStudio({
                   onClick={swapCustom}
                   title="Tukar lebar ⇄ tinggi"
                   aria-label="Tukar lebar dan tinggi"
-                  className="mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-glass-border text-stone-400 transition-all hover:bg-white/[0.06] hover:text-stone-200 active:scale-90"
+                  className="mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-glass-border text-ink-muted transition-all hover:bg-black/5 hover:text-ink active:scale-90"
                 >
                   ⇄
                 </button>
-                <label className="min-w-0 flex-1 text-xs text-stone-400">
+                <label className="min-w-0 flex-1 text-xs text-ink-muted">
                   Tinggi ({unit})
                   <input
                     type="number"
@@ -344,8 +344,8 @@ export function DesignStudio({
               <p
                 className={`mt-3 text-xs ${
                   customValid || customPx === null
-                    ? "text-stone-500"
-                    : "text-rose-300"
+                    ? "text-ink-subtle"
+                    : "text-rose-500"
                 }`}
               >
                 {customPx === null
@@ -363,7 +363,7 @@ export function DesignStudio({
                 onClick={() =>
                   customPx && apply(customPx.width, customPx.height)
                 }
-                className="mt-5 w-full rounded-xl bg-gradient-to-r from-amber-300 via-orange-400 to-red-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:shadow-glow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:shadow-none"
+                className="mt-5 w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:from-blue-500 hover:to-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:shadow-none"
               >
                 Buat Kanvas Baru
               </button>
@@ -377,19 +377,19 @@ export function DesignStudio({
                     <button
                       type="button"
                       onClick={() => apply(w, h)}
-                      className="group flex w-full items-start gap-3 rounded-xl border border-glass-border bg-glass-soft p-3 text-left transition-all hover:border-accent/40 hover:bg-white/[0.08] active:scale-[0.99]"
+                      className="group flex w-full items-start gap-3 rounded-xl border border-glass-border bg-glass-soft p-3 text-left transition-all hover:border-accent/40 hover:bg-white/70 active:scale-[0.99]"
                     >
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-stone-300 transition-colors group-hover:bg-accent-soft group-hover:text-accent">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-canvas-soft text-ink-muted transition-colors group-hover:bg-accent-soft group-hover:text-accent">
                         {PRESET_ICONS[p.icon]}
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+                        <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-subtle">
                           {p.group}
                         </span>
                         <span className="block truncate text-sm font-medium text-ink">
                           {p.name}
                         </span>
-                        <span className="mt-0.5 block text-xs tabular-nums text-stone-400">
+                        <span className="mt-0.5 block text-xs tabular-nums text-ink-muted">
                           {w.toLocaleString("id-ID")} ×{" "}
                           {h.toLocaleString("id-ID")} px
                           {p.note ? ` · ${p.note}` : ""}
@@ -426,7 +426,7 @@ function RailTab({
       className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-[13px] transition-colors ${
         active
           ? "bg-accent-soft font-medium text-accent"
-          : "text-stone-400 hover:bg-white/[0.06] hover:text-stone-200"
+          : "text-ink-muted hover:bg-black/5 hover:text-ink"
       }`}
     >
       <span className="shrink-0">{PRESET_ICONS[icon]}</span>

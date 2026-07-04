@@ -40,17 +40,17 @@ export function BlockProperties({ block }: { block: CanvasObject }) {
   const labelName =
     kind === "input" ? "Placeholder" : kind === "container" ? "Nama" : "Teks";
 
-  const fieldLabel = "text-[10px] font-medium uppercase tracking-wide text-stone-500";
+  const fieldLabel = "text-[10px] font-medium uppercase tracking-wide text-ink-subtle";
 
   return (
-    <section className="flex flex-col gap-3 rounded-lg bg-black/20 p-3 ring-1 ring-inset ring-white/[0.06]">
+    <section className="flex flex-col gap-3 rounded-lg bg-canvas-soft p-3 ring-1 ring-inset ring-glass-border-subtle">
       <label className="flex flex-col gap-1">
         <span className={fieldLabel}>{labelName}</span>
         <input
           type="text"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          className="rounded-md border border-glass-border bg-black/30 px-2 py-1.5 text-sm text-ink outline-none transition-all focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
+          className="rounded-md border border-glass-border bg-white/70 px-2 py-1.5 text-sm text-ink outline-none transition-all focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
         />
       </label>
 
@@ -104,10 +104,10 @@ function ColorField({
   const hex = asHex(value, fallback);
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-medium uppercase tracking-wide text-stone-500">
+      <span className="text-[10px] font-medium uppercase tracking-wide text-ink-subtle">
         {label}
       </span>
-      <span className="flex items-center gap-2 rounded-md border border-glass-border bg-black/30 px-2 py-1">
+      <span className="flex items-center gap-2 rounded-md border border-glass-border bg-white/70 px-2 py-1">
         <input
           type="color"
           value={hex}
@@ -115,7 +115,7 @@ function ColorField({
           className="h-6 w-6 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0"
           aria-label={label}
         />
-        <span className="truncate font-mono text-[11px] text-stone-400">{hex}</span>
+        <span className="truncate font-mono text-[11px] text-ink-muted">{hex}</span>
       </span>
     </label>
   );
@@ -136,7 +136,7 @@ function NumberField({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-medium uppercase tracking-wide text-stone-500">
+      <span className="text-[10px] font-medium uppercase tracking-wide text-ink-subtle">
         {label}
       </span>
       <input
@@ -148,7 +148,7 @@ function NumberField({
           const n = Number.parseInt(e.target.value, 10);
           if (Number.isFinite(n)) onChange(Math.min(max, Math.max(min, n)));
         }}
-        className="rounded-md border border-glass-border bg-black/30 px-2 py-1.5 text-sm tabular-nums text-ink outline-none transition-all focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
+        className="rounded-md border border-glass-border bg-white/70 px-2 py-1.5 text-sm tabular-nums text-ink outline-none transition-all focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
       />
     </label>
   );

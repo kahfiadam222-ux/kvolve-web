@@ -18,6 +18,7 @@ import { PRESET_CATEGORIES } from "@/lib/presets/canvasPresets";
 import { randomCursorColor, throttle } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { MultiplayerCursors } from "./MultiplayerCursors";
+import { CanvasNavbar } from "./CanvasNavbar";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { BlockPalette } from "./BlockPalette";
 import { CodeInspector } from "./CodeInspector";
@@ -180,6 +181,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
       <MultiplayerCursors />
       {ready && (
         <>
+          <CanvasNavbar projectId={projectId} />
           <BlockPalette engineRef={engineRef} />
           <CodeInspector />
           <SelectionToolbar />
