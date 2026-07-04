@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type RefObject,
 } from "react";
@@ -65,14 +66,55 @@ export function DesignStudio({
   const [hPx, setHPx] = useState<number | null>(1080);
   const [widthStr, setWidthStr] = useState("1080");
   const [heightStr, setHeightStr] = useState("1080");
+  const panelRef = useRef<HTMLDivElement>(null);
 
+  // A11y modal: Escape menutup, fokus awal masuk ke dalam dialog, Tab
+  // terperangkap di dalamnya, dan fokus dikembalikan ke pemicu saat tutup.
   useEffect(() => {
     if (!open) return;
+    const prevFocused = document.activeElement as HTMLElement | null;
+
+    const focusables = (): HTMLElement[] => {
+      const panel = panelRef.current;
+      if (!panel) return [];
+      return [
+        ...panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ].filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
+    };
+
+    // Fokus awal (setelah paint) agar pengguna keyboard langsung di dalam.
+    const raf = requestAnimationFrame(() => focusables()[0]?.focus());
+
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const els = focusables();
+      if (els.length === 0) return;
+      const first = els[0];
+      const last = els[els.length - 1];
+      const active = document.activeElement;
+      if (!panelRef.current?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("keydown", onKey);
+      prevFocused?.focus?.();
+    };
   }, [open, onClose]);
 
   /** Terapkan ukuran ke engine — satu-satunya pintu keluar modal ini. */
@@ -149,7 +191,10 @@ export function DesignStudio({
         aria-hidden
       />
 
-      <div className="relative flex max-h-[min(40rem,calc(100dvh-2rem))] w-full max-w-3xl animate-fade-up overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl">
+      <div
+        ref={panelRef}
+        className="relative flex max-h-[min(40rem,calc(100dvh-2rem))] w-full max-w-3xl animate-fade-up overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl"
+      >
         {/* ------------------------------------------------ rail kategori */}
         <aside className="flex w-44 shrink-0 flex-col border-r border-glass-border bg-black/20 p-3">
           <div className="flex items-center gap-2 px-1.5 pb-4 pt-1">

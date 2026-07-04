@@ -33,7 +33,7 @@ function readAll(): ProjectMeta[] {
     const raw = window.localStorage.getItem(PROJECTS_KEY);
     const parsed: unknown = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
+    const valid = parsed.filter(
       (p): p is ProjectMeta =>
         typeof p === "object" &&
         p !== null &&
@@ -41,6 +41,10 @@ function readAll(): ProjectMeta[] {
         typeof (p as ProjectMeta).name === "string" &&
         typeof (p as ProjectMeta).updatedAt === "number",
     );
+    // Dedupe id — pertahanan terhadap penulisan silang antar-tab yang
+    // (jarang) menghasilkan entri ganda; entri pertama menang.
+    const seen = new Set<string>();
+    return valid.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
   } catch {
     return [];
   }
@@ -82,8 +86,13 @@ export function createProject(name = "Desain tanpa judul"): ProjectMeta {
 export function renameProject(id: string, name: string): void {
   const trimmed = name.trim();
   if (!trimmed) return;
+  const projects = readAll();
+  const target = projects.find((p) => p.id === id);
+  // Lewati bila nama tidak berubah — hindari penulisan & bump updatedAt sia-sia
+  // (yang juga akan memicu event storage di tab lain tanpa alasan).
+  if (!target || target.name === trimmed) return;
   writeAll(
-    readAll().map((p) =>
+    projects.map((p) =>
       p.id === id ? { ...p, name: trimmed, updatedAt: Date.now() } : p,
     ),
   );
@@ -105,6 +114,24 @@ export function touchProject(id: string): void {
   writeAll(
     readAll().map((p) => (p.id === id ? { ...p, updatedAt: Date.now() } : p)),
   );
+}
+
+// ---------------------------------------------------------- sinkron tab
+
+/**
+ * Berlangganan perubahan daftar proyek dari TAB LAIN (event `storage` hanya
+ * dipicu di tab selain yang menulis). Membuat dashboard yang terbuka di
+ * beberapa tab tetap konsisten — buat/rename/hapus di satu tab langsung
+ * tercermin di tab lain. Mengembalikan fungsi berhenti-langganan.
+ */
+export function subscribeProjects(onChange: () => void): () => void {
+  if (!hasStorage()) return () => {};
+  const handler = (e: StorageEvent): void => {
+    // key === null saat localStorage.clear(); tangani juga itu.
+    if (e.key === null || e.key === PROJECTS_KEY) onChange();
+  };
+  window.addEventListener("storage", handler);
+  return () => window.removeEventListener("storage", handler);
 }
 
 // -------------------------------------------------------------- artboard
