@@ -8,6 +8,7 @@ import {
   deleteProject,
   listProjects,
   renameProject,
+  subscribeProjects,
   timeAgo,
   type ProjectMeta,
 } from "@/lib/projects/localProjects";
@@ -32,7 +33,14 @@ export function ProjectGallery() {
 
   useEffect(() => {
     setProjects(listProjects());
+    // Konsistensi multi-tab: perbarui saat tab lain mengubah daftar proyek,
+    // dan saat tab ini kembali fokus (mis. balik dari kanvas di tab lain).
+    const unsub = subscribeProjects(() => setProjects(listProjects()));
+    const onFocus = (): void => setProjects(listProjects());
+    window.addEventListener("focus", onFocus);
     return () => {
+      unsub();
+      window.removeEventListener("focus", onFocus);
       if (confirmTimer.current) clearTimeout(confirmTimer.current);
     };
   }, []);
