@@ -5,17 +5,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Palet Kvolve (tema gelap redup) — charcoal hangat + kinetic teal.
-        // Panel memakai glass.* (semi-transparan + backdrop-blur).
-        canvas: "#161614",
-        ink: "#e8e6e3",
+        // Palet Kvolve v2 "deep space" — indigo-hitam dingin + aksen aurora
+        // (kinetic teal → violet → fuchsia). Panel memakai glass.*
+        // (semi-transparan + backdrop-blur) di atas glow aurora statis.
+        canvas: "#0d0d15",
+        ink: "#e9e8f2",
         accent: {
           DEFAULT: "#2dd4bf",
           soft: "rgb(45 212 191 / 0.12)",
         },
         glass: {
-          DEFAULT: "rgb(26 26 24 / 0.72)",
-          soft: "rgb(255 255 255 / 0.06)",
+          DEFAULT: "rgb(19 19 30 / 0.72)",
+          soft: "rgb(255 255 255 / 0.05)",
           border: "rgb(255 255 255 / 0.10)",
         },
       },
@@ -32,7 +33,9 @@ const config: Config = {
       boxShadow: {
         // Shadow berlapis khas panel melayang Kvolve (toolbar, palet, inspector).
         float:
-          "0 1px 2px rgb(0 0 0 / 0.35), 0 12px 32px -8px rgb(0 0 0 / 0.55)",
+          "0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -8px rgb(0 0 0 / 0.6)",
+        // Glow aksen untuk CTA & elemen fokus — sentuhan "keren"-nya.
+        glow: "0 0 24px -4px rgb(45 212 191 / 0.45), 0 0 48px -12px rgb(167 139 250 / 0.35)",
       },
       keyframes: {
         "fade-up": {

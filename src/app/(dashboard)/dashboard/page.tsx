@@ -13,6 +13,8 @@ import { ProjectGallery } from "@/components/dashboard/ProjectGallery";
 export default function DashboardPage() {
   return (
     <div className="min-h-dvh">
+      {/* Glow aurora statis di balik seluruh halaman (nol biaya runtime). */}
+      <div aria-hidden className="bg-aurora pointer-events-none fixed inset-0" />
       <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/70 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
           <div className="flex items-center gap-2.5">

@@ -128,7 +128,7 @@ export function getProfile(username: string, now: number = Date.now()): UserProf
     bio: isOwner
       ? "Membangun Kvolve — infinite canvas untuk desain, PDF & layout HTML. Kolaborasi tanpa batas."
       : "Kreator di ekosistem Kvolve.",
-    avatarGradient: "linear-gradient(135deg,#2dd4bf,#0f766e)",
+    avatarGradient: "linear-gradient(135deg,#2dd4bf,#7c6cf0)",
     initials: initialsFrom(name),
     verified: isOwner,
     followers: isOwner ? 1284 : 42,

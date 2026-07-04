@@ -98,7 +98,7 @@ export function ProjectGallery() {
       <header className="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Proyek kanvas
+            Proyek <span className="text-gradient">kanvas</span>
           </h1>
           <p className="mt-1 text-sm text-stone-400">
             {projects.length} proyek · tersimpan lokal selama MVP
@@ -107,7 +107,7 @@ export function ProjectGallery() {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-teal-950 transition-all hover:opacity-90 active:scale-[0.98]"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-300 via-sky-300 to-violet-300 px-4 py-2 text-sm font-semibold text-slate-950 transition-all hover:shadow-glow active:scale-[0.98]"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
             <path

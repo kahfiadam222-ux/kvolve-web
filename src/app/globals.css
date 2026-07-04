@@ -48,16 +48,46 @@
     background-size: 22px 22px;
   }
 
+  /* Aurora — glow gradasi statis (teal → violet → fuchsia) di balik
+     halaman. Murni background-image, tanpa animasi: nol biaya runtime.
+     Pasang pada elemen fixed inset-0 pointer-events-none. */
+  .bg-aurora {
+    background-image:
+      radial-gradient(
+        640px 420px at 12% -8%,
+        rgb(45 212 191 / 0.14),
+        transparent 65%
+      ),
+      radial-gradient(
+        720px 480px at 88% -4%,
+        rgb(167 139 250 / 0.13),
+        transparent 65%
+      ),
+      radial-gradient(
+        640px 520px at 50% 112%,
+        rgb(244 114 182 / 0.09),
+        transparent 65%
+      );
+  }
+
+  /* Teks gradasi aurora untuk kata kunci judul. */
+  .text-gradient {
+    background-image: linear-gradient(90deg, #2dd4bf, #a78bfa 55%, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #44443f transparent;
+    scrollbar-color: #3c3c50 transparent;
   }
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #44443f;
+    background: #3c3c50;
     border-radius: 3px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {

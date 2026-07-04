@@ -45,6 +45,7 @@ export function ProfileView({ username }: { username: string }) {
 
   return (
     <div className="min-h-dvh">
+      <div aria-hidden className="bg-aurora pointer-events-none fixed inset-0" />
       <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/70 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
           <Link href="/dashboard" className="flex items-center gap-2.5">
@@ -122,7 +123,7 @@ export function ProfileView({ username }: { username: string }) {
                   className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
                     following
                       ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
-                      : "bg-accent text-teal-950 hover:opacity-90"
+                      : "bg-gradient-to-r from-teal-300 via-sky-300 to-violet-300 text-slate-950 hover:shadow-glow"
                   }`}
                 >
                   {following ? "Mengikuti ✓" : "Ikuti"}

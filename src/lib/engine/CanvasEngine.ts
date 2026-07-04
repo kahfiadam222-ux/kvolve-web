@@ -485,9 +485,9 @@ export class CanvasEngine {
   private createGridTexture(): Texture {
     const g = new Graphics()
       .circle(GRID_TEX_SIZE / 2, GRID_TEX_SIZE / 2, 1.5)
-      // Titik redup di atas latar gelap (bg-canvas #161614) — cukup terlihat
+      // Titik redup di atas latar gelap (bg-canvas #0d0d15) — cukup terlihat
       // sebagai orientasi tanpa bersaing dengan konten.
-      .fill({ color: 0x4a4a45, alpha: 0.9 });
+      .fill({ color: 0x42425a, alpha: 0.9 });
     return this.app.renderer.generateTexture({
       target: g,
       frame: new Rectangle(0, 0, GRID_TEX_SIZE, GRID_TEX_SIZE),

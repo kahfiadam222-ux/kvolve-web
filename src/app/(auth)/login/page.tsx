@@ -77,11 +77,12 @@ export default function LoginPage() {
 
   return (
     <main className="bg-dotgrid grid min-h-dvh place-items-center px-6">
-      <div className="w-full max-w-sm animate-fade-up">
+      <div aria-hidden className="bg-aurora pointer-events-none fixed inset-0" />
+      <div className="relative w-full max-w-sm animate-fade-up">
         <div className="rounded-3xl border border-glass-border bg-glass p-8 shadow-float backdrop-blur-xl">
           <KvolveMark className="h-9 w-9" />
           <h1 className="mt-5 text-xl font-semibold tracking-tight">
-            Masuk ke ruang kerja
+            Masuk ke <span className="text-gradient">ruang kerja</span>
           </h1>
           <p className="mt-1 text-sm leading-relaxed text-stone-400">
             Satu kanvas tak terbatas untuk desain, PDF, dan layout HTML.
@@ -104,7 +105,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={enterAsGuest}
-              className="mt-3 w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-teal-950 transition-all hover:opacity-90 active:scale-[0.98]"
+              className="mt-3 w-full rounded-xl bg-gradient-to-r from-teal-300 via-sky-300 to-violet-300 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:shadow-glow active:scale-[0.98]"
             >
               {existingGuest && !guestName
                 ? `Lanjut sebagai ${existingGuest}`
