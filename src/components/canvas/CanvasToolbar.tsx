@@ -158,7 +158,7 @@ export function CanvasToolbar({
       <button
         type="button"
         title="Bagikan snapshot kanvas sebagai Story (24 jam)"
-        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-fuchsia-300 transition-colors hover:bg-fuchsia-400/10"
+        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-orange-300 transition-colors hover:bg-orange-400/10"
         onClick={shareStory}
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>

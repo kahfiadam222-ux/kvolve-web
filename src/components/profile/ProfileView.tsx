@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { KvolveMark } from "@/components/brand/KvolveMark";
+import { LiquidBackdrop } from "@/components/brand/LiquidBackdrop";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import {
   activeStories,
@@ -44,8 +45,10 @@ export function ProfileView({ username }: { username: string }) {
   const onToggleFollow = (): void => setFollowing(toggleFollow(username));
 
   return (
-    <div className="min-h-dvh">
-      <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/70 backdrop-blur-md">
+    <div className="relative min-h-dvh text-ink">
+      <LiquidBackdrop />
+
+      <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/60 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <KvolveMark className="h-7 w-7" />
@@ -72,61 +75,71 @@ export function ProfileView({ username }: { username: string }) {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-3xl px-6 py-8">
+      <main className="relative mx-auto max-w-3xl px-6 py-8">
         {profile === null ? (
           <ProfileSkeleton />
         ) : (
           <div className="animate-fade-up space-y-8">
             {/* --- Story bubbles (atas profil, PRD 3) --- */}
             {stories.length > 0 && (
-              <div className="rounded-2xl border border-glass-border bg-glass-soft p-4 backdrop-blur-sm">
+              <div className="glass-sheen rounded-2xl border border-glass-border bg-glass-soft p-4 backdrop-blur-sm">
                 <StoryBar profile={profile} stories={stories} />
               </div>
             )}
 
-            {/* --- Header profil (glass, glossy edge) --- */}
-            <header className="rounded-3xl border border-glass-border bg-glass p-6 shadow-float backdrop-blur-xl">
-              <div className="flex flex-wrap items-start gap-5">
-                <span
-                  className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl text-2xl font-bold text-white ring-1 ring-white/20"
-                  style={{ background: profile.avatarGradient }}
-                >
-                  {profile.initials}
-                </span>
+            {/* --- Header profil: cover band warna berbaur + avatar overlap --- */}
+            <header className="glass-sheen overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl backdrop-saturate-150">
+              <div
+                className="h-24 sm:h-28"
+                style={{
+                  background:
+                    "linear-gradient(120deg,#fbbf24 0%,#f97316 55%,#ea580c 100%)",
+                }}
+              />
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="text-xl font-semibold tracking-tight">{profile.name}</h1>
-                    {profile.verified && <VerifiedBadge className="h-5 w-5" />}
-                    <span className="text-sm text-stone-500">@{profile.username}</span>
-                  </div>
+              <div className="px-6 pb-6">
+                <div className="flex flex-wrap items-end gap-5">
+                  <span
+                    className="-mt-10 grid h-20 w-20 shrink-0 place-items-center rounded-2xl text-2xl font-bold text-white shadow-float ring-4 ring-canvas"
+                    style={{ background: profile.avatarGradient }}
+                  >
+                    {profile.initials}
+                  </span>
 
-                  <p className="mt-2 max-w-prose text-sm leading-relaxed text-stone-300">
-                    {profile.bio}
-                  </p>
-
-                  <div className="mt-4">
-                    <SocialLinks socials={profile.socials} />
+                  <div className="min-w-0 flex-1 pt-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h1 className="text-xl font-semibold tracking-tight">{profile.name}</h1>
+                      {profile.verified && <VerifiedBadge className="h-5 w-5" />}
+                      <span className="text-sm text-stone-500">@{profile.username}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Statistik sosial + Follow/Unfollow */}
-              <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-glass-border pt-4">
-                <Stat value={profile.followers + (following ? 1 : 0)} label="Pengikut" />
-                <Stat value={profile.following} label="Mengikuti" />
-                <button
-                  type="button"
-                  onClick={onToggleFollow}
-                  aria-pressed={following}
-                  className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
-                    following
-                      ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
-                      : "bg-accent text-teal-950 hover:opacity-90"
-                  }`}
-                >
-                  {following ? "Mengikuti ✓" : "Ikuti"}
-                </button>
+                <p className="mt-4 max-w-prose text-sm leading-relaxed text-stone-300">
+                  {profile.bio}
+                </p>
+
+                <div className="mt-4">
+                  <SocialLinks socials={profile.socials} />
+                </div>
+
+                {/* Statistik sosial + Follow/Unfollow */}
+                <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-glass-border pt-4">
+                  <Stat value={profile.followers + (following ? 1 : 0)} label="Pengikut" />
+                  <Stat value={profile.following} label="Mengikuti" />
+                  <button
+                    type="button"
+                    onClick={onToggleFollow}
+                    aria-pressed={following}
+                    className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
+                      following
+                        ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
+                        : "bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 text-orange-950 shadow-card hover:shadow-glow"
+                    }`}
+                  >
+                    {following ? "Mengikuti ✓" : "Ikuti"}
+                  </button>
+                </div>
               </div>
             </header>
 

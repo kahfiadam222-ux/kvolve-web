@@ -25,7 +25,7 @@ const PRESETS: Record<HtmlBlockKind, BlockPreset> = {
     label: "Tombol",
     tag: "button",
     styles: {
-      backgroundColor: "#0d9488",
+      backgroundColor: "#f97316",
       color: "#ffffff",
       border: "none",
       borderRadius: "8px",

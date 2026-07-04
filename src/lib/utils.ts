@@ -20,7 +20,7 @@ export function throttle<T extends (...args: never[]) => void>(
 }
 
 const CURSOR_COLORS = [
-  "#0d9488", // teal (aksen Kvolve)
+  "#ea580c", // oren (aksen Kvolve)
   "#e11d48",
   "#7c3aed",
   "#d97706",

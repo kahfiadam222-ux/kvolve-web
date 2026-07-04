@@ -19,7 +19,7 @@ export function FeaturedProjects({ projects }: { projects: FeaturedProject[] }) 
           <li key={p.id}>
             <Link
               href={`/canvas/${p.id}`}
-              className="group block overflow-hidden rounded-2xl border border-glass-border bg-glass-soft backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-float"
+              className="glass-sheen group block overflow-hidden rounded-2xl border border-glass-border bg-glass-soft backdrop-blur-sm backdrop-saturate-150 transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-card-hover"
             >
               <div
                 className="bg-dotgrid relative h-24 border-b border-white/[0.06]"
