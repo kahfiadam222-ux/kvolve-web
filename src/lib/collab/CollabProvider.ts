@@ -63,7 +63,6 @@ export class CollabProvider {
         .replaceAllObjects([...this.yObjects.values()]);
     };
     this.yObjects.observe(applyRemote);
-    applyRemote(); // hydrate awal (state yang sudah tersinkron sebelumnya)
     this.cleanups.push(() => this.yObjects.unobserve(applyRemote));
 
     // Store -> remote.
@@ -72,6 +71,21 @@ export class CollabProvider {
       (objects) => this.pushLocalObjects(objects),
     );
     this.cleanups.push(unsub);
+
+    // PENTING: state pre-sync TIDAK diterapkan ke store — dokumen lokal
+    // selalu kosong sebelum sinkronisasi pertama, dan menerapkannya akan
+    // menghapus objek hasil pemulihan localStorage. Setelah sinkron:
+    // - dokumen bersama berisi -> observer di atas menerapkannya (remote
+    //   menang, konsisten untuk semua peserta);
+    // - dokumen bersama kosong -> benihkan dengan objek hasil pemulihan.
+    const onSync = (synced: boolean): void => {
+      if (!synced) return;
+      if (this.yObjects.size === 0) {
+        this.pushLocalObjects(useCanvasStore.getState().objects);
+      }
+    };
+    this.provider.on("sync", onSync);
+    this.cleanups.push(() => this.provider.off("sync", onSync));
   }
 
   private pushLocalObjects(objects: ReadonlyMap<string, CanvasObject>): void {
