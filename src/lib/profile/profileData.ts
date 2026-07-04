@@ -264,6 +264,18 @@ export function storyTimeLeft(story: Story, now: number = Date.now()): string {
   return `${Math.max(1, Math.floor(ms / (60 * 1000)))} mnt`;
 }
 
+/**
+ * Kirim reaksi emoji ke story — stub "background thread". Belum ada
+ * backend, jadi ini hanya mensimulasikan pengiriman async non-blocking;
+ * tukar dengan panggilan API sungguhan begitu backend tersedia (pola sama
+ * seperti `getProfile` menunggu Supabase Auth di komentar file ini).
+ */
+export function sendReaction(storyId: string, emoji: string): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 150 + Math.random() * 150);
+  });
+}
+
 // -------------------------------------------------------- state follow
 
 const followKey = (username: string) => `kvolve:following:${username}`;

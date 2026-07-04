@@ -5,10 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProject } from "@/lib/projects/localProjects";
 import {
+  sendReaction,
   storyTimeLeft,
   type Story,
   type UserProfile,
 } from "@/lib/profile/profileData";
+
+const REACTION_EMOJIS = ["👍", "❤️", "😂", "😢", "😮", "🔥"];
 
 /**
  * StoryBar (PRD 3 — Ephemeral Stories) — barisan Story Bubbles dengan cincin
@@ -128,7 +131,26 @@ function StoryViewer({
   const router = useRouter();
   const [index, setIndex] = useState(startIndex);
   const [progress, setProgress] = useState(0);
+  const [bursts, setBursts] = useState<
+    { id: string; emoji: string; offsetX: number }[]
+  >([]);
   const story = stories[index];
+
+  // Reset letupan reaksi saat pindah story — cegah sisa emoji story
+  // sebelumnya nyangkut di atas konten yang baru.
+  useEffect(() => setBursts([]), [index]);
+
+  const handleReact = (emoji: string): void => {
+    const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    const offsetX = Math.round((Math.random() - 0.5) * 80);
+    setBursts((b) => [...b, { id, emoji, offsetX }]);
+    setTimeout(() => removeBurst(id), 1200); // jaring pengaman bila animationend tak terpicu
+    // "Background thread": fire-and-forget, tidak pernah memblokir UI.
+    void sendReaction(story.id, emoji).catch(() => {});
+  };
+
+  const removeBurst = (id: string): void =>
+    setBursts((b) => b.filter((x) => x.id !== id));
 
   const next = useRef<() => void>(() => {});
   next.current = () => {
@@ -181,7 +203,7 @@ function StoryViewer({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/80 p-4"
+      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/95 p-4"
       role="dialog"
       aria-modal="true"
       aria-label={`Story ${profile.name}`}
@@ -271,6 +293,34 @@ function StoryViewer({
           onClick={() => next.current()}
           className="absolute inset-y-0 right-0 z-0 w-1/3"
         />
+
+        {/* Bilah reaksi mengambang (6 emoji wajib) */}
+        <div className="pointer-events-auto absolute bottom-20 left-1/2 z-20 flex -translate-x-1/2 gap-1 rounded-full border border-white/20 bg-white/15 px-3 py-2 backdrop-blur-md">
+          {REACTION_EMOJIS.map((emoji) => (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => handleReact(emoji)}
+              aria-label={`Reaksi ${emoji}`}
+              className="text-2xl leading-none transition-transform duration-200 ease-in-out hover:scale-[1.25] active:scale-95"
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+
+        {/* Partikel letupan emoji — naik lalu memudar, self-cleaning */}
+        {bursts.map((b) => (
+          <span
+            key={b.id}
+            aria-hidden
+            className="kv-reaction-burst pointer-events-none absolute bottom-32 left-1/2 z-20 text-2xl"
+            style={{ marginLeft: `${b.offsetX}px` }}
+            onAnimationEnd={() => removeBurst(b.id)}
+          >
+            {b.emoji}
+          </span>
+        ))}
 
         {/* Aksi: Remix from Story */}
         {story.projectId && (
