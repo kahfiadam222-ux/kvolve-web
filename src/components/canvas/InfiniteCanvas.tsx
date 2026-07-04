@@ -17,6 +17,7 @@ import { CanvasToolbar } from "./CanvasToolbar";
 import { BlockPalette } from "./BlockPalette";
 import { CodeInspector } from "./CodeInspector";
 import { PdfTextLayer } from "./PdfTextLayer";
+import { SelectionToolbar } from "./SelectionToolbar";
 import { DesignStudio } from "@/components/studio/DesignStudio";
 
 /**
@@ -133,6 +134,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         <>
           <BlockPalette engineRef={engineRef} />
           <CodeInspector />
+          <SelectionToolbar />
           <PdfTextLayer />
           <CanvasToolbar
             engineRef={engineRef}

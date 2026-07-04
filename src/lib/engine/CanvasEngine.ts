@@ -8,6 +8,7 @@ import {
 } from "pixi.js";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { clamp, mod } from "@/lib/utils";
+import { deleteSelected, duplicateSelected } from "@/lib/canvas/objectActions";
 import { ObjectRenderer } from "./ObjectRenderer";
 
 /**
@@ -347,6 +348,31 @@ export class CanvasEngine {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     });
+
+    // --- Pintasan objek: Hapus & Duplikat ---------------------------
+    // Guard sama dengan Space: jangan aktif saat mengetik / di dalam modal
+    // (mis. input anotasi PDF), agar Backspace/Delete tetap normal di sana.
+    const onEditKey = (e: KeyboardEvent): void => {
+      if (isInteractiveTarget(e.target)) return;
+      const store = useCanvasStore.getState();
+      const mod = e.ctrlKey || e.metaKey;
+
+      if (!mod && (e.key === "Delete" || e.key === "Backspace")) {
+        if (store.selectedIds.size === 0) return;
+        e.preventDefault();
+        deleteSelected();
+      } else if (mod && (e.key === "d" || e.key === "D")) {
+        if (store.selectedIds.size === 0) return;
+        e.preventDefault(); // cegah "bookmark" default browser
+        duplicateSelected();
+      } else if (e.key === "Escape") {
+        store.clearSelection();
+      }
+    };
+    window.addEventListener("keydown", onEditKey);
+    this.cleanups.push(() =>
+      window.removeEventListener("keydown", onEditKey),
+    );
   }
 
   private setCursor(cursor: string): void {
