@@ -35,7 +35,9 @@ export interface Story {
   kind: StoryKind;
   /** Epoch ms — dipakai untuk kedaluwarsa 24 jam. */
   createdAt: number;
-  /** Untuk kind "snapshot": data URL / URL gambar (mock: gradient CSS). */
+  /** Untuk kind "snapshot": data URL JPEG hasil Secure Snapshot kanvas. */
+  image?: string;
+  /** Fallback visual bila tidak ada image (story demo): gradient CSS. */
   gradient?: string;
   /** Untuk kind "text": isi status. */
   text?: string;
@@ -133,7 +135,11 @@ export function getProfile(username: string, now: number = Date.now()): UserProf
     following: isOwner ? 312 : 87,
     socials: isOwner ? OWNER_SOCIALS : [],
     featured,
-    stories: seededStories(clean, featured, now),
+    // Profil sendiri: story snapshot NYATA milik pengguna tampil lebih dulu,
+    // disusul story demo agar barisan tidak kosong saat pertama kali.
+    stories: isOwner
+      ? [...listUserStories(now), ...seededStories(clean, featured, now)]
+      : seededStories(clean, featured, now),
   };
 }
 
@@ -186,6 +192,66 @@ function seededStories(
 /** Story yang belum kedaluwarsa (< 24 jam). PRD 3: durasi hidup 24 jam. */
 export function activeStories(stories: Story[], now: number = Date.now()): Story[] {
   return stories.filter((s) => now - s.createdAt < STORY_TTL_MS);
+}
+
+// ------------------------------------------------------- story pengguna
+
+const STORIES_KEY = "kvolve:stories";
+
+/**
+ * Story milik pengguna (hasil Secure Snapshot kanvas) — localStorage,
+ * kedaluwarsa otomatis 24 jam. Yang kedaluwarsa dipangkas saat dibaca
+ * agar penyimpanan tidak menumpuk data URL gambar lama.
+ */
+export function listUserStories(now: number = Date.now()): Story[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(STORIES_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return [];
+    const valid = parsed.filter(
+      (s): s is Story =>
+        typeof s === "object" &&
+        s !== null &&
+        typeof (s as Story).id === "string" &&
+        typeof (s as Story).createdAt === "number",
+    );
+    const alive = activeStories(valid, now);
+    if (alive.length !== valid.length) {
+      window.localStorage.setItem(STORIES_KEY, JSON.stringify(alive));
+    }
+    return alive.sort((a, b) => b.createdAt - a.createdAt);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Simpan snapshot kanvas sebagai story baru. Mengembalikan story-nya, atau
+ * null bila penyimpanan gagal (mis. kuota localStorage penuh) — pemanggil
+ * bisa menampilkan pesan yang sesuai.
+ */
+export function addSnapshotStory(input: {
+  image: string;
+  projectId?: string;
+  projectName?: string;
+}): Story | null {
+  if (typeof window === "undefined") return null;
+  const story: Story = {
+    id: `snap-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    kind: "snapshot",
+    createdAt: Date.now(),
+    image: input.image,
+    projectId: input.projectId,
+    projectName: input.projectName,
+  };
+  try {
+    const next = [story, ...listUserStories()];
+    window.localStorage.setItem(STORIES_KEY, JSON.stringify(next));
+    return story;
+  } catch {
+    return null; // kuota penuh — jangan crash alur pengguna
+  }
 }
 
 /** Sisa waktu hidup story dalam format ringkas, mis. "4 jam" / "12 mnt". */

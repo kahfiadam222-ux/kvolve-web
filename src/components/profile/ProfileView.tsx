@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { KvolveMark } from "@/components/brand/KvolveMark";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import {
   activeStories,
   getProfile,
@@ -26,6 +27,7 @@ import { FeaturedProjects } from "./FeaturedProjects";
  * menghindari mismatch hydrasi antara waktu server & klien pada story TTL.
  */
 export function ProfileView({ username }: { username: string }) {
+  const { user, signOut } = useAuthUser();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [following, setFollowing] = useState(false);
 
@@ -49,12 +51,24 @@ export function ProfileView({ username }: { username: string }) {
             <KvolveMark className="h-7 w-7" />
             <span className="text-[15px] font-semibold tracking-tight">Kvolve</span>
           </Link>
-          <Link
-            href="/dashboard"
-            className="rounded-full border border-glass-border bg-glass-soft px-3 py-1.5 text-xs text-stone-300 transition-colors hover:bg-white/10 hover:text-ink"
-          >
-            ← Dasbor
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard"
+              className="rounded-full border border-glass-border bg-glass-soft px-3 py-1.5 text-xs text-stone-300 transition-colors hover:bg-white/10 hover:text-ink"
+            >
+              ← Dasbor
+            </Link>
+            {user && (
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                title={`Keluar dari sesi ${user.name}${user.guest ? " (Tamu)" : ""}`}
+                className="rounded-full border border-glass-border bg-glass-soft px-3 py-1.5 text-xs text-stone-400 transition-colors hover:border-rose-400/40 hover:text-rose-300"
+              >
+                Keluar
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -137,8 +151,8 @@ function Stat({ value, label }: { value: number; label: string }) {
 function ProfileSkeleton() {
   return (
     <div className="space-y-8">
-      <div className="h-24 animate-pulse rounded-2xl border border-glass-border bg-glass-soft" />
-      <div className="h-56 animate-pulse rounded-3xl border border-glass-border bg-glass-soft" />
+      <div className="bg-shimmer h-24 rounded-2xl border border-glass-border bg-glass-soft" />
+      <div className="bg-shimmer h-56 rounded-3xl border border-glass-border bg-glass-soft" />
     </div>
   );
 }
