@@ -75,12 +75,14 @@ export interface UserProfile {
 export const STORY_TTL_MS = 24 * 60 * 60 * 1000; // 24 jam (PRD 3)
 const HOUR = 60 * 60 * 1000;
 
+// Gradasi vivid "kaca oren berbaur" — dirancang untuk kartu KACA GELAP
+// (glass-soft) shell aplikasi, senada dengan LiquidBackdrop (amber/rust).
 const THUMB_GRADIENTS = [
-  "linear-gradient(135deg,#2dd4bf22,#0d948855)",
-  "linear-gradient(135deg,#7c3aed33,#2dd4bf33)",
-  "linear-gradient(135deg,#e11d4833,#f59e0b33)",
-  "linear-gradient(135deg,#2563eb33,#2dd4bf33)",
-  "linear-gradient(135deg,#db277733,#7c3aed33)",
+  "linear-gradient(135deg,#fbbf24,#f97316)",
+  "linear-gradient(135deg,#f97316,#ea580c)",
+  "linear-gradient(135deg,#fdba74,#f59e0b)",
+  "linear-gradient(135deg,#fb923c,#c2410c)",
+  "linear-gradient(135deg,#fde68a,#f97316)",
 ];
 
 const gradientFor = (seed: string): string => {
@@ -128,7 +130,7 @@ export function getProfile(username: string, now: number = Date.now()): UserProf
     bio: isOwner
       ? "Membangun Kvolve — infinite canvas untuk desain, PDF & layout HTML. Kolaborasi tanpa batas."
       : "Kreator di ekosistem Kvolve.",
-    avatarGradient: "linear-gradient(135deg,#2dd4bf,#7c6cf0)",
+    avatarGradient: "linear-gradient(135deg,#fbbf24,#ea580c)",
     initials: initialsFrom(name),
     verified: isOwner,
     followers: isOwner ? 1284 : 42,
@@ -168,7 +170,7 @@ function seededStories(
       id: `${username}-s1`,
       kind: "snapshot",
       createdAt: now - 2 * HOUR,
-      gradient: "linear-gradient(160deg,#0f766e,#2dd4bf)",
+      gradient: "linear-gradient(160deg,#c2410c,#fb923c)",
       projectId: first?.id,
       projectName: first?.name,
     },
@@ -182,7 +184,7 @@ function seededStories(
       id: `${username}-s3`,
       kind: "snapshot",
       createdAt: now - 20 * HOUR,
-      gradient: "linear-gradient(160deg,#7c3aed,#db2777)",
+      gradient: "linear-gradient(160deg,#92400e,#f59e0b)",
       projectId: featured[1]?.id,
       projectName: featured[1]?.name,
     },

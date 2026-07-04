@@ -151,7 +151,7 @@ export function PdfTextLayer() {
           <button
             type="button"
             onClick={stopAnnotate}
-            className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-teal-950 transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-orange-950 transition-opacity hover:opacity-90"
           >
             Selesai
           </button>

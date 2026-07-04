@@ -22,7 +22,7 @@ export function UserBadge() {
     <Link
       href={user ? "/profile/kahfi" : "/login"}
       title={user ? `${user.name}${user.guest ? " (Tamu)" : ""} — lihat profil` : "Masuk"}
-      className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-violet-500 text-xs font-bold text-white ring-2 ring-white/20 transition-transform hover:scale-105"
+      className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-xs font-bold text-white shadow-sm ring-2 ring-white/20 transition-transform hover:scale-105"
     >
       {user ? initial : "→"}
     </Link>

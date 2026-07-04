@@ -79,7 +79,7 @@ export function ProjectGallery() {
   // Hindari flicker hydration: render placeholder sampai data client siap.
   if (projects === null) {
     return (
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {[0, 1].map((i) => (
           <div
             key={i}
@@ -91,23 +91,26 @@ export function ProjectGallery() {
   }
 
   const iconBtn =
-    "grid h-7 w-7 place-items-center rounded-lg text-stone-500 transition-colors hover:bg-white/10 hover:text-ink";
+    "grid h-7 w-7 place-items-center rounded-lg text-stone-400 transition-colors hover:bg-white/10 hover:text-ink";
 
   return (
     <>
       <header className="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            Ruang kerja
+          </p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
             Proyek <span className="text-gradient">kanvas</span>
           </h1>
-          <p className="mt-1 text-sm text-stone-400">
+          <p className="mt-1.5 text-sm text-stone-400">
             {projects.length} proyek · tersimpan lokal selama MVP
           </p>
         </div>
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-300 via-sky-300 to-violet-300 px-4 py-2 text-sm font-semibold text-slate-950 transition-all hover:shadow-glow active:scale-[0.98]"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
             <path
@@ -121,17 +124,20 @@ export function ProjectGallery() {
         </button>
       </header>
 
-      <ul className="mt-10 grid gap-4 animate-fade-up sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((p) => (
+      <ul className="mt-10 grid gap-5 animate-fade-up sm:grid-cols-2 lg:grid-cols-3">
+        {projects.map((p, i) => (
           <li key={p.id} className="group relative">
             <Link
               href={`/canvas/${p.id}`}
-              className="block rounded-2xl border border-glass-border bg-glass-soft p-4 backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.08] hover:shadow-float"
+              className="glass-sheen block overflow-hidden rounded-2xl border border-glass-border bg-glass-soft p-4 backdrop-blur-sm backdrop-saturate-150 transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-card-hover"
             >
-              <div className="bg-dotgrid relative h-28 overflow-hidden rounded-xl border border-white/[0.06] bg-black/20">
-                <span className="absolute left-6 top-5 h-10 w-16 rounded-md bg-accent/20 ring-1 ring-accent/30 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                <span className="absolute left-16 top-10 h-12 w-20 rounded-md bg-white/10 ring-1 ring-white/15 transition-transform duration-300 group-hover:translate-x-1" />
-                <span className="absolute right-6 top-6 h-8 w-8 rounded-full bg-rose-400/20 ring-1 ring-rose-400/30 transition-transform duration-300 group-hover:translate-y-0.5" />
+              <div
+                className="relative h-28 overflow-hidden rounded-xl border border-white/[0.06]"
+                style={{ background: THUMB_GRADIENTS[i % THUMB_GRADIENTS.length] }}
+              >
+                <span className="absolute left-6 top-5 h-10 w-16 rounded-md bg-white/25 ring-1 ring-white/30 backdrop-blur-sm transition-transform duration-300 group-hover:-translate-y-0.5" />
+                <span className="absolute left-16 top-10 h-12 w-20 rounded-md bg-white/15 ring-1 ring-white/20 backdrop-blur-sm transition-transform duration-300 group-hover:translate-x-1" />
+                <span className="absolute right-6 top-6 h-8 w-8 rounded-full bg-white/20 ring-1 ring-white/30 backdrop-blur-sm transition-transform duration-300 group-hover:translate-y-0.5" />
               </div>
 
               <div className="mt-4 min-h-[2.5rem] px-0.5">
@@ -233,3 +239,13 @@ export function ProjectGallery() {
     </>
   );
 }
+
+/** Cover thumbnail proyek — gradasi kaca oren berbaur (bukan foto/dot grid). */
+const THUMB_GRADIENTS = [
+  "linear-gradient(135deg,#fbbf24,#f97316)",
+  "linear-gradient(135deg,#f97316,#ea580c)",
+  "linear-gradient(135deg,#fdba74,#f59e0b)",
+  "linear-gradient(135deg,#fb923c,#c2410c)",
+  "linear-gradient(135deg,#fde68a,#f97316)",
+  "linear-gradient(135deg,#ea580c,#fbbf24)",
+];

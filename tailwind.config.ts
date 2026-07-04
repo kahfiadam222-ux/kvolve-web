@@ -5,19 +5,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Palet Kvolve v2 "deep space" — indigo-hitam dingin + aksen aurora
-        // (kinetic teal → violet → fuchsia). Panel memakai glass.*
-        // (semi-transparan + backdrop-blur) di atas glow aurora statis.
-        canvas: "#0d0d15",
-        ink: "#e9e8f2",
+        // Palet Kvolve "liquid amber glass" — dasar gelap bernuansa hangat,
+        // dengan blob oren/amber/rust yang berbaur & bergerak ala air
+        // (lihat LiquidBackdrop). Panel pakai glass.* — SEMUA transparan
+        // (blur + saturasi) alih-alih solid, kesan kaca basah keseluruhan.
+        canvas: "#120d0a",
+        ink: "#f4ede6",
         accent: {
-          DEFAULT: "#2dd4bf",
-          soft: "rgb(45 212 191 / 0.12)",
+          DEFAULT: "#f97316",
+          soft: "rgb(249 115 22 / 0.14)",
         },
         glass: {
-          DEFAULT: "rgb(19 19 30 / 0.72)",
+          DEFAULT: "rgb(28 18 10 / 0.5)",
           soft: "rgb(255 255 255 / 0.05)",
-          border: "rgb(255 255 255 / 0.10)",
+          border: "rgb(255 210 160 / 0.14)",
         },
       },
       fontFamily: {
@@ -31,11 +32,17 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        // Shadow berlapis khas panel melayang Kvolve (toolbar, palet, inspector).
+        // Shadow berlapis khas panel melayang Kvolve (toolbar, palet, inspector
+        // di dalam workspace kanvas — tetap gelap, lihat globals.css).
         float:
           "0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -8px rgb(0 0 0 / 0.6)",
         // Glow aksen untuk CTA & elemen fokus — sentuhan "keren"-nya.
-        glow: "0 0 24px -4px rgb(45 212 191 / 0.45), 0 0 48px -12px rgb(167 139 250 / 0.35)",
+        glow: "0 0 24px -4px rgb(249 115 22 / 0.5), 0 0 48px -12px rgb(234 88 12 / 0.35)",
+        // Elevasi kartu liquid-glass shell (dashboard/login/profil): dasar
+        // gelap netral + glow oren lembut saat hover, di atas backdrop cair.
+        card: "0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.45)",
+        "card-hover":
+          "0 2px 4px rgb(0 0 0 / 0.3), 0 16px 40px -10px rgb(249 115 22 / 0.3)",
       },
       keyframes: {
         "fade-up": {
@@ -54,6 +61,21 @@ const config: Config = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.55" },
         },
+        // Gerak blob "liquid" — transform murni (translate+scale), murah di
+        // GPU. Tiga durasi berbeda agar blob tak bergerak serempak (organik,
+        // mensimulasikan efek warna berbaur di air).
+        "float-a": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "50%": { transform: "translate(4%, -6%) scale(1.08)" },
+        },
+        "float-b": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "50%": { transform: "translate(-5%, 5%) scale(1.05)" },
+        },
+        "float-c": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "50%": { transform: "translate(3%, 4%) scale(1.1)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both",
@@ -61,6 +83,9 @@ const config: Config = {
         "slide-in-right":
           "slide-in-right 0.35s cubic-bezier(0.22, 1, 0.36, 1) both",
         "pulse-soft": "pulse-soft 1.6s ease-in-out infinite",
+        "float-a": "float-a 18s ease-in-out infinite",
+        "float-b": "float-b 22s ease-in-out infinite",
+        "float-c": "float-c 26s ease-in-out infinite",
       },
     },
   },

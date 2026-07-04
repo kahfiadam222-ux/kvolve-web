@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { KvolveMark } from "@/components/brand/KvolveMark";
+import { LiquidBackdrop } from "@/components/brand/LiquidBackdrop";
 import { getGuestUser, signInAsGuest } from "@/lib/auth/appUser";
 import {
   createBrowserSupabase,
@@ -17,10 +18,57 @@ import {
  *   (dulu malah crash saat diklik), dan Mode Tamu menjadi jalur utama
  *   sehingga aplikasi tetap bisa dipakai penuh.
  *
+ * Tata letak dua-kolom (branding + form) di layar lebar; branding menyusut
+ * jadi header ringkas di mobile. Latar liquid-glass sama dengan shell lain.
+ *
  * Prasyarat di dashboard Supabase:
  * 1. Aktifkan provider Google & GitHub (isi client ID/secret).
  * 2. Tambahkan `${origin}/dashboard` ke daftar Redirect URLs.
  */
+
+const FEATURES = [
+  {
+    title: "Kanvas tak terbatas",
+    desc: "Pan & zoom mulus untuk gambar, PDF, dan layout HTML.",
+    icon: (
+      <path
+        d="M4 8h4v8H4zM10 4h4v16h-4zM16 10h4v4h-4z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    ),
+  },
+  {
+    title: "Anotasi PDF langsung",
+    desc: "Render halaman PDF asli lalu ketik ulang teksnya di kanvas.",
+    icon: (
+      <path
+        d="M7 3h7l4 4v14H7zM14 3v4h4M9 15h6M9 12h6"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    ),
+  },
+  {
+    title: "Kolaborasi real-time",
+    desc: "Kursor multiplayer & sinkronisasi objek lewat CRDT Y.js.",
+    icon: (
+      <path
+        d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM16 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3 20c0-3 2.5-5 5-5s5 2 5 5M11 20c0-3 2.5-5 5-5s5 2 5 5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    ),
+  },
+];
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -76,20 +124,53 @@ export default function LoginPage() {
     "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-2.5 text-sm font-medium text-ink transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-glass-border disabled:hover:bg-glass-soft";
 
   return (
-    <main className="bg-dotgrid grid min-h-dvh place-items-center px-6">
-      <div aria-hidden className="bg-aurora pointer-events-none fixed inset-0" />
-      <div className="relative w-full max-w-sm animate-fade-up">
-        <div className="rounded-3xl border border-glass-border bg-glass p-8 shadow-float backdrop-blur-xl">
-          <KvolveMark className="h-9 w-9" />
-          <h1 className="mt-5 text-xl font-semibold tracking-tight">
-            Masuk ke <span className="text-gradient">ruang kerja</span>
-          </h1>
-          <p className="mt-1 text-sm leading-relaxed text-stone-400">
-            Satu kanvas tak terbatas untuk desain, PDF, dan layout HTML.
+    <main className="relative grid min-h-dvh place-items-center px-6 py-10 text-ink">
+      <LiquidBackdrop />
+
+      <div className="glass-sheen relative grid w-full max-w-4xl animate-fade-up overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl backdrop-saturate-150 lg:grid-cols-2">
+        {/* ------------------------------------------------ Panel branding */}
+        <div className="relative flex flex-col justify-between gap-8 border-b border-glass-border bg-black/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
+          <div>
+            <KvolveMark className="h-10 w-10" />
+            <h1 className="mt-6 text-2xl font-semibold tracking-tight sm:text-3xl">
+              Satu kanvas, <span className="text-gradient">tanpa batas</span>
+            </h1>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-stone-400">
+              Desain, PDF, dan layout HTML berbaur dalam satu ruang kerja
+              kolaboratif — seperti warna yang membaur di air.
+            </p>
+          </div>
+
+          <ul className="space-y-4">
+            {FEATURES.map((f) => (
+              <li key={f.title} className="flex items-start gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
+                    {f.icon}
+                  </svg>
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-ink">{f.title}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-stone-400">
+                    {f.desc}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* ------------------------------------------------ Panel form */}
+        <div className="p-8 lg:p-10">
+          <h2 className="text-lg font-semibold tracking-tight">
+            Masuk ke ruang kerja
+          </h2>
+          <p className="mt-1 text-sm text-stone-400">
+            Coba tanpa akun, atau masuk dengan email/sosial media.
           </p>
 
           {/* ------------------------------------------------ Mode Tamu */}
-          <div className="mt-7">
+          <div className="mt-6">
             <label className="text-xs text-stone-400">
               Nama tampilan (untuk kursor kolaborasi)
               <input
@@ -105,7 +186,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={enterAsGuest}
-              className="mt-3 w-full rounded-xl bg-gradient-to-r from-teal-300 via-sky-300 to-violet-300 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:shadow-glow active:scale-[0.98]"
+              className="mt-3 w-full rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2.5 text-sm font-semibold text-white shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
             >
               {existingGuest && !guestName
                 ? `Lanjut sebagai ${existingGuest}`
@@ -210,11 +291,11 @@ export default function LoginPage() {
               {status.msg}
             </p>
           )}
-        </div>
 
-        <p className="mt-5 text-center text-xs text-stone-500">
-          Dengan masuk, Anda menyetujui Ketentuan Layanan Kvolve.
-        </p>
+          <p className="mt-5 text-center text-xs text-stone-500">
+            Dengan masuk, Anda menyetujui Ketentuan Layanan Kvolve.
+          </p>
+        </div>
       </div>
     </main>
   );

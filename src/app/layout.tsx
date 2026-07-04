@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { RippleLayer } from "@/components/effects/RippleLayer";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -17,6 +18,7 @@ export default function RootLayout({
     <html lang="id" className={inter.variable}>
       <body className="h-full bg-canvas font-sans text-ink antialiased">
         {children}
+        <RippleLayer />
       </body>
     </html>
   );
