@@ -83,7 +83,7 @@ export function ProjectGallery() {
         {[0, 1].map((i) => (
           <div
             key={i}
-            className="h-48 animate-pulse rounded-2xl border border-glass-border bg-glass-soft"
+            className="bg-shimmer h-48 rounded-2xl border border-glass-border bg-glass-soft"
           />
         ))}
       </div>

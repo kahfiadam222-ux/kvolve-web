@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import { CanvasEngine } from "@/lib/engine/CanvasEngine";
 import { CollabProvider } from "@/lib/collab/CollabProvider";
+import { getCachedDisplayName } from "@/lib/auth/appUser";
 import { useAssetDrop } from "@/hooks/useAssetDrop";
 import {
   loadArtboard,
@@ -67,10 +68,12 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         // Kolaborasi opsional: tanpa URL WS, kanvas berjalan mode offline.
         const wsUrl = process.env.NEXT_PUBLIC_COLLAB_WS_URL;
         if (wsUrl) {
-          // TODO(W-FR-1.1): ganti identitas tamu dengan sesi Supabase Auth.
+          // Identitas kursor: nama pengguna (sesi Supabase / tamu) bila ada.
           collabRef.current = new CollabProvider(wsUrl, projectId, {
             id: nanoid(8),
-            name: `Tamu ${Math.floor(Math.random() * 90 + 10)}`,
+            name:
+              getCachedDisplayName() ??
+              `Tamu ${Math.floor(Math.random() * 90 + 10)}`,
             color: randomCursorColor(),
           });
         }
@@ -138,6 +141,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
           <PdfTextLayer />
           <CanvasToolbar
             engineRef={engineRef}
+            projectId={projectId}
             onOpenStudio={() => setStudioOpen(true)}
           />
           <DesignStudio

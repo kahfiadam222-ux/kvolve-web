@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProject } from "@/lib/projects/localProjects";
 import {
@@ -40,14 +41,39 @@ export function StoryBar({
             className="group flex w-16 shrink-0 flex-col items-center gap-1.5"
             title={`Story · sisa ${storyTimeLeft(s)}`}
           >
-            <span className="rounded-full bg-gradient-to-tr from-accent via-teal-300 to-fuchsia-400 p-[2px] transition-transform group-hover:scale-105">
-              <span className="block rounded-full bg-canvas p-[2px]">
-                <span
-                  className="grid h-12 w-12 place-items-center rounded-full text-[10px] font-semibold text-white/90"
-                  style={{ background: s.gradient ?? "linear-gradient(135deg,#334155,#0f172a)" }}
-                >
-                  {s.kind === "text" ? "Aa" : ""}
-                </span>
+            {/* Cincin gradasi BERPUTAR (conic) — animasi transform murni,
+                murah di GPU, dan berhenti saat prefers-reduced-motion. */}
+            <span className="relative block h-14 w-14 transition-transform duration-200 group-hover:scale-105">
+              <span
+                aria-hidden
+                className="absolute inset-0 rounded-full animate-[spin_5s_linear_infinite] motion-reduce:animate-none"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, #2dd4bf, #c084fc, #fb7185, #fbbf24, #2dd4bf)",
+                }}
+              />
+              <span className="absolute inset-[2px] rounded-full bg-canvas" />
+              <span
+                className="absolute inset-[4px] grid place-items-center overflow-hidden rounded-full text-[10px] font-semibold text-white/90"
+                style={
+                  s.image
+                    ? undefined
+                    : { background: s.gradient ?? "linear-gradient(135deg,#334155,#0f172a)" }
+                }
+              >
+                {s.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={s.image}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    draggable={false}
+                  />
+                ) : s.kind === "text" ? (
+                  "Aa"
+                ) : (
+                  ""
+                )}
               </span>
             </span>
             <span className="max-w-16 truncate text-[10px] text-stone-400">
@@ -71,17 +97,18 @@ export function StoryBar({
 
 function AddStoryBubble() {
   return (
-    <div
-      className="flex w-16 shrink-0 flex-col items-center gap-1.5"
-      title="Buat story dari snapshot kanvas (menyusul)"
+    <Link
+      href="/dashboard"
+      className="group flex w-16 shrink-0 flex-col items-center gap-1.5"
+      title="Buka proyek, lalu klik tombol Story di toolbar kanvas untuk membagikan snapshot"
     >
-      <span className="grid h-[52px] w-[52px] place-items-center rounded-full border-2 border-dashed border-white/15 text-stone-400 transition-colors hover:border-accent/50 hover:text-accent">
+      <span className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-white/15 text-stone-400 transition-all duration-200 group-hover:scale-105 group-hover:border-accent/50 group-hover:text-accent">
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
           <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
       </span>
       <span className="text-[10px] text-stone-500">Kamu</span>
-    </div>
+    </Link>
   );
 }
 
@@ -162,11 +189,21 @@ function StoryViewer({
       <div className="absolute inset-0" onClick={onClose} aria-hidden />
 
       <div className="relative flex aspect-[9/16] max-h-[calc(100dvh-2rem)] w-auto max-w-[min(28rem,100%)] flex-col overflow-hidden rounded-3xl border border-glass-border shadow-float">
-        {/* Latar story */}
-        <div
-          className="absolute inset-0"
-          style={{ background: story.gradient ?? "linear-gradient(160deg,#1e293b,#0f172a)" }}
-        />
+        {/* Latar story: snapshot kanvas asli bila ada, selain itu gradient */}
+        {story.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={story.image}
+            alt={story.projectName ?? "Snapshot kanvas"}
+            className="absolute inset-0 h-full w-full animate-fade-in object-contain"
+            draggable={false}
+          />
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{ background: story.gradient ?? "linear-gradient(160deg,#1e293b,#0f172a)" }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
 
         {/* Progress bars per story */}
@@ -209,7 +246,7 @@ function StoryViewer({
             <p className="text-xl font-semibold leading-snug text-white drop-shadow-lg">
               {story.text}
             </p>
-          ) : (
+          ) : story.image ? null /* snapshot asli sudah jadi latar penuh */ : (
             <div className="rounded-2xl border border-white/20 bg-black/20 px-4 py-3 backdrop-blur-sm">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
                 Snapshot kanvas

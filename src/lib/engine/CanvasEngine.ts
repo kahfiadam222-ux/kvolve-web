@@ -188,6 +188,42 @@ export class CanvasEngine {
     this.fitToArtboard(width, height);
   }
 
+  /**
+   * "Secure Snapshot" (PRD Addendum 03) — potret area kerja menjadi JPEG
+   * data URL kecil untuk konten Story. Mengekstrak container world pada
+   * frame artboard (atau viewport bila kanvas bebas), lalu dikomposit ke
+   * latar solid agar area transparan tidak menjadi hitam JPEG.
+   */
+  snapshotDataUrl(maxWidth = 540): string | null {
+    try {
+      const ab = useCanvasStore.getState().artboard;
+      const frame = ab
+        ? new Rectangle(0, 0, ab.width, ab.height)
+        : this.getVisibleWorldBounds();
+      if (frame.width < 1 || frame.height < 1) return null;
+
+      const resolution = Math.min(1, maxWidth / frame.width);
+      const src = this.app.renderer.extract.canvas({
+        target: this.world,
+        frame,
+        resolution,
+      }) as HTMLCanvasElement;
+
+      const out = document.createElement("canvas");
+      out.width = src.width;
+      out.height = src.height;
+      const ctx = out.getContext("2d");
+      if (!ctx) return null;
+      ctx.fillStyle = ab ? "#ffffff" : "#161614"; // halaman putih / kanvas gelap
+      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.drawImage(src, 0, 0);
+      return out.toDataURL("image/jpeg", 0.82);
+    } catch (err) {
+      console.error("[Kvolve] Gagal membuat snapshot:", err);
+      return null;
+    }
+  }
+
   /** Pas-kan kamera ke artboard dengan margin nyaman di sekelilingnya. */
   fitToArtboard(width?: number, height?: number): void {
     const ab =

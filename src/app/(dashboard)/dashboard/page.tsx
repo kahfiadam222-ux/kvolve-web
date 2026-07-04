@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { KvolveMark } from "@/components/brand/KvolveMark";
+import { UserBadge } from "@/components/auth/UserBadge";
 import { ProjectGallery } from "@/components/dashboard/ProjectGallery";
 
 /**
@@ -21,13 +21,7 @@ export default function DashboardPage() {
               Kvolve
             </span>
           </div>
-          <Link
-            href="/profile/kahfi"
-            title="Lihat profil"
-            className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-teal-500 to-teal-700 text-xs font-bold text-white ring-2 ring-white/20 transition-transform hover:scale-105"
-          >
-            K
-          </Link>
+          <UserBadge />
         </div>
       </nav>
 

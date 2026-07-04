@@ -1,38 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { KvolveMark } from "@/components/brand/KvolveMark";
-import { createBrowserSupabase } from "@/lib/supabase/client";
+import { getGuestUser, signInAsGuest } from "@/lib/auth/appUser";
+import {
+  createBrowserSupabase,
+  isSupabaseConfigured,
+} from "@/lib/supabase/client";
 
 /**
- * W-FR-1.1 — OAuth & Auth System (Supabase Auth).
- * Skeleton fungsional: Google, GitHub, dan magic link email.
+ * W-FR-1.1 — OAuth & Auth System (Supabase Auth) + Mode Tamu.
+ *
+ * - Supabase terkonfigurasi: Google, GitHub, magic link email — semuanya aktif.
+ * - Belum terkonfigurasi: tombol OAuth dinonaktifkan dengan keterangan
+ *   (dulu malah crash saat diklik), dan Mode Tamu menjadi jalur utama
+ *   sehingga aplikasi tetap bisa dipakai penuh.
  *
  * Prasyarat di dashboard Supabase:
  * 1. Aktifkan provider Google & GitHub (isi client ID/secret).
  * 2. Tambahkan `${origin}/dashboard` ke daftar Redirect URLs.
  */
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [guestName, setGuestName] = useState("");
   const [sending, setSending] = useState(false);
+  const [existingGuest, setExistingGuest] = useState<string | null>(null);
   const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(
     null,
   );
 
+  useEffect(() => {
+    setExistingGuest(getGuestUser()?.name ?? null);
+  }, []);
+
   const signInWith = async (provider: "google" | "github") => {
     const supabase = createBrowserSupabase();
-    await supabase.auth.signInWithOAuth({
+    if (!supabase) return; // tombol sudah disabled; guard ekstra
+    setStatus(null);
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${location.origin}/dashboard` },
     });
+    if (error) setStatus({ ok: false, msg: `Gagal masuk: ${error.message}` });
   };
 
   const signInWithEmail = async () => {
     if (!email || sending) return;
+    const supabase = createBrowserSupabase();
+    if (!supabase) return;
     setSending(true);
     setStatus(null);
     try {
-      const supabase = createBrowserSupabase();
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: `${location.origin}/dashboard` },
@@ -47,8 +67,13 @@ export default function LoginPage() {
     }
   };
 
+  const enterAsGuest = (): void => {
+    signInAsGuest(guestName || existingGuest || "Tamu Kvolve");
+    router.push("/dashboard");
+  };
+
   const providerBtn =
-    "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-2.5 text-sm font-medium text-ink transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.99]";
+    "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-2.5 text-sm font-medium text-ink transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-glass-border disabled:hover:bg-glass-soft";
 
   return (
     <main className="bg-dotgrid grid min-h-dvh place-items-center px-6">
@@ -62,10 +87,43 @@ export default function LoginPage() {
             Satu kanvas tak terbatas untuk desain, PDF, dan layout HTML.
           </p>
 
-          <div className="mt-7 space-y-2">
+          {/* ------------------------------------------------ Mode Tamu */}
+          <div className="mt-7">
+            <label className="text-xs text-stone-400">
+              Nama tampilan (untuk kursor kolaborasi)
+              <input
+                type="text"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && enterAsGuest()}
+                placeholder={existingGuest ?? "mis. Kahfi"}
+                maxLength={40}
+                className="mt-1.5 w-full rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={enterAsGuest}
+              className="mt-3 w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-teal-950 transition-all hover:opacity-90 active:scale-[0.98]"
+            >
+              {existingGuest && !guestName
+                ? `Lanjut sebagai ${existingGuest}`
+                : "Masuk sebagai Tamu"}
+            </button>
+          </div>
+
+          <div className="my-6 flex items-center gap-3 text-xs text-stone-500">
+            <span className="h-px flex-1 bg-white/10" />
+            atau dengan akun
+            <span className="h-px flex-1 bg-white/10" />
+          </div>
+
+          {/* ------------------------------------------------ OAuth */}
+          <div className="space-y-2">
             <button
               type="button"
               onClick={() => signInWith("google")}
+              disabled={!isSupabaseConfigured}
               className={providerBtn}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
@@ -91,6 +149,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => signInWith("github")}
+              disabled={!isSupabaseConfigured}
               className={providerBtn}
             >
               <svg
@@ -104,32 +163,40 @@ export default function LoginPage() {
               </svg>
               Lanjutkan dengan GitHub
             </button>
+
+            <div className="flex gap-2 pt-1">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && void signInWithEmail()}
+                placeholder="nama@perusahaan.com"
+                disabled={!isSupabaseConfigured}
+                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35"
+              />
+              <button
+                type="button"
+                onClick={() => void signInWithEmail()}
+                disabled={!isSupabaseConfigured || sending || !email}
+                className="rounded-xl border border-glass-border bg-glass-soft px-4 py-2.5 text-sm font-semibold text-ink transition-all hover:bg-white/10 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
+              >
+                {sending ? "Mengirim…" : "Kirim tautan"}
+              </button>
+            </div>
           </div>
 
-          <div className="my-6 flex items-center gap-3 text-xs text-stone-500">
-            <span className="h-px flex-1 bg-white/10" />
-            atau lewat email
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-
-          <div className="flex gap-2">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && void signInWithEmail()}
-              placeholder="nama@perusahaan.com"
-              className="min-w-0 flex-1 rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
-            />
-            <button
-              type="button"
-              onClick={() => void signInWithEmail()}
-              disabled={sending || !email}
-              className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-teal-950 transition-all hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
-            >
-              {sending ? "Mengirim…" : "Kirim tautan"}
-            </button>
-          </div>
+          {!isSupabaseConfigured && (
+            <p className="mt-3 rounded-lg bg-white/[0.04] px-3 py-2 text-[11px] leading-relaxed text-stone-500">
+              Login akun belum aktif — isi{" "}
+              <code className="text-stone-400">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
+              &{" "}
+              <code className="text-stone-400">
+                NEXT_PUBLIC_SUPABASE_ANON_KEY
+              </code>{" "}
+              di <code className="text-stone-400">.env.local</code> untuk
+              mengaktifkan Google/GitHub/email.
+            </p>
+          )}
 
           {status && (
             <p
