@@ -16,6 +16,7 @@ import { MultiplayerCursors } from "./MultiplayerCursors";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { BlockPalette } from "./BlockPalette";
 import { CodeInspector } from "./CodeInspector";
+import { PdfTextLayer } from "./PdfTextLayer";
 import { DesignStudio } from "@/components/studio/DesignStudio";
 
 /**
@@ -132,6 +133,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         <>
           <BlockPalette engineRef={engineRef} />
           <CodeInspector />
+          <PdfTextLayer />
           <CanvasToolbar
             engineRef={engineRef}
             onOpenStudio={() => setStudioOpen(true)}
