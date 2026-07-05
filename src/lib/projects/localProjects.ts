@@ -153,7 +153,14 @@ export function loadArtboard(projectId: string): ArtboardState | null {
       typeof (parsed as ArtboardState).width === "number" &&
       typeof (parsed as ArtboardState).height === "number"
     ) {
-      return { width: (parsed as ArtboardState).width, height: (parsed as ArtboardState).height };
+      const ab = parsed as ArtboardState;
+      return {
+        width: ab.width,
+        height: ab.height,
+        ...(typeof ab.backgroundColor === "string"
+          ? { backgroundColor: ab.backgroundColor }
+          : {}),
+      };
     }
     return null;
   } catch {

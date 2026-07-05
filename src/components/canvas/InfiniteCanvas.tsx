@@ -24,6 +24,7 @@ import { BlockPalette } from "./BlockPalette";
 import { CodeInspector } from "./CodeInspector";
 import { PdfTextLayer } from "./PdfTextLayer";
 import { SelectionToolbar } from "./SelectionToolbar";
+import { TrendingBoard } from "./TrendingBoard";
 import { DesignStudio, type TabId } from "@/components/studio/DesignStudio";
 
 /**
@@ -185,6 +186,7 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
           <BlockPalette engineRef={engineRef} />
           <CodeInspector />
           <SelectionToolbar />
+          <TrendingBoard />
           <PdfTextLayer />
           <CanvasToolbar
             engineRef={engineRef}
