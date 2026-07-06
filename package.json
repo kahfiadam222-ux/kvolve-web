@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "clean": "node -e 'const fs = require('fs'); const path = require('path'); const dir = path.join(__dirname, '.next'); if (fs.existsSync(dir)) { fs.rmSync(dir, { recursive: true, force: true }); console.log('Cleaned .next directory'); } else { console.log('.next directory does not exist'); }'",
     "collab:dev": "npx y-websocket"
   },
   "dependencies": {
