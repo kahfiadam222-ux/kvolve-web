@@ -13,6 +13,8 @@ import {
   timeAgo,
   type ProjectMeta,
 } from "@/lib/projects/localProjects";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { GlassButton } from "@/components/ui/GlassButton";
 
 /**
  * ProjectGallery — Crystal OS project cards.
@@ -116,16 +118,30 @@ export function ProjectGallery() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white/30 py-16 text-center backdrop-blur-sm"
         >
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/8">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden className="text-accent">
-              <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </div>
-          <p className="text-sm font-semibold text-ink">Belum ada proyek</p>
-          <p className="mt-1 text-xs text-ink-muted">Mulai dengan tombol Buat proyek di atas</p>
+          <GlassCard noHover className="flex flex-col items-center px-8 py-16 text-center">
+            <div
+              className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl"
+              style={{ background: "linear-gradient(135deg,#dbeafe,#ccfbf1)" }}
+            >
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden className="text-accent">
+                <path
+                  d="M12 3L13.8 8.2L19 10L13.8 11.8L12 17L10.2 11.8L5 10L10.2 8.2L12 3Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinejoin="round"
+                />
+                <path d="M19 15L19.9 17.1L22 18L19.9 18.9L19 21L18.1 18.9L16 18L18.1 17.1L19 15Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <p className="text-lg font-semibold text-ink">Mulai kreasi pertamamu</p>
+            <p className="mt-1.5 max-w-xs text-sm text-ink-muted">
+              Ruang kerjamu masih kosong — buat desain pertama dan lihat hasilnya muncul di sini.
+            </p>
+            <GlassButton variant="primary" size="lg" pill className="mt-6" onClick={onCreate}>
+              Buat proyek pertama
+            </GlassButton>
+          </GlassCard>
         </motion.div>
       ) : (
         <motion.ul
@@ -150,7 +166,7 @@ export function ProjectGallery() {
                 >
                   {/* Thumbnail */}
                   <div
-                    className="relative h-32 overflow-hidden"
+                    className="relative h-44 overflow-hidden"
                     style={{ background: THUMB_GRADIENTS[i % THUMB_GRADIENTS.length] }}
                   >
                     {/* Simulated canvas content */}
