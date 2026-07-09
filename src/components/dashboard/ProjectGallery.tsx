@@ -15,6 +15,7 @@ import {
 } from "@/lib/projects/localProjects";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { GlassButton } from "@/components/ui/GlassButton";
+import { TiltCard } from "@/components/effects/TiltCard";
 
 /**
  * ProjectGallery — Crystal OS project cards.
@@ -163,44 +164,46 @@ export function ProjectGallery() {
                   href={`/canvas/${p.id}`}
                   className="glass-sheen block overflow-hidden rounded-2xl border border-glass-border-strong bg-glass shadow-card backdrop-blur-lg transition-all duration-200 hover:-translate-y-1"
                 >
-                  {/* Thumbnail */}
-                  <div
-                    className="relative h-44 overflow-hidden"
-                    style={{ background: THUMB_GRADIENTS[i % THUMB_GRADIENTS.length] }}
-                  >
-                    {/* Simulated canvas content */}
-                    <div className="absolute left-5 top-5 h-10 w-20 rounded-lg bg-white/25 ring-1 ring-white/30 backdrop-blur-[2px] transition-transform duration-300 group-hover:-translate-y-0.5" />
-                    <div className="absolute left-14 top-12 h-12 w-24 rounded-lg bg-white/15 ring-1 ring-white/20 backdrop-blur-[2px] transition-transform duration-300 group-hover:translate-x-0.5" />
-                    <div className="absolute right-5 top-6 h-10 w-10 rounded-full bg-white/20 ring-1 ring-white/25 backdrop-blur-[2px] transition-transform duration-300 group-hover:translate-y-0.5" />
-                    <div className="absolute bottom-3 left-5 h-2 w-14 rounded-full bg-white/20" />
-                    {/* Gradient overlay bottom */}
-                    <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/5 to-transparent" />
-                  </div>
+                  <TiltCard>
+                    {/* Thumbnail */}
+                    <div
+                      className="relative h-44 overflow-hidden"
+                      style={{ background: THUMB_GRADIENTS[i % THUMB_GRADIENTS.length] }}
+                    >
+                      {/* Simulated canvas content */}
+                      <div className="absolute left-5 top-5 h-10 w-20 rounded-lg bg-white/25 ring-1 ring-white/30 backdrop-blur-[2px] transition-transform duration-300 group-hover:-translate-y-0.5" />
+                      <div className="absolute left-14 top-12 h-12 w-24 rounded-lg bg-white/15 ring-1 ring-white/20 backdrop-blur-[2px] transition-transform duration-300 group-hover:translate-x-0.5" />
+                      <div className="absolute right-5 top-6 h-10 w-10 rounded-full bg-white/20 ring-1 ring-white/25 backdrop-blur-[2px] transition-transform duration-300 group-hover:translate-y-0.5" />
+                      <div className="absolute bottom-3 left-5 h-2 w-14 rounded-full bg-white/20" />
+                      {/* Gradient overlay bottom */}
+                      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/5 to-transparent" />
+                    </div>
 
-                  {/* Info */}
-                  <div className="px-4 py-3">
-                    {renamingId === p.id ? (
-                      <input
-                        autoFocus
-                        value={draftName}
-                        onChange={(e) => setDraftName(e.target.value)}
-                        onBlur={commitRename}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") commitRename();
-                          if (e.key === "Escape") setRenamingId(null);
-                        }}
-                        onClick={(e) => e.preventDefault()}
-                        className="w-full rounded-lg border border-accent/30 bg-glass-strong px-2.5 py-1 text-sm font-medium text-ink outline-none focus:ring-2 focus:ring-accent/20"
-                      />
-                    ) : (
-                      <>
-                        <p className="truncate pr-14 text-sm font-semibold text-ink">{p.name}</p>
-                        <p className="mt-0.5 text-xs text-ink-muted">
-                          Diubah {timeAgo(p.updatedAt)}
-                        </p>
-                      </>
-                    )}
-                  </div>
+                    {/* Info */}
+                    <div className="px-4 py-3">
+                      {renamingId === p.id ? (
+                        <input
+                          autoFocus
+                          value={draftName}
+                          onChange={(e) => setDraftName(e.target.value)}
+                          onBlur={commitRename}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") commitRename();
+                            if (e.key === "Escape") setRenamingId(null);
+                          }}
+                          onClick={(e) => e.preventDefault()}
+                          className="w-full rounded-lg border border-accent/30 bg-glass-strong px-2.5 py-1 text-sm font-medium text-ink outline-none focus:ring-2 focus:ring-accent/20"
+                        />
+                      ) : (
+                        <>
+                          <p className="truncate pr-14 text-sm font-semibold text-ink">{p.name}</p>
+                          <p className="mt-0.5 text-xs text-ink-muted">
+                            Diubah {timeAgo(p.updatedAt)}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </TiltCard>
                 </Link>
 
                 {/* Card actions — outside Link */}

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { createProject } from "@/lib/projects/localProjects";
 import { motion } from "framer-motion";
+import { TiltCard } from "@/components/effects/TiltCard";
 
 /**
  * StudioCards — Design type selector exposed directly on the dashboard.
@@ -180,36 +181,38 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
             variants={cardVariants}
             type="button"
             onClick={() => handleCardClick(type.id)}
-            className="glass-sheen group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-glass-border-strong bg-glass p-5 text-center backdrop-blur-lg shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
+            className="glass-sheen group relative overflow-hidden rounded-2xl border border-glass-border-strong bg-glass p-5 text-center backdrop-blur-lg shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
           >
-            {/* Gradient accent background */}
-            <div
-              className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-0 transition-opacity duration-200 group-hover:opacity-100`}
-            />
+            <TiltCard className="flex flex-col items-center gap-3">
+              {/* Gradient accent background */}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-0 transition-opacity duration-200 group-hover:opacity-100`}
+              />
 
-            {/* Icon */}
-            <div
-              className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-glass-strong text-ink-muted transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
-              style={{ boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 2px 8px rgba(0,0,0,0.06)" }}
-            >
-              {type.icon}
-            </div>
+              {/* Icon */}
+              <div
+                className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-glass-strong text-ink-muted transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
+                style={{ boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 2px 8px rgba(0,0,0,0.06)" }}
+              >
+                {type.icon}
+              </div>
 
-            {/* Text */}
-            <div className="relative z-10">
-              <p className="text-[13px] font-semibold leading-tight text-ink">
-                {type.label}
-              </p>
-              <p className="mt-0.5 text-[11px] leading-tight text-ink-muted">
-                {type.sublabel}
-              </p>
-            </div>
+              {/* Text */}
+              <div className="relative z-10">
+                <p className="text-[13px] font-semibold leading-tight text-ink">
+                  {type.label}
+                </p>
+                <p className="mt-0.5 text-[11px] leading-tight text-ink-muted">
+                  {type.sublabel}
+                </p>
+              </div>
 
-            {/* Bottom glow on hover */}
-            <div
-              className="absolute bottom-0 left-1/2 h-12 w-24 -translate-x-1/2 translate-y-6 rounded-full opacity-0 blur-2xl transition-all duration-300 group-hover:translate-y-2 group-hover:opacity-100"
-              style={{ background: type.glow }}
-            />
+              {/* Bottom glow on hover */}
+              <div
+                className="absolute bottom-0 left-1/2 h-12 w-24 -translate-x-1/2 translate-y-6 rounded-full opacity-0 blur-2xl transition-all duration-300 group-hover:translate-y-2 group-hover:opacity-100"
+                style={{ background: type.glow }}
+              />
+            </TiltCard>
           </motion.button>
         ))}
       </motion.div>

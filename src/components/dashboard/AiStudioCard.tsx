@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { GlassButton } from "@/components/ui/GlassButton";
+import { TiltCard } from "@/components/effects/TiltCard";
 
 /**
  * AiStudioCard — kehadiran AI sebagai fitur inti di Workspace, bukan cuma
@@ -50,42 +51,44 @@ export function AiStudioCard({ onOpenAi }: { onOpenAi: () => void }) {
       </div>
 
       <GlassCard accentHover className="p-5 sm:p-6">
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {FEATURES.map((f) => (
-            <button
-              key={f.label}
-              type="button"
-              onClick={onOpenAi}
-              className="flex items-start gap-3 rounded-xl p-3 text-left transition-colors hover:bg-accent-soft"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-sm font-bold text-accent">
-                {f.icon}
-              </span>
-              <span>
-                <span className="block text-sm font-semibold text-ink">{f.label}</span>
-                <span className="block text-xs text-ink-muted">{f.desc}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-5 border-t border-glass-border pt-4">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-ink-subtle">
-            Coba ide ini
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {SUGGESTIONS.map((s) => (
+        <TiltCard maxTilt={2}>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {FEATURES.map((f) => (
               <button
-                key={s}
+                key={f.label}
                 type="button"
                 onClick={onOpenAi}
-                className="rounded-full border border-glass-border-strong bg-glass px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
+                className="flex items-start gap-3 rounded-xl p-3 text-left transition-colors hover:bg-accent-soft"
               >
-                {s}
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-sm font-bold text-accent">
+                  {f.icon}
+                </span>
+                <span>
+                  <span className="block text-sm font-semibold text-ink">{f.label}</span>
+                  <span className="block text-xs text-ink-muted">{f.desc}</span>
+                </span>
               </button>
             ))}
           </div>
-        </div>
+
+          <div className="mt-5 border-t border-glass-border pt-4">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-ink-subtle">
+              Coba ide ini
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={onOpenAi}
+                  className="rounded-full border border-glass-border-strong bg-glass px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        </TiltCard>
       </GlassCard>
     </motion.section>
   );
