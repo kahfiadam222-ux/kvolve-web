@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { RippleLayer } from "@/components/effects/RippleLayer";
 import { CursorTrail } from "@/components/effects/CursorTrail";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ComfortProvider } from "@/components/comfort/ComfortProvider";
 import "./globals.css";
 
 /**
@@ -31,7 +32,7 @@ export default function RootLayout({
     <html lang="id" className={inter.variable} suppressHydrationWarning>
       <body className="h-full bg-canvas font-sans text-ink antialiased">
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
-        {children}
+        <ComfortProvider>{children}</ComfortProvider>
         <ThemeProvider />
         <RippleLayer />
         <CursorTrail />

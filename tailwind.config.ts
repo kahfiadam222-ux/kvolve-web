@@ -128,6 +128,11 @@ const config: Config = {
         ].join(", "),
       },
 
+      // SENGAJA statis: Tailwind menyalurkan nilai ini lewat rantai custom
+      // property --tw-backdrop-blur, dan calc()+var() di rantai itu terbukti
+      // tidak ter-evaluasi di Chrome (nilai langsung seperti .crystal-panel
+      // di globals.css aman). Mode Performa memangkas blur utilitas ini via
+      // aturan !important di globals.css, bukan lewat var.
       backdropBlur: {
         xs: "4px",
         sm: "8px",

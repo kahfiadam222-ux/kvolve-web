@@ -102,8 +102,8 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
               className="fixed bottom-8 right-8 z-50 w-80 overflow-hidden rounded-3xl"
               style={{
                 background: "rgb(var(--kv-glass-rgb) / var(--kv-glass-strong-a))",
-                backdropFilter: "blur(calc(40px * var(--kv-blur-scale))) saturate(2)",
-                WebkitBackdropFilter: "blur(calc(40px * var(--kv-blur-scale))) saturate(2)",
+                backdropFilter: "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
+                WebkitBackdropFilter: "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
                 border: "1px solid rgb(var(--kv-glass-border-rgb) / 0.85)",
                 boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 8px 32px rgba(0,0,0,0.12), 0 32px 64px rgba(0,0,0,0.10), 0 0 0 1px rgb(var(--kv-accent) / 0.08)",
               }}

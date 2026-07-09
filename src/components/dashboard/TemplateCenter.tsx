@@ -45,7 +45,7 @@ export function TemplateCenter() {
   };
 
   return (
-    <section>
+    <section data-kv-decorative>
       <div className="mb-5 flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useComfort } from "@/lib/comfort/comfortStore";
 
 /**
  * CursorTrail — pendaran partikel mengikuti kursor + letupan saat klik
@@ -29,8 +30,12 @@ const BURST_COLOR = "147,197,253"; // biru es (#93c5fd) senada palet Crystal
 
 export function CursorTrail() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const comfort = useComfort();
+  const disabled =
+    comfort.reduceMotion || comfort.performanceMode || comfort.focusMode;
 
   useEffect(() => {
+    if (disabled) return; // comfort mode — tanpa listener sama sekali
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return; // tanpa listener sama sekali, bukan sekadar tanpa animasi
     }
@@ -140,7 +145,9 @@ export function CursorTrail() {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
     };
-  }, []);
+  }, [disabled]);
+
+  if (disabled) return null;
 
   return (
     <canvas

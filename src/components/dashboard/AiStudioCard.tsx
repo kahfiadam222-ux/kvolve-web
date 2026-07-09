@@ -29,6 +29,7 @@ const SUGGESTIONS = [
 export function AiStudioCard({ onOpenAi }: { onOpenAi: () => void }) {
   return (
     <motion.section
+      data-kv-decorative
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}

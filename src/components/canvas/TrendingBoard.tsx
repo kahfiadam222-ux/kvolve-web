@@ -59,7 +59,10 @@ export function TrendingBoard() {
   const radarResult = radarOpen ? matchAesthetic(objects) : null;
 
   return (
-    <div className="pointer-events-auto absolute bottom-20 right-4 flex flex-col items-end gap-2">
+    <div
+      data-kv-decorative
+      className="pointer-events-auto absolute bottom-20 right-4 flex flex-col items-end gap-2"
+    >
       {radarOpen && radarResult && (
         <RadarPopover result={radarResult} onClose={() => setRadarOpen(false)} />
       )}

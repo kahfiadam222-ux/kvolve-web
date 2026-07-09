@@ -233,9 +233,9 @@ export function buildTheme(spec: ThemeSpec): KvTheme {
 export const DEFAULT_THEME_ID = "crystal-intelligence";
 export const CUSTOM_THEME_ID = "custom-ai";
 
-export const THEME_PRESETS: KvTheme[] = [
+const THEME_SPECS: ThemeSpec[] = [
   // 1. Default — nilai PERSIS era hardcoded (zero visual diff).
-  buildTheme({
+  {
     id: DEFAULT_THEME_ID,
     name: "Crystal Intelligence",
     tagline: "Bersih, profesional, AI",
@@ -276,10 +276,10 @@ export const THEME_PRESETS: KvTheme[] = [
       "rgba(147, 197, 253, 0.18)",
       "rgba(224, 242, 254, 0.5)",
     ],
-  }),
+  },
 
   // 2. Jepang gelap premium — pink neon di atas malam biru.
-  buildTheme({
+  {
     id: "tokyo-future",
     name: "Tokyo Future",
     tagline: "Minimal Jepang, premium gelap",
@@ -301,10 +301,10 @@ export const THEME_PRESETS: KvTheme[] = [
     glassBorderRgbHex: "#A5B4FC",
     glassBorderA: 0.22,
     motionScale: 0.85,
-  }),
+  },
 
   // 3. CEO — hitam pekat, biru baja, kepercayaan tinggi.
-  buildTheme({
+  {
     id: "executive-black",
     name: "Executive Black",
     tagline: "Fokus, keputusan, wibawa",
@@ -326,10 +326,10 @@ export const THEME_PRESETS: KvTheme[] = [
     glassBorderRgbHex: "#FFFFFF",
     glassBorderA: 0.14,
     motionScale: 1,
-  }),
+  },
 
   // 4. Laut — segar, jernih, tenang.
-  buildTheme({
+  {
     id: "ocean-glass",
     name: "Ocean Glass",
     tagline: "Segar, jernih, tenang",
@@ -351,11 +351,11 @@ export const THEME_PRESETS: KvTheme[] = [
     ctaFrom: "#0891B2",
     ctaTo: "#06B6D4",
     motionScale: 1,
-  }),
+  },
 
   // 5. UMKM — organik, hangat, tumbuh. (Aksen green-600 ~3.1:1: elemen
   // interaktif/besar saja; teks tubuh tetap ink.)
-  buildTheme({
+  {
     id: "nature-founder",
     name: "Nature Founder",
     tagline: "Organik, hangat, bertumbuh",
@@ -374,10 +374,10 @@ export const THEME_PRESETS: KvTheme[] = [
     ctaFrom: "#16A34A",
     ctaTo: "#22C55E",
     motionScale: 1.1,
-  }),
+  },
 
   // 6. Kreator konten — energik, cepat, berani.
-  buildTheme({
+  {
     id: "creator-energy",
     name: "Creator Energy",
     tagline: "Cepat, energik, trend-first",
@@ -396,10 +396,10 @@ export const THEME_PRESETS: KvTheme[] = [
     ctaFrom: "#DB2777",
     ctaTo: "#F97316",
     motionScale: 0.85,
-  }),
+  },
 
   // 7. Futuristik — ungu lab di kegelapan.
-  buildTheme({
+  {
     id: "ai-laboratory",
     name: "AI Laboratory",
     tagline: "Futuristik, inovasi",
@@ -421,11 +421,11 @@ export const THEME_PRESETS: KvTheme[] = [
     glassBorderRgbHex: "#A78BFA",
     glassBorderA: 0.2,
     motionScale: 1,
-  }),
+  },
 
   // 8. Apple-inspired — putih murni, hairline gelap (alasan border-rgb
   // terpisah dari glass-rgb).
-  buildTheme({
+  {
     id: "white-vision",
     name: "White Vision",
     tagline: "Putih murni, presisi Apple",
@@ -451,11 +451,11 @@ export const THEME_PRESETS: KvTheme[] = [
     glassBorderStrongHex: "#D1D5DB",
     noiseA: 0.012,
     motionScale: 1.15,
-  }),
+  },
 
   // 9. Brand premium — emas di atas hitam pekat. CTA emas butuh teks GELAP
   // (putih-di-emas cuma ~1.9:1 — inilah alasan --kv-cta-ink ada).
-  buildTheme({
+  {
     id: "luxury-gold",
     name: "Luxury Gold",
     tagline: "Brand premium, mewah",
@@ -479,8 +479,15 @@ export const THEME_PRESETS: KvTheme[] = [
     glassBorderA: 0.22,
     noiseA: 0.028,
     motionScale: 1.2,
-  }),
+  },
 ];
+
+export const THEME_PRESETS: KvTheme[] = THEME_SPECS.map(buildTheme);
+
+/** Spec mentah preset — dipakai themeGenerator untuk me-recolor basis. */
+export function getThemeSpec(id: string): ThemeSpec | undefined {
+  return THEME_SPECS.find((s) => s.id === id);
+}
 
 /** Fallback slot "Custom AI" sebelum pengguna men-generate tema sendiri. */
 export function customThemeFallback(): KvTheme {
