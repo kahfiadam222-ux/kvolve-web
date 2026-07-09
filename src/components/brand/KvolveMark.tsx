@@ -8,8 +8,9 @@ export function KvolveMark({ className = "h-8 w-8" }: { className?: string }) {
     <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
       <defs>
         <linearGradient id="kvmark-crystal" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#3B82F6" />
-          <stop offset="100%" stopColor="#14B8A6" />
+          {/* stop-color via CSS var — logo ikut aksen tema aktif */}
+          <stop offset="0%" style={{ stopColor: "rgb(var(--kv-accent-light))" }} />
+          <stop offset="100%" style={{ stopColor: "rgb(var(--kv-mint))" }} />
         </linearGradient>
       </defs>
       <rect width="32" height="32" rx="9" fill="url(#kvmark-crystal)" />

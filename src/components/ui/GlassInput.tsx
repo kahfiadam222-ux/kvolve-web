@@ -63,7 +63,7 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
             className={[
               // Base
               "w-full rounded-xl",
-              "bg-white/55 backdrop-blur-md",
+              "bg-glass backdrop-blur-md",
               "border",
               error
                 ? "border-rose-400/50 focus:border-rose-400 focus:ring-rose-400/20"
@@ -71,7 +71,7 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
               "text-ink placeholder:text-ink-subtle",
               "outline-none",
               "transition-all duration-150",
-              "focus:ring-2 focus:bg-white/70",
+              "focus:ring-2 focus:bg-glass-strong",
               "disabled:opacity-50 disabled:cursor-not-allowed",
               inputSizeCls[inputSize],
               prefixIcon ? "pl-9" : "",

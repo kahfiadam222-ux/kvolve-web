@@ -16,6 +16,8 @@ import { createProject } from "@/lib/projects/localProjects";
 
 const CATEGORIES = ["Semua", "Trending", "Media Sosial", "Bisnis", "Edukasi", "Poster", "Presentasi"];
 
+// Warna kartu template SENGAJA statis (tidak ikut tema) — ini pratinjau
+// KONTEN template, bukan chrome aplikasi.
 const TEMPLATES = [
   { id: "t1", name: "Instagram Feed Minimalis", category: "Media Sosial", color: "from-violet-400 to-purple-600", accent: "rgba(139,92,246,0.3)" },
   { id: "t2", name: "Pitch Deck Startup", category: "Presentasi", color: "from-blue-400 to-cyan-500", accent: "rgba(37,99,235,0.3)" },
@@ -71,8 +73,8 @@ export function TemplateCenter() {
             className={[
               "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-150",
               activeCategory === cat
-                ? "bg-accent text-white shadow-glow"
-                : "bg-white/55 text-ink-muted border border-glass-border-strong hover:bg-white/80 hover:text-ink backdrop-blur-md",
+                ? "bg-accent text-cta-ink shadow-glow"
+                : "bg-glass text-ink-muted border border-glass-border-strong hover:bg-glass-strong hover:text-ink backdrop-blur-md",
             ].join(" ")}
           >
             {cat}
@@ -94,8 +96,7 @@ export function TemplateCenter() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative cursor-pointer overflow-hidden rounded-2xl border border-glass-border-strong bg-white/55 backdrop-blur-lg"
-              style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 2px 8px rgba(0,0,0,0.05)" }}
+              className="group relative cursor-pointer overflow-hidden rounded-2xl border border-glass-border-strong bg-glass shadow-card backdrop-blur-lg"
               onMouseEnter={() => setHoveredId(tpl.id)}
               onMouseLeave={() => setHoveredId(null)}
               onClick={handleUse}
@@ -129,7 +130,7 @@ export function TemplateCenter() {
                     transition={{ duration: 0.15 }}
                     className="absolute inset-0 flex items-center justify-center bg-ink/10 backdrop-blur-[2px]"
                   >
-                    <span className="rounded-full bg-white/90 px-4 py-1.5 text-[12px] font-semibold text-ink shadow-float backdrop-blur-md">
+                    <span className="rounded-full bg-[rgb(var(--kv-glass-rgb)/0.9)] px-4 py-1.5 text-[12px] font-semibold text-ink shadow-float backdrop-blur-md">
                       Gunakan Template
                     </span>
                   </motion.div>

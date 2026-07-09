@@ -52,7 +52,7 @@ export function StoryBar({
                 className="absolute inset-0 rounded-full animate-[spin_5s_linear_infinite] motion-reduce:animate-none"
                 style={{
                   background:
-                    "conic-gradient(from 0deg, #93c5fd, #60a5fa, #2563eb, #5eead4, #93c5fd)",
+                    "conic-gradient(from 0deg, rgb(var(--kv-accent-light)), rgb(var(--kv-accent)), rgb(var(--kv-mint-light)), rgb(var(--kv-accent-light)))",
                 }}
               />
               <span className="absolute inset-[2px] rounded-full bg-canvas" />

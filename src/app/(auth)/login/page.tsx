@@ -135,7 +135,7 @@ export default function LoginPage() {
             <h1 className="mt-6 text-2xl font-semibold tracking-tight sm:text-3xl">
               Satu kanvas, <span className="text-gradient">tanpa batas</span>
             </h1>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-stone-400">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted">
               Desain, PDF, dan layout HTML berbaur dalam satu ruang kerja
               kolaboratif — seperti warna yang membaur di air.
             </p>
@@ -151,7 +151,7 @@ export default function LoginPage() {
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink">{f.title}</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-stone-400">
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink-muted">
                     {f.desc}
                   </p>
                 </div>
@@ -165,13 +165,13 @@ export default function LoginPage() {
           <h2 className="text-lg font-semibold tracking-tight">
             Masuk ke ruang kerja
           </h2>
-          <p className="mt-1 text-sm text-stone-400">
+          <p className="mt-1 text-sm text-ink-muted">
             Coba tanpa akun, atau masuk dengan email/sosial media.
           </p>
 
           {/* ------------------------------------------------ Mode Tamu */}
           <div className="mt-6">
-            <label className="text-xs text-stone-400">
+            <label className="text-xs text-ink-muted">
               Nama tampilan (untuk kursor kolaborasi)
               <input
                 type="text"
@@ -180,13 +180,13 @@ export default function LoginPage() {
                 onKeyDown={(e) => e.key === "Enter" && enterAsGuest()}
                 placeholder={existingGuest ?? "mis. Kahfi"}
                 maxLength={40}
-                className="mt-1.5 w-full rounded-xl border border-glass-border bg-white/60 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
+                className="mt-1.5 w-full rounded-xl border border-glass-border bg-[rgb(var(--kv-glass-rgb)/0.6)] px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
               />
             </label>
             <button
               type="button"
               onClick={enterAsGuest}
-              className="mt-3 w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:from-blue-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-[0.98]"
+              className="kv-cta mt-3 w-full rounded-xl px-4 py-2.5 text-sm font-semibold shadow-glow transition-all hover:shadow-glow-strong active:scale-[0.98]"
             >
               {existingGuest && !guestName
                 ? `Lanjut sebagai ${existingGuest}`
@@ -194,7 +194,7 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="my-6 flex items-center gap-3 text-xs text-stone-500">
+          <div className="my-6 flex items-center gap-3 text-xs text-ink-subtle">
             <span className="h-px flex-1 bg-glass-border-subtle" />
             atau dengan akun
             <span className="h-px flex-1 bg-glass-border-subtle" />
@@ -254,7 +254,7 @@ export default function LoginPage() {
                 onKeyDown={(e) => e.key === "Enter" && void signInWithEmail()}
                 placeholder="nama@perusahaan.com"
                 disabled={!isSupabaseConfigured}
-                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-white/60 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35"
+                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-[rgb(var(--kv-glass-rgb)/0.6)] px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35"
               />
               <button
                 type="button"
@@ -268,14 +268,14 @@ export default function LoginPage() {
           </div>
 
           {!isSupabaseConfigured && (
-            <p className="mt-3 rounded-lg bg-canvas-soft px-3 py-2 text-[11px] leading-relaxed text-stone-500">
+            <p className="mt-3 rounded-lg bg-canvas-soft px-3 py-2 text-[11px] leading-relaxed text-ink-subtle">
               Login akun belum aktif — isi{" "}
-              <code className="text-stone-600">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
+              <code className="text-ink-strong">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
               &{" "}
-              <code className="text-stone-600">
+              <code className="text-ink-strong">
                 NEXT_PUBLIC_SUPABASE_ANON_KEY
               </code>{" "}
-              di <code className="text-stone-600">.env.local</code> untuk
+              di <code className="text-ink-strong">.env.local</code> untuk
               mengaktifkan Google/GitHub/email.
             </p>
           )}
@@ -292,7 +292,7 @@ export default function LoginPage() {
             </p>
           )}
 
-          <p className="mt-5 text-center text-xs text-stone-500">
+          <p className="mt-5 text-center text-xs text-ink-subtle">
             Dengan masuk, Anda menyetujui Ketentuan Layanan Kvolve.
           </p>
         </div>

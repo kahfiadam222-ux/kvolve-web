@@ -5,47 +5,50 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ─── Kvovle Crystal OS — "Ice Glass" palette ───────────────────────
-        // Background: clean ice white — workspace feels like frosted morning air.
-        // Glass: real crystal translucency: rgba(255,255,255,0.45).
-        // Accent: Ocean Blue — professional, calm, expensive.
-        // Secondary: Fresh Mint — creative contrast, Apple-adjacent.
-        // Text: Deep Navy on light — maximum legibility.
+        // ─── Liquid Intelligence — token layer berbasis CSS variables ──────
+        // Nilai sesungguhnya hidup di :root globals.css (default = Crystal
+        // "Ice Glass") dan bisa ditimpa runtime oleh ThemeProvider
+        // (src/lib/themes). Triplet RGB spasi agar slash-opacity Tailwind
+        // (mis. bg-canvas/60, border-accent/30) tetap terkomposisi.
 
-        canvas: "#F8FAFC",           // Ice White — main page background
-        "canvas-soft": "#EFF4FB",    // Slightly deeper for section contrast
+        canvas: "rgb(var(--kv-canvas) / <alpha-value>)",
+        "canvas-soft": "rgb(var(--kv-canvas-soft) / <alpha-value>)",
 
-        ink: "#111827",              // Deep Navy — primary text
-        "ink-muted": "#64748B",      // Slate — secondary/muted text
-        "ink-subtle": "#94A3B8",     // Light slate — hints / placeholders
+        ink: "rgb(var(--kv-ink) / <alpha-value>)",
+        "ink-muted": "rgb(var(--kv-ink-muted) / <alpha-value>)",
+        "ink-subtle": "rgb(var(--kv-ink-subtle) / <alpha-value>)",
+        "ink-strong": "rgb(var(--kv-ink-strong) / <alpha-value>)",
+
+        /** Warna teks di atas gradient CTA (tema gelap-emas memakai gelap). */
+        "cta-ink": "rgb(var(--kv-cta-ink) / <alpha-value>)",
 
         accent: {
-          DEFAULT: "#2563EB",        // Ocean Blue
-          light: "#3B82F6",          // Lighter blue
-          soft: "rgba(37,99,235,0.10)",   // Blue tint for hover/bg
-          glow: "rgba(37,99,235,0.25)",   // Blue glow for shadows
+          DEFAULT: "rgb(var(--kv-accent) / <alpha-value>)",
+          light: "rgb(var(--kv-accent-light) / <alpha-value>)",
+          soft: "rgb(var(--kv-accent) / 0.10)",
+          glow: "rgb(var(--kv-accent) / 0.25)",
         },
 
         mint: {
-          DEFAULT: "#14B8A6",        // Fresh Mint
-          soft: "rgba(20,184,166,0.12)",
-          light: "#2DD4BF",
+          DEFAULT: "rgb(var(--kv-mint) / <alpha-value>)",
+          soft: "rgb(var(--kv-mint) / 0.12)",
+          light: "rgb(var(--kv-mint-light) / <alpha-value>)",
         },
 
         glass: {
-          DEFAULT: "rgba(255,255,255,0.55)",   // Crystal glass panel
-          soft: "rgba(255,255,255,0.35)",       // Lighter glass
-          strong: "rgba(255,255,255,0.72)",     // Almost solid glass
-          border: "rgba(255,255,255,0.70)",     // Visible glass border
-          "border-subtle": "rgba(148,163,184,0.25)", // Subtle dividers
-          "border-strong": "rgba(203,213,225,0.60)", // Stronger borders
+          DEFAULT: "rgb(var(--kv-glass-rgb) / var(--kv-glass-a))",
+          soft: "rgb(var(--kv-glass-rgb) / var(--kv-glass-soft-a))",
+          strong: "rgb(var(--kv-glass-rgb) / var(--kv-glass-strong-a))",
+          border: "rgb(var(--kv-glass-border-rgb) / var(--kv-glass-border-a))",
+          "border-subtle": "rgb(var(--kv-ink-subtle) / 0.25)",
+          "border-strong": "rgb(var(--kv-glass-border-strong-rgb) / 0.60)",
         },
 
         // Crystal surface tints — for depth layering
         crystal: {
-          blue: "rgba(219,234,254,0.50)",      // Soft blue glass
-          mint: "rgba(204,251,241,0.50)",      // Soft mint glass
-          white: "rgba(248,250,252,0.80)",     // Near-white glass
+          blue: "rgb(var(--kv-accent-wash) / 0.50)",
+          mint: "rgb(var(--kv-mint-wash) / 0.50)",
+          white: "rgb(var(--kv-canvas) / 0.80)",
         },
       },
 
@@ -65,10 +68,12 @@ const config: Config = {
         // ─── Crystal shadow system ─────────────────────────────────────────
         // Multi-layer shadows that simulate real glass depth & lighting.
         // Named by metaphor (float, card, glass) not by size (sm/md/lg).
+        // Rim-light putih memakai --kv-inset-a agar tema gelap bisa
+        // meredupkannya (pola sama dengan float-dark).
 
         // Floating glass panels — toolbar, dock, modal
         float: [
-          "0 1px 0 rgba(255,255,255,0.9) inset",    // top edge highlight
+          "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
           "0 2px 4px rgba(0,0,0,0.04)",
           "0 8px 24px rgba(0,0,0,0.06)",
           "0 24px 48px rgba(0,0,0,0.08)",
@@ -76,43 +81,46 @@ const config: Config = {
 
         // Cards — project cards, studio cards, template cards
         card: [
-          "0 1px 0 rgba(255,255,255,0.9) inset",
+          "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
           "0 1px 2px rgba(0,0,0,0.04)",
           "0 4px 16px rgba(0,0,0,0.06)",
         ].join(", "),
 
         // Hovered cards — lift effect
         "card-hover": [
-          "0 1px 0 rgba(255,255,255,0.9) inset",
+          "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
           "0 4px 8px rgba(0,0,0,0.06)",
           "0 12px 32px rgba(0,0,0,0.10)",
-          "0 0 0 1px rgba(37,99,235,0.15)",
+          "0 0 0 1px rgb(var(--kv-accent) / 0.15)",
         ].join(", "),
 
         // Glass panels — sidebars, inspectors
         glass: [
-          "0 1px 0 rgba(255,255,255,0.9) inset",
+          "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
           "0 1px 2px rgba(0,0,0,0.03)",
           "0 8px 32px rgba(0,0,0,0.08)",
         ].join(", "),
 
         // Primary CTA glow
         glow: [
-          "0 0 0 1px rgba(37,99,235,0.3)",
-          "0 0 12px rgba(37,99,235,0.25)",
-          "0 4px 16px rgba(37,99,235,0.20)",
+          "0 0 0 1px rgb(var(--kv-accent) / 0.3)",
+          "0 0 12px rgb(var(--kv-accent) / 0.25)",
+          "0 4px 16px rgb(var(--kv-accent) / 0.20)",
         ].join(", "),
+
+        // Stronger CTA hover glow (menggantikan literal shadow-[0_0_20px_...])
+        "glow-strong": "0 0 20px rgb(var(--kv-accent) / 0.4)",
 
         // Mint accent glow
         "glow-mint": [
-          "0 0 0 1px rgba(20,184,166,0.3)",
-          "0 0 12px rgba(20,184,166,0.20)",
+          "0 0 0 1px rgb(var(--kv-mint) / 0.3)",
+          "0 0 12px rgb(var(--kv-mint) / 0.20)",
         ].join(", "),
 
         // Subtle inner glow for glass tops
-        "inner-shine": "0 1px 0 rgba(255,255,255,0.95) inset",
+        "inner-shine": "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
 
-        // Canvas editor dark panels
+        // Canvas editor dark panels (identitas editor — tidak ikut tema)
         "float-dark": [
           "0 1px 0 rgba(255,255,255,0.08) inset",
           "0 2px 4px rgba(0,0,0,0.4)",
@@ -217,10 +225,10 @@ const config: Config = {
         "slide-in-right": "slide-in-right 0.35s cubic-bezier(0.22, 1, 0.36, 1) both",
         "slide-in-left": "slide-in-left 0.35s cubic-bezier(0.22, 1, 0.36, 1) both",
 
-        // Ambient
-        "float-a": "float-a 18s ease-in-out infinite",
-        "float-b": "float-b 22s ease-in-out infinite",
-        "float-c": "float-c 26s ease-in-out infinite",
+        // Ambient — durasi mengikuti --kv-motion-scale per tema
+        "float-a": "float-a calc(18s * var(--kv-motion-scale)) ease-in-out infinite",
+        "float-b": "float-b calc(22s * var(--kv-motion-scale)) ease-in-out infinite",
+        "float-c": "float-c calc(26s * var(--kv-motion-scale)) ease-in-out infinite",
 
         // Micro
         "pulse-soft": "pulse-soft 1.8s ease-in-out infinite",

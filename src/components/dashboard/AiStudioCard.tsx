@@ -57,7 +57,7 @@ export function AiStudioCard({ onOpenAi }: { onOpenAi: () => void }) {
               onClick={onOpenAi}
               className="flex items-start gap-3 rounded-xl p-3 text-left transition-colors hover:bg-accent-soft"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-sky-50 text-sm font-bold text-accent">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-sm font-bold text-accent">
                 {f.icon}
               </span>
               <span>
@@ -78,7 +78,7 @@ export function AiStudioCard({ onOpenAi }: { onOpenAi: () => void }) {
                 key={s}
                 type="button"
                 onClick={onOpenAi}
-                className="rounded-full border border-glass-border-strong bg-white/60 px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
+                className="rounded-full border border-glass-border-strong bg-glass px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
               >
                 {s}
               </button>

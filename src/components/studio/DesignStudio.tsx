@@ -363,7 +363,7 @@ export function DesignStudio({
                 onClick={() =>
                   customPx && apply(customPx.width, customPx.height)
                 }
-                className="mt-5 w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:from-blue-500 hover:to-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:shadow-none"
+                className="kv-cta mt-5 w-full rounded-xl px-4 py-2.5 text-sm font-semibold shadow-glow transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:shadow-none"
               >
                 Buat Kanvas Baru
               </button>

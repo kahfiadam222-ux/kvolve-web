@@ -93,7 +93,7 @@ export function ProfileView({ username }: { username: string }) {
                 className="h-24 sm:h-28"
                 style={{
                   background:
-                    "linear-gradient(120deg,#3B82F6 0%,#2563EB 55%,#14B8A6 100%)",
+                    "linear-gradient(120deg, rgb(var(--kv-accent-light)) 0%, rgb(var(--kv-accent)) 55%, rgb(var(--kv-mint)) 100%)",
                 }}
               />
 
@@ -134,7 +134,7 @@ export function ProfileView({ username }: { username: string }) {
                     className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
                       following
                         ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
-                        : "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-glow hover:from-blue-500 hover:to-blue-400"
+                        : "kv-cta shadow-glow"
                     }`}
                   >
                     {following ? "Mengikuti ✓" : "Ikuti"}

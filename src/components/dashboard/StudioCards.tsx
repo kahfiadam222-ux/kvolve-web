@@ -21,13 +21,18 @@ interface StudioType {
   glow: string;
 }
 
+/**
+ * Kartu ber-aksen brand (blank/ai/document) memakai token tema; kartu
+ * lain (social/presentation/marketing) SENGAJA mempertahankan warna
+ * identitas platformnya — itu konten kategori, bukan chrome tema.
+ */
 const STUDIO_TYPES: StudioType[] = [
   {
     id: "blank",
     label: "Kanvas Kosong",
     sublabel: "Mulai dari nol",
-    gradient: "from-blue-500/15 to-sky-400/10",
-    glow: "rgba(37,99,235,0.15)",
+    gradient: "from-accent-light/15 to-accent-light/10",
+    glow: "rgb(var(--kv-accent) / 0.15)",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
         <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.6" />
@@ -68,8 +73,8 @@ const STUDIO_TYPES: StudioType[] = [
     id: "document",
     label: "Dokumen",
     sublabel: "A4 · Letter · Print",
-    gradient: "from-teal-500/15 to-emerald-400/10",
-    glow: "rgba(20,184,166,0.15)",
+    gradient: "from-mint/15 to-mint-light/10",
+    glow: "rgb(var(--kv-mint) / 0.15)",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6" />
@@ -95,8 +100,8 @@ const STUDIO_TYPES: StudioType[] = [
     id: "ai",
     label: "AI Creator",
     sublabel: "Buat dengan AI",
-    gradient: "from-blue-600/20 to-teal-400/15",
-    glow: "rgba(37,99,235,0.20)",
+    gradient: "from-accent/20 to-mint-light/15",
+    glow: "rgb(var(--kv-accent) / 0.2)",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2Z" stroke="currentColor" strokeWidth="1.6" />
@@ -175,8 +180,7 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
             variants={cardVariants}
             type="button"
             onClick={() => handleCardClick(type.id)}
-            className="glass-sheen group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-glass-border-strong bg-white/55 p-5 text-center backdrop-blur-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
-            style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
+            className="glass-sheen group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-glass-border-strong bg-glass p-5 text-center backdrop-blur-lg shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
           >
             {/* Gradient accent background */}
             <div
@@ -185,8 +189,8 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
 
             {/* Icon */}
             <div
-              className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-white/70 text-ink-muted shadow-inner-shine transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
-              style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 2px 8px rgba(0,0,0,0.06)" }}
+              className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-glass-strong text-ink-muted transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
+              style={{ boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 2px 8px rgba(0,0,0,0.06)" }}
             >
               {type.icon}
             </div>

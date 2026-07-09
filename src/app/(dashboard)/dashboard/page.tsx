@@ -39,7 +39,7 @@ export default function DashboardPage() {
         <TemplateCenter />
         <ProjectGallery />
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-glass-border bg-glass-soft px-4 py-2 text-xs text-stone-400 backdrop-blur-sm">
+        <div className="inline-flex items-center gap-2 rounded-full border border-glass-border bg-glass-soft px-4 py-2 text-xs text-ink-subtle backdrop-blur-sm">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0 text-accent">
             <path
               d="M12 21c4.5-3.5 7-6.9 7-10.5A7 7 0 0 0 5 10.5C5 14.1 7.5 17.5 12 21Z"

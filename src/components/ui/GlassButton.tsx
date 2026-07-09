@@ -29,12 +29,14 @@ interface GlassButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantCls: Record<GlassButtonVariant, string> = {
+  // Gradient CTA memakai .kv-cta/.kv-cta-mint (globals.css) — endpoint &
+  // warna teksnya var-driven sehingga ikut tema aktif.
   primary: [
-    "bg-gradient-to-r from-blue-600 to-blue-500",
-    "text-white font-semibold",
-    "border border-blue-400/30",
+    "kv-cta",
+    "font-semibold",
+    "border border-accent-light/30",
     "shadow-glow",
-    "hover:from-blue-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)]",
+    "hover:shadow-glow-strong",
     "active:scale-[0.97]",
   ].join(" "),
 
@@ -42,7 +44,7 @@ const variantCls: Record<GlassButtonVariant, string> = {
     "crystal-panel",
     "text-accent font-medium",
     "border border-accent/20",
-    "hover:border-accent/40 hover:bg-white/70",
+    "hover:border-accent/40 hover:bg-glass-strong",
     "active:scale-[0.98]",
   ].join(" "),
 
@@ -50,16 +52,15 @@ const variantCls: Record<GlassButtonVariant, string> = {
     "bg-transparent",
     "text-ink-muted",
     "border border-transparent",
-    "hover:bg-white/60 hover:border-glass-border-strong hover:text-ink hover:shadow-card",
+    "hover:bg-glass hover:border-glass-border-strong hover:text-ink hover:shadow-card",
     "active:scale-[0.97]",
   ].join(" "),
 
   mint: [
-    "bg-gradient-to-r from-teal-500 to-emerald-400",
-    "text-white font-semibold",
-    "border border-teal-400/30",
+    "kv-cta-mint",
+    "font-semibold",
+    "border border-mint-light/30",
     "shadow-glow-mint",
-    "hover:from-teal-400 hover:to-emerald-300",
     "active:scale-[0.97]",
   ].join(" "),
 

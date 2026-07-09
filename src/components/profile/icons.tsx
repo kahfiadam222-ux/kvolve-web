@@ -52,8 +52,9 @@ export function VerifiedBadge({ className = "h-4 w-4" }: { className?: string })
     <svg viewBox="0 0 24 24" className={className} aria-label="Kreator terverifikasi" role="img">
       <defs>
         <linearGradient id="kv-verified" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#60A5FA" />
-          <stop offset="1" stopColor="#2563EB" />
+          {/* stop-color via CSS var — lencana ikut aksen tema aktif */}
+          <stop offset="0" style={{ stopColor: "rgb(var(--kv-accent-light))" }} />
+          <stop offset="1" style={{ stopColor: "rgb(var(--kv-accent))" }} />
         </linearGradient>
       </defs>
       <path

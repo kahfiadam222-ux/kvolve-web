@@ -79,7 +79,7 @@ export function ProjectGallery() {
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="bg-shimmer h-52 rounded-2xl border border-glass-border-strong bg-white/40"
+            className="bg-shimmer h-52 rounded-2xl border border-glass-border-strong bg-[rgb(var(--kv-glass-rgb)/0.4)]"
           />
         ))}
       </div>
@@ -87,7 +87,7 @@ export function ProjectGallery() {
   }
 
   const iconBtn =
-    "grid h-7 w-7 place-items-center rounded-lg text-ink-subtle transition-all hover:bg-slate-100 hover:text-ink-muted";
+    "grid h-7 w-7 place-items-center rounded-lg text-ink-subtle transition-all hover:bg-canvas-soft hover:text-ink-muted";
 
   return (
     <>
@@ -105,7 +105,7 @@ export function ProjectGallery() {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-glow transition-all hover:from-blue-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-[0.97]"
+          className="kv-cta inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-glow transition-all hover:shadow-glow-strong active:scale-[0.97]"
         >
           <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden>
             <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -122,7 +122,7 @@ export function ProjectGallery() {
           <GlassCard noHover className="flex flex-col items-center px-8 py-16 text-center">
             <div
               className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl"
-              style={{ background: "linear-gradient(135deg,#dbeafe,#ccfbf1)" }}
+              style={{ background: "linear-gradient(135deg, rgb(var(--kv-accent-wash)), rgb(var(--kv-mint-wash)))" }}
             >
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden className="text-accent">
                 <path
@@ -161,8 +161,7 @@ export function ProjectGallery() {
               >
                 <Link
                   href={`/canvas/${p.id}`}
-                  className="glass-sheen block overflow-hidden rounded-2xl border border-glass-border-strong bg-white/55 backdrop-blur-lg transition-all duration-200 hover:-translate-y-1"
-                  style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
+                  className="glass-sheen block overflow-hidden rounded-2xl border border-glass-border-strong bg-glass shadow-card backdrop-blur-lg transition-all duration-200 hover:-translate-y-1"
                 >
                   {/* Thumbnail */}
                   <div
@@ -191,7 +190,7 @@ export function ProjectGallery() {
                           if (e.key === "Escape") setRenamingId(null);
                         }}
                         onClick={(e) => e.preventDefault()}
-                        className="w-full rounded-lg border border-accent/30 bg-white/70 px-2.5 py-1 text-sm font-medium text-ink outline-none focus:ring-2 focus:ring-accent/20"
+                        className="w-full rounded-lg border border-accent/30 bg-glass-strong px-2.5 py-1 text-sm font-medium text-ink outline-none focus:ring-2 focus:ring-accent/20"
                       />
                     ) : (
                       <>
@@ -249,9 +248,9 @@ export function ProjectGallery() {
               <button
                 type="button"
                 onClick={onCreate}
-                className="group flex h-full min-h-[190px] w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 bg-white/20 text-ink-subtle transition-all duration-200 hover:border-accent/30 hover:bg-white/40 hover:text-accent backdrop-blur-sm"
+                className="group flex h-full min-h-[190px] w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-ink-subtle/40 bg-[rgb(var(--kv-glass-rgb)/0.2)] text-ink-subtle transition-all duration-200 hover:border-accent/30 hover:bg-[rgb(var(--kv-glass-rgb)/0.4)] hover:text-accent backdrop-blur-sm"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100/80 transition-all group-hover:bg-accent/10 group-hover:scale-110">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-canvas-soft/80 transition-all group-hover:bg-accent/10 group-hover:scale-110">
                   <svg width="18" height="18" viewBox="0 0 14 14" aria-hidden>
                     <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                   </svg>
@@ -266,7 +265,11 @@ export function ProjectGallery() {
   );
 }
 
-/** Crystal thumbnail gradients — clean, professional, no amber */
+/**
+ * Crystal thumbnail gradients — clean, professional, no amber.
+ * SENGAJA statis (tidak ikut tema): ini pratinjau KONTEN proyek, bukan
+ * chrome aplikasi — warna tema tidak boleh mengubah representasi karya.
+ */
 const THUMB_GRADIENTS = [
   "linear-gradient(135deg, #dbeafe, #93c5fd)",
   "linear-gradient(135deg, #ccfbf1, #5eead4)",

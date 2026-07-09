@@ -26,7 +26,7 @@ interface GlassPanelProps extends HTMLAttributes<HTMLDivElement> {
 const variantStyles: Record<GlassPanelVariant, string> = {
   default: "crystal-panel",
   soft: "crystal-panel-soft",
-  strong: "bg-white/75 backdrop-blur-2xl border border-white/80 shadow-float",
+  strong: "bg-glass-strong backdrop-blur-2xl border border-glass-border shadow-float",
   dark: "glass-dark",
 };
 
