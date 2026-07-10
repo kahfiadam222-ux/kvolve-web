@@ -5,6 +5,7 @@ import { useCanvasStore } from "@/stores/canvasStore";
 import { getActiveTheme, subscribeTheme } from "@/lib/themes/themeStore";
 import { scoreDesign, type DesignIntelResult } from "@/lib/design-intel/scoreDesign";
 import { BOARD_EXPAND_EVENT } from "./TrendingBoard";
+import { KvLoader } from "@/components/ui/KvLoader";
 
 const STORAGE_KEY = "kvolve:design-intel-expanded";
 const DEBOUNCE_MS = 800;
@@ -171,7 +172,9 @@ export function DesignIntelBoard() {
               })()}
             </>
           ) : (
-            <p className="text-[11px] text-ink-muted">Menghitung…</p>
+            <div className="py-3">
+              <KvLoader fullscreen={false} size="sm" label="Menghitung skor…" />
+            </div>
           )}
         </div>
       )}

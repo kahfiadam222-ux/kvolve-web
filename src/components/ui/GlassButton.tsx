@@ -36,8 +36,8 @@ const variantCls: Record<GlassButtonVariant, string> = {
     "font-semibold",
     "border border-accent-light/30",
     "shadow-glow",
-    "hover:shadow-glow-strong",
-    "active:scale-[0.97]",
+    "hover:shadow-glow-strong hover:-translate-y-px",
+    "active:scale-[0.97] active:translate-y-0",
   ].join(" "),
 
   secondary: [
@@ -61,7 +61,8 @@ const variantCls: Record<GlassButtonVariant, string> = {
     "font-semibold",
     "border border-mint-light/30",
     "shadow-glow-mint",
-    "active:scale-[0.97]",
+    "hover:-translate-y-px",
+    "active:scale-[0.97] active:translate-y-0",
   ].join(" "),
 
   danger: [

@@ -89,7 +89,15 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 6, scale: 0.98 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className="kv-lux-ring fixed inset-x-4 top-[4.25rem] z-50 overflow-hidden rounded-2xl border border-glass-border bg-glass-strong shadow-float backdrop-blur-xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80"
+        className="kv-lux-ring fixed inset-x-4 top-[4.25rem] z-50 overflow-hidden rounded-2xl border border-glass-border shadow-float sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80"
+        style={{
+          // Material sepekat panel AiOrb — teks di belakang tidak menembus.
+          background: "rgb(var(--kv-glass-rgb) / 0.9)",
+          backdropFilter:
+            "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
+          WebkitBackdropFilter:
+            "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
+        }}
         role="dialog"
         aria-label="Pengaturan aplikasi"
       >

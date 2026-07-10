@@ -37,13 +37,22 @@ export function CreativeHero({ onOpenAi }: { onOpenAi: () => void }) {
         rounded="3xl"
         className="kv-lux-ring relative overflow-hidden px-6 py-9 sm:px-10 sm:py-12"
       >
-        {/* Cahaya ambient sudut — kedalaman lembut, ikut warna tema */}
+        {/* Cahaya ambient dua sudut — safir kanan-atas + emas kiri-bawah:
+            keseimbangan cahaya "studio", kedalaman lembut, ikut tema */}
         <div
           aria-hidden
           className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full opacity-60 blur-3xl"
           style={{
             background:
-              "radial-gradient(circle, rgb(var(--kv-accent) / 0.18), rgb(var(--kv-mint) / 0.10) 55%, transparent 75%)",
+              "radial-gradient(circle, rgb(var(--kv-accent) / 0.18), rgb(var(--kv-grad-mid) / 0.10) 55%, transparent 75%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-28 -left-20 h-60 w-60 rounded-full opacity-50 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle, rgb(var(--kv-mint) / 0.14), transparent 70%)",
           }}
         />
 
@@ -54,6 +63,10 @@ export function CreativeHero({ onOpenAi }: { onOpenAi: () => void }) {
           Mau membuat apa{" "}
           <span className="text-gradient">hari ini?</span>
         </h1>
+        <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-muted">
+          Asisten AI yang membantu brand-mu bertumbuh — desain, tren pasar,
+          dan skor kualitas dalam satu studio.
+        </p>
 
         {/* Enter/kirim = buka AI Studio (AiOrb) — input bukan lagi hiasan */}
         <form

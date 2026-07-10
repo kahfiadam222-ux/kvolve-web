@@ -229,7 +229,9 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
               {/* Header */}
               <div className="flex items-center justify-between border-b border-glass-border-subtle px-5 py-4">
                 <div className="flex items-center gap-3">
-                  {/* Mini orb — cincin berputar saat berpikir/generating */}
+                  {/* Mini orb — cincin berputar saat berpikir/generating,
+                      inti berdenyut (energi internal), gelombang sekali
+                      saat sukses: asisten terasa hidup, bukan tombol. */}
                   <div className="relative h-8 w-8 shrink-0">
                     {(phase === "thinking" || phase === "generating") && (
                       <span
@@ -242,13 +244,28 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                         }}
                       />
                     )}
+                    {phase === "success" && !skipTheater && (
+                      <span
+                        aria-hidden
+                        className="kv-complete-wave absolute -inset-1 rounded-full motion-reduce:hidden"
+                        style={{
+                          border: "2px solid rgb(var(--kv-mint) / 0.7)",
+                        }}
+                      />
+                    )}
                     <div className="h-8 w-8 overflow-hidden rounded-full"
                       style={{
                         background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgb(var(--kv-accent-wash) / 0.6) 30%, rgb(var(--kv-accent) / 0.6) 70%, rgb(var(--kv-mint) / 0.8))",
                         boxShadow: "0 0 12px rgb(var(--kv-accent) / 0.25), 0 1px 0 rgba(255,255,255,0.5) inset",
                       }}
                     >
-                      <div className="absolute left-1 top-0.5 h-3 w-3 rounded-full bg-white/50 blur-[4px]" />
+                      <div
+                        className={`absolute left-1 top-0.5 h-3 w-3 rounded-full bg-white/50 blur-[4px] ${
+                          phase === "thinking" || phase === "generating"
+                            ? "animate-pulse-soft"
+                            : ""
+                        }`}
+                      />
                     </div>
                   </div>
                   <div>

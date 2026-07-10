@@ -24,7 +24,7 @@ export default function DashboardPage() {
     <div className="relative min-h-dvh text-ink">
       <CrystalBackdrop />
 
-      <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/60 backdrop-blur-md">
+      <nav className="kv-hairline-b sticky top-0 z-10 border-b border-glass-border bg-canvas/60 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 sm:px-6">
           <div className="flex items-center gap-2.5">
             <KvolveMark className="h-7 w-7" />

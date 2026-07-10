@@ -10,13 +10,20 @@
 export function KvLoader({
   label = "Memuat…",
   fullscreen = true,
+  size = "md",
 }: {
   label?: string;
   fullscreen?: boolean;
+  /** "sm" untuk panel sempit (mis. papan Skor AI). */
+  size?: "sm" | "md";
 }) {
+  const sm = size === "sm";
   const orb = (
-    <div className="flex flex-col items-center gap-4">
-      <span className="relative grid h-14 w-14 place-items-center" aria-hidden>
+    <div className={`flex flex-col items-center ${sm ? "gap-2" : "gap-4"}`}>
+      <span
+        className={`relative grid place-items-center ${sm ? "h-9 w-9" : "h-14 w-14"}`}
+        aria-hidden
+      >
         {/* Cincin conic berputar — identitas sama dengan orb AiOrb */}
         <span
           className="absolute inset-0 animate-spin rounded-full motion-reduce:animate-none"
@@ -30,7 +37,7 @@ export function KvLoader({
         />
         {/* Bola kristal di tengah */}
         <span
-          className="h-9 w-9 rounded-full"
+          className={`rounded-full ${sm ? "h-6 w-6" : "h-9 w-9"}`}
           style={{
             background:
               "linear-gradient(135deg, rgba(255,255,255,0.95), rgb(var(--kv-accent-wash) / 0.7) 40%, rgb(var(--kv-accent) / 0.45) 80%, rgb(var(--kv-mint) / 0.6))",
@@ -41,7 +48,7 @@ export function KvLoader({
       </span>
       <p
         role="status"
-        className="animate-pulse-soft text-sm font-medium text-ink-muted"
+        className={`animate-pulse-soft font-medium text-ink-muted ${sm ? "text-xs" : "text-sm"}`}
       >
         {label}
       </p>

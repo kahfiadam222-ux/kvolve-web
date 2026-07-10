@@ -59,6 +59,9 @@ export function ThemePanel({ onClose }: { onClose: () => void }) {
   // Alasan rekomendasi persona terakhir yang disentuh — pengganti tooltip
   // `title` yang tidak pernah muncul di layar sentuh.
   const [personaWhy, setPersonaWhy] = useState<string | null>(null);
+  // Tema yang direkomendasikan untuk persona terpilih — diberi badge emas
+  // "Rekomendasi AI" di grid supaya pilihan terasa personal.
+  const [recommendedId, setRecommendedId] = useState<string | null>(null);
   const comfort = useComfort();
   const activeId = useSyncExternalStore(
     subscribeTheme,
@@ -99,7 +102,16 @@ export function ThemePanel({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 6, scale: 0.98 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed inset-x-4 top-[4.25rem] z-50 overflow-hidden rounded-2xl border border-glass-border bg-glass-strong shadow-float backdrop-blur-xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80"
+        className="kv-lux-ring fixed inset-x-4 top-[4.25rem] z-50 overflow-hidden rounded-2xl border border-glass-border shadow-float sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80"
+        style={{
+          // Material sepekat panel AiOrb: konten ramai di belakang tidak
+          // menembus teks (dulu bg-glass-strong terlalu transparan).
+          background: "rgb(var(--kv-glass-rgb) / 0.9)",
+          backdropFilter:
+            "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
+          WebkitBackdropFilter:
+            "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
+        }}
         role="dialog"
         aria-label="Personalisasi tampilan"
       >
@@ -150,6 +162,7 @@ export function ThemePanel({ onClose }: { onClose: () => void }) {
                   onClick={() => {
                     setActiveTheme(p.themeId);
                     setPersonaWhy(p.why);
+                    setRecommendedId(p.themeId);
                   }}
                   className="rounded-full border border-glass-border-strong bg-glass px-3 py-1.5 text-[11px] font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent active:scale-95"
                 >
@@ -176,9 +189,9 @@ export function ThemePanel({ onClose }: { onClose: () => void }) {
                     onClick={() => setActiveTheme(t.id)}
                     aria-pressed={active}
                     title={`${t.tagline} · Material ${GLASS_MATERIALS[t.material].label}`}
-                    className={`overflow-hidden rounded-xl border text-left transition-all ${
+                    className={`overflow-hidden rounded-xl border text-left transition-all duration-300 ${
                       active
-                        ? "border-accent ring-2 ring-accent/30"
+                        ? "border-accent shadow-glow ring-2 ring-accent/30"
                         : "border-glass-border-strong hover:border-accent/40"
                     }`}
                   >
@@ -187,6 +200,12 @@ export function ThemePanel({ onClose }: { onClose: () => void }) {
                       className="relative h-12"
                       style={{ background: `rgb(${t.vars["--kv-canvas"]})` }}
                     >
+                      {/* Badge rekomendasi AI — muncul setelah persona dipilih */}
+                      {recommendedId === t.id && (
+                        <span className="absolute right-1 top-1 rounded-full bg-mint px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-cta-ink shadow-sm">
+                          ✦ Rekomendasi AI
+                        </span>
+                      )}
                       <div
                         className="absolute inset-x-2 bottom-1.5 h-4 rounded-md"
                         style={{
