@@ -3,28 +3,34 @@
 @tailwind utilities;
 
 /* ─── Liquid Intelligence — kontrak CSS variable ─────────────────────────────
- * Default = tema "Crystal Intelligence" (nilai Ice Glass yang sama persis
- * dengan era hardcoded — first paint identik tanpa JS). ThemeProvider
- * (src/lib/themes) menimpa variabel ini di <html> saat tema lain aktif.
+ * Default = tema "Royal Atelier" (rebrand premium dari Crystal Intelligence):
+ * safir royal #2E4FC3 + emas antik #9E752B + jembatan amethyst #7D5AD1 di
+ * atas porselen hangat, ink midnight bernuansa violet — sengaja menjauh dari
+ * hex standar Tailwind. Kontras dihitung manual: ink/canvas 15.9:1,
+ * ink-muted 6.2:1, aksen-sebagai-teks 6.4:1, emas-sebagai-teks-bold 3.9:1,
+ * putih di seluruh rentang gradient CTA ≥ 3.2:1.
+ * Nilai di sini HARUS identik dengan spec "crystal-intelligence" di
+ * themeData.ts (first paint tanpa JS == tema default). ThemeProvider
+ * menimpa variabel ini di <html> saat tema lain aktif.
  * Warna komposabel = triplet RGB spasi (dipakai rgb(var(--x) / alpha)).
  */
 :root {
   /* Warna inti */
-  --kv-canvas: 248 250 252;
-  --kv-canvas-soft: 239 244 251;
-  --kv-ink: 17 24 39;
-  --kv-ink-muted: 100 116 139;
-  --kv-ink-subtle: 148 163 184;
-  --kv-ink-strong: 71 85 105;
-  --kv-accent: 37 99 235;
-  --kv-accent-light: 59 130 246;
-  --kv-accent-deep: 29 78 216;
-  --kv-accent-wash: 219 234 254;
-  --kv-wash-soft: 239 246 255;
-  --kv-mint: 20 184 166;
-  --kv-mint-light: 45 212 191;
-  --kv-mint-wash: 204 251 241;
-  --kv-grad-mid: 14 165 233;
+  --kv-canvas: 247 245 242;
+  --kv-canvas-soft: 239 236 230;
+  --kv-ink: 25 26 35;
+  --kv-ink-muted: 93 90 102;
+  --kv-ink-subtle: 143 140 151;
+  --kv-ink-strong: 68 66 78;
+  --kv-accent: 46 79 195;
+  --kv-accent-light: 90 118 224;
+  --kv-accent-deep: 34 57 143;
+  --kv-accent-wash: 226 230 247;
+  --kv-wash-soft: 242 244 251;
+  --kv-mint: 158 117 43;
+  --kv-mint-light: 201 163 86;
+  --kv-mint-wash: 243 238 230;
+  --kv-grad-mid: 125 90 209;
   --kv-cta-ink: 255 255 255;
 
   /* Material kaca */
@@ -34,32 +40,32 @@
   --kv-glass-strong-a: 0.72;
   --kv-glass-border-rgb: 255 255 255;
   --kv-glass-border-a: 0.7;
-  --kv-glass-border-strong-rgb: 203 213 225;
+  --kv-glass-border-strong-rgb: 211 204 192;
   --kv-inset-a: 0.9;
   --kv-blur-scale: 1;
   --kv-sheen-a: 0.35;
 
-  /* Atmosfer (CrystalBackdrop) — string warna penuh, tidak dikomposisi */
-  --kv-blob-1a: rgba(186, 230, 253, 0.55);
-  --kv-blob-1b: rgba(147, 197, 253, 0.3);
-  --kv-blob-2a: rgba(196, 181, 253, 0.3);
-  --kv-blob-2b: rgba(167, 139, 250, 0.15);
-  --kv-blob-3a: rgba(153, 246, 228, 0.3);
-  --kv-blob-3b: rgba(94, 234, 212, 0.15);
-  --kv-blob-4a: rgba(186, 230, 253, 0.35);
-  --kv-blob-4b: rgba(147, 197, 253, 0.18);
-  --kv-blob-5a: rgba(224, 242, 254, 0.5);
+  /* Atmosfer (CrystalBackdrop) — safir/amethyst/emas pastel di porselen */
+  --kv-blob-1a: rgba(90, 118, 224, 0.5);
+  --kv-blob-1b: rgba(46, 79, 195, 0.26);
+  --kv-blob-2a: rgba(125, 90, 209, 0.28);
+  --kv-blob-2b: rgba(125, 90, 209, 0.14);
+  --kv-blob-3a: rgba(158, 117, 43, 0.24);
+  --kv-blob-3b: rgba(201, 163, 86, 0.13);
+  --kv-blob-4a: rgba(90, 118, 224, 0.32);
+  --kv-blob-4b: rgba(46, 79, 195, 0.16);
+  --kv-blob-5a: rgba(173, 187, 240, 0.5);
   --kv-noise-a: 0.018;
 
   /* Gradient CTA (dipakai .kv-cta / .kv-cta-mint) */
-  --kv-cta-from: #2563eb;
-  --kv-cta-to: #3b82f6;
-  --kv-cta-from-hover: #3b82f6;
-  --kv-cta-to-hover: #60a5fa;
-  --kv-cta-mint-from: #14b8a6;
-  --kv-cta-mint-to: #34d399;
-  --kv-cta-mint-from-hover: #2dd4bf;
-  --kv-cta-mint-to-hover: #6ee7b7;
+  --kv-cta-from: #2e4fc3;
+  --kv-cta-to: #5a54d9;
+  --kv-cta-from-hover: #3e5ed3;
+  --kv-cta-to-hover: #6d67e4;
+  --kv-cta-mint-from: #8f6a26;
+  --kv-cta-mint-to: #b08a45;
+  --kv-cta-mint-from-hover: #9e752b;
+  --kv-cta-mint-to-hover: #b98f49;
 
   /* Gerak */
   --kv-motion-scale: 1;
@@ -407,6 +413,56 @@
   }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+
+  /* ─── Lux ring — border hairline gradient (kaca premium) ──────────────────
+     Teknik mask-composite: gradient hanya mengisi cincin 1px, konten bebas.
+     Murah: satu elemen pseudo, tanpa filter/shadow tambahan. */
+  .kv-lux-ring {
+    position: relative;
+  }
+  .kv-lux-ring::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, calc(var(--kv-inset-a) * 0.95)) 0%,
+      rgb(var(--kv-accent) / 0.35) 35%,
+      rgb(var(--kv-mint) / 0.4) 65%,
+      rgba(255, 255, 255, calc(var(--kv-inset-a) * 0.5)) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ─── Spatial carousel (slide 3D ala Vision Pro) ──────────────────────────
+     Transform per-slide dihitung SpatialCarousel.tsx (rAF, tanpa state React).
+     Di sini hanya kerangka snap + perspektif. */
+  .kv-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    perspective: 1200px;
+    scrollbar-width: none;
+  }
+  .kv-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .kv-carousel > * {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
   }
 
   /* ─── Dock active indicator ───────────────────────────────────────────── */

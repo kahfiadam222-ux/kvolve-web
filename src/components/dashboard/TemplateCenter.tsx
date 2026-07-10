@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { createProject } from "@/lib/projects/localProjects";
-import { TiltCard } from "@/components/effects/TiltCard";
+import { SpatialCarousel } from "@/components/effects/SpatialCarousel";
 
 /**
  * TemplateCenter — Template discovery section.
@@ -83,66 +83,62 @@ export function TemplateCenter() {
         ))}
       </div>
 
-      {/* Template cards */}
-      <motion.div
-        layout
-        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+      {/* Deret slide spasial ala Vision Pro — kartu pusat frontal, kartu
+          sisi menekuk menjauh; geser/swipe dengan snap. key per kategori
+          me-reset posisi scroll saat filter berganti. Padding inline =
+          max(tepi, 50% - ½lebar-slide) supaya kartu tepi bisa snap ke pusat.
+          (TiltCard tidak dipakai di sini — rotasi slide SUDAH lapisan 3D-nya;
+          dua transform bertumpuk saling bertengkar secara visual.) */}
+      <SpatialCarousel
+        key={activeCategory}
+        className="-mx-5 animate-fade-in gap-4 px-[max(1.25rem,calc(50%-7rem))] py-3 sm:mx-0 sm:gap-5"
       >
-        <AnimatePresence mode="popLayout">
-          {filtered.map((tpl) => (
-            <motion.div
-              key={tpl.id}
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative cursor-pointer overflow-hidden rounded-2xl border border-glass-border-strong bg-glass shadow-card backdrop-blur-lg"
-              onMouseEnter={() => setHoveredId(tpl.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              onClick={handleUse}
-            >
-              <TiltCard>
-                {/* Preview area */}
-                <div className={`relative h-28 bg-gradient-to-br ${tpl.color} overflow-hidden`}>
-                  {/* Simulated content shapes */}
-                  <div className="absolute left-4 top-4 h-4 w-20 rounded-full bg-white/30" />
-                  <div className="absolute left-4 top-11 h-3 w-14 rounded-full bg-white/20" />
-                  <div className="absolute bottom-4 right-4 h-10 w-10 rounded-xl bg-white/25" />
-                  <div className="absolute left-4 bottom-4 h-2 w-16 rounded-full bg-white/20" />
-                  <div
-                    className="absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                    style={{ background: `radial-gradient(ellipse at center, ${tpl.accent}, transparent 70%)` }}
-                  />
-                </div>
+        {filtered.map((tpl) => (
+          <div
+            key={tpl.id}
+            className="group relative w-56 cursor-pointer overflow-hidden rounded-2xl border border-glass-border-strong bg-glass shadow-card backdrop-blur-lg"
+            onMouseEnter={() => setHoveredId(tpl.id)}
+            onMouseLeave={() => setHoveredId(null)}
+            onClick={handleUse}
+          >
+            {/* Preview area */}
+            <div className={`relative h-32 bg-gradient-to-br ${tpl.color} overflow-hidden`}>
+              {/* Simulated content shapes */}
+              <div className="absolute left-4 top-4 h-4 w-20 rounded-full bg-white/30" />
+              <div className="absolute left-4 top-11 h-3 w-14 rounded-full bg-white/20" />
+              <div className="absolute bottom-4 right-4 h-10 w-10 rounded-xl bg-white/25" />
+              <div className="absolute left-4 bottom-4 h-2 w-16 rounded-full bg-white/20" />
+              <div
+                className="absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                style={{ background: `radial-gradient(ellipse at center, ${tpl.accent}, transparent 70%)` }}
+              />
+            </div>
 
-                {/* Info */}
-                <div className="p-3">
-                  <p className="text-[12px] font-semibold text-ink leading-tight">{tpl.name}</p>
-                  <p className="mt-0.5 text-[10px] text-ink-muted">{tpl.category}</p>
-                </div>
+            {/* Info */}
+            <div className="p-3">
+              <p className="text-[12px] font-semibold text-ink leading-tight">{tpl.name}</p>
+              <p className="mt-0.5 text-[10px] text-ink-muted">{tpl.category}</p>
+            </div>
 
-                {/* Hover quick-action overlay */}
-                <AnimatePresence>
-                  {hoveredId === tpl.id && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute inset-0 flex items-center justify-center bg-ink/10 backdrop-blur-[2px]"
-                    >
-                      <span className="rounded-full bg-[rgb(var(--kv-glass-rgb)/0.9)] px-4 py-1.5 text-[12px] font-semibold text-ink shadow-float backdrop-blur-md">
-                        Gunakan Template
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </TiltCard>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
+            {/* Hover quick-action overlay */}
+            <AnimatePresence>
+              {hoveredId === tpl.id && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute inset-0 flex items-center justify-center bg-ink/10 backdrop-blur-[2px]"
+                >
+                  <span className="rounded-full bg-[rgb(var(--kv-glass-rgb)/0.9)] px-4 py-1.5 text-[12px] font-semibold text-ink shadow-float backdrop-blur-md">
+                    Gunakan Template
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </SpatialCarousel>
     </section>
   );
 }

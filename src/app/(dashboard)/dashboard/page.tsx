@@ -2,6 +2,7 @@ import { KvolveMark } from "@/components/brand/KvolveMark";
 import { CrystalBackdrop } from "@/components/brand/CrystalBackdrop";
 import { UserBadge } from "@/components/auth/UserBadge";
 import { PersonalizationButton } from "@/components/theme/PersonalizationButton";
+import { SettingsButton } from "@/components/settings/SettingsButton";
 import { DashboardStudioHub } from "@/components/dashboard/DashboardStudioHub";
 import { TemplateCenter } from "@/components/dashboard/TemplateCenter";
 import { ProjectGallery } from "@/components/dashboard/ProjectGallery";
@@ -33,6 +34,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             <PersonalizationButton />
+            <SettingsButton />
             <UserBadge />
           </div>
         </div>

@@ -135,7 +135,7 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
       id: "theme",
       label: "Terapkan tema yang cocok",
       onAction: (): void => {
-        setCustomTheme(generateTheme(inputVal || "Crystal Intelligence"));
+        setCustomTheme(generateTheme(inputVal || "Royal Atelier"));
       },
     },
     {
@@ -217,7 +217,7 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.97 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-x-4 bottom-[calc(1rem+var(--kv-safe-b))] z-50 overflow-hidden rounded-3xl sm:inset-x-auto sm:bottom-8 sm:right-8 sm:w-80"
+              className="kv-lux-ring fixed inset-x-4 bottom-[calc(1rem+var(--kv-safe-b))] z-50 overflow-hidden rounded-3xl sm:inset-x-auto sm:bottom-8 sm:right-8 sm:w-80"
               style={{
                 background: "rgb(var(--kv-glass-rgb) / var(--kv-glass-strong-a))",
                 backdropFilter: "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",

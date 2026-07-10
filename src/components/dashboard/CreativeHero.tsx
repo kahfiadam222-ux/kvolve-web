@@ -35,7 +35,7 @@ export function CreativeHero({ onOpenAi }: { onOpenAi: () => void }) {
       <GlassPanel
         variant="strong"
         rounded="3xl"
-        className="relative overflow-hidden px-6 py-9 sm:px-10 sm:py-12"
+        className="kv-lux-ring relative overflow-hidden px-6 py-9 sm:px-10 sm:py-12"
       >
         {/* Cahaya ambient sudut — kedalaman lembut, ikut warna tema */}
         <div

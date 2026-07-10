@@ -7,8 +7,10 @@
  * tinggal menempel `vars` ke <html> tanpa perhitungan runtime.
  *
  * Aturan penting:
- * - "crystal-intelligence" (default) memakai nilai PERSIS era hardcoded —
- *   mengaktifkannya identik dengan tanpa tema sama sekali (zero visual diff).
+ * - "crystal-intelligence" (id default, kini bernama "Royal Atelier")
+ *   nilainya HARUS identik dengan :root globals.css — mengaktifkannya
+ *   identik dengan tanpa tema sama sekali. Id lama dipertahankan agar
+ *   preferensi tersimpan pengguna tetap valid.
  * - Nama var `--kv-mint` dipertahankan untuk kompatibilitas kelas token
  *   `mint`, meskipun tema lain mengisinya dengan warna sekunder non-mint
  *   (amber, oranye, cyan).
@@ -234,47 +236,51 @@ export const DEFAULT_THEME_ID = "crystal-intelligence";
 export const CUSTOM_THEME_ID = "custom-ai";
 
 const THEME_SPECS: ThemeSpec[] = [
-  // 1. Default — nilai PERSIS era hardcoded (zero visual diff).
+  // 1. Default — "Royal Atelier": safir royal + emas antik + amethyst di
+  //    porselen hangat. Nilai HARUS identik dengan :root globals.css
+  //    (first paint tanpa JS == tema default). Kontras terverifikasi:
+  //    ink 15.9:1 · inkMuted 6.2:1 · accent 6.4:1 · emas (teks bold) 3.9:1 ·
+  //    putih di rentang gradient CTA ≥ 3.2:1.
   {
     id: DEFAULT_THEME_ID,
-    name: "Crystal Intelligence",
-    tagline: "Bersih, profesional, AI",
+    name: "Royal Atelier",
+    tagline: "Safir, emas, porselen — mewah tenang",
     dark: false,
     material: "crystal",
-    canvas: "#F8FAFC",
-    canvasSoft: "#EFF4FB",
-    ink: "#111827",
-    inkMuted: "#64748B",
-    inkSubtle: "#94A3B8",
-    inkStrong: "#475569",
-    accent: "#2563EB",
-    accentLight: "#3B82F6",
-    accentDeep: "#1D4ED8",
-    accentWash: "#DBEAFE",
-    washSoft: "#EFF6FF",
-    secondary: "#14B8A6",
-    secondaryLight: "#2DD4BF",
-    secondaryWash: "#CCFBF1",
-    gradMid: "#0EA5E9",
-    ctaFrom: "#2563EB",
-    ctaTo: "#3B82F6",
-    ctaFromHover: "#3B82F6",
-    ctaToHover: "#60A5FA",
-    ctaMint: ["#14B8A6", "#34D399", "#2DD4BF", "#6EE7B7"],
-    glassBorderStrongHex: "#CBD5E1",
+    canvas: "#F7F5F2",
+    canvasSoft: "#EFECE6",
+    ink: "#191A23",
+    inkMuted: "#5D5A66",
+    inkSubtle: "#8F8C97",
+    inkStrong: "#44424E",
+    accent: "#2E4FC3",
+    accentLight: "#5A76E0",
+    accentDeep: "#22398F",
+    accentWash: "#E2E6F7",
+    washSoft: "#F2F4FB",
+    secondary: "#9E752B",
+    secondaryLight: "#C9A356",
+    secondaryWash: "#F3EEE6",
+    gradMid: "#7D5AD1",
+    ctaFrom: "#2E4FC3",
+    ctaTo: "#5A54D9",
+    ctaFromHover: "#3E5ED3",
+    ctaToHover: "#6D67E4",
+    ctaMint: ["#8F6A26", "#B08A45", "#9E752B", "#B98F49"],
+    glassBorderStrongHex: "#D3CCC0",
     insetA: 0.9,
     noiseA: 0.018,
     motionScale: 1,
     blobs: [
-      "rgba(186, 230, 253, 0.55)",
-      "rgba(147, 197, 253, 0.3)",
-      "rgba(196, 181, 253, 0.3)",
-      "rgba(167, 139, 250, 0.15)",
-      "rgba(153, 246, 228, 0.3)",
-      "rgba(94, 234, 212, 0.15)",
-      "rgba(186, 230, 253, 0.35)",
-      "rgba(147, 197, 253, 0.18)",
-      "rgba(224, 242, 254, 0.5)",
+      "rgba(90, 118, 224, 0.5)",
+      "rgba(46, 79, 195, 0.26)",
+      "rgba(125, 90, 209, 0.28)",
+      "rgba(125, 90, 209, 0.14)",
+      "rgba(158, 117, 43, 0.24)",
+      "rgba(201, 163, 86, 0.13)",
+      "rgba(90, 118, 224, 0.32)",
+      "rgba(46, 79, 195, 0.16)",
+      "rgba(173, 187, 240, 0.5)",
     ],
   },
 

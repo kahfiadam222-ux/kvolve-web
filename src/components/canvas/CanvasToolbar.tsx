@@ -29,6 +29,7 @@ export function CanvasToolbar({
     return false;
   });
   const [toast, setToast] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [exporting, setExporting] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(
@@ -159,19 +160,49 @@ export function CanvasToolbar({
             showToast(false, "Sisipkan blok HTML dulu dari palet di kiri.");
             return;
           }
-          void exportSiteZip(useCanvasStore.getState().objects);
+          if (exporting) return;
+          // Notif loading di layar: kanvas besar butuh waktu zip — tombol
+          // menampilkan spinner sampai file benar-benar terunduh.
+          setExporting(true);
+          void exportSiteZip(useCanvasStore.getState().objects)
+            .catch(() => showToast(false, "Ekspor gagal — coba lagi."))
+            .finally(() => setExporting(false));
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
-          <path
-            d="M6 1.5v6m0 0L3.5 5M6 7.5 8.5 5M2 10.5h8"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span className="hidden sm:inline">Ekspor .zip</span>
+        {exporting ? (
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden
+            className="animate-spin motion-reduce:animate-none"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray="32"
+              strokeDashoffset="12"
+            />
+          </svg>
+        ) : (
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
+            <path
+              d="M6 1.5v6m0 0L3.5 5M6 7.5 8.5 5M2 10.5h8"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+        <span className="hidden sm:inline">
+          {exporting ? "Mengekspor…" : "Ekspor .zip"}
+        </span>
       </button>
 
       <button

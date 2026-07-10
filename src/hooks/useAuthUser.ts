@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  USER_CHANGED_EVENT,
   cacheDisplayName,
   getGuestUser,
   signOutGuest,
@@ -24,6 +25,16 @@ export function useAuthUser() {
   const router = useRouter();
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Identitas tamu bisa berubah dari Settings (rename) — ikuti event-nya
+  // supaya setiap konsumen (UserBadge, profil) segar tanpa reload.
+  useEffect(() => {
+    const refresh = (): void => {
+      setUser((u) => (u === null || u.guest ? getGuestUser() : u));
+    };
+    window.addEventListener(USER_CHANGED_EVENT, refresh);
+    return () => window.removeEventListener(USER_CHANGED_EVENT, refresh);
+  }, []);
 
   useEffect(() => {
     let alive = true;
