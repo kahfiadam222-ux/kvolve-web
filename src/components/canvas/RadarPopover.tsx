@@ -2,6 +2,7 @@
 
 import { PLATFORM_LABEL, VELOCITY_LABEL } from "@/lib/trends/trendData";
 import type { AestheticMatchResult } from "@/lib/trends/aestheticMatch";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 
 /** Hasil Vibe-Match Radar — daftar tren yang cocok dengan tag terdeteksi. */
 export function RadarPopover({
@@ -12,7 +13,7 @@ export function RadarPopover({
   onClose: () => void;
 }) {
   return (
-    <div className="max-h-[40vh] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md scrollbar-thin sm:w-60">
+    <GlassPanel className="max-h-[40vh] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto p-3 scrollbar-thin sm:w-60">
       <div className="mb-2 flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
           Vibe-Match Radar
@@ -74,6 +75,6 @@ export function RadarPopover({
           )}
         </>
       )}
-    </div>
+    </GlassPanel>
   );
 }

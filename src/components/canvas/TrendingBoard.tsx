@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCanvasStore } from "@/stores/canvasStore";
 import {
   PLATFORM_LABEL,
@@ -10,13 +10,10 @@ import {
 } from "@/lib/trends/trendData";
 import { matchAesthetic } from "@/lib/trends/aestheticMatch";
 import { RadarPopover } from "./RadarPopover";
+import { GlassPanel } from "@/components/ui/GlassPanel";
+import { useExpandableBoard } from "@/hooks/useExpandableBoard";
 
 const STORAGE_KEY = "kvolve:trending-board-expanded";
-
-/** Event koordinasi antar-board bawah (Tren ↔ Skor AI): di layar sempit
- *  keduanya terbuka bersamaan akan saling tumpang-tindih, jadi salah satu
- *  menutup saat yang lain dibuka. Tanpa store baru — cukup CustomEvent. */
-export const BOARD_EXPAND_EVENT = "kv:board-expand";
 
 /**
  * Micro-Trending Board — panel kaca mengambang di pojok kanan-bawah editor
@@ -33,49 +30,8 @@ export function TrendingBoard() {
     (s) => s.setArtboardBackgroundColor,
   );
   const objects = useCanvasStore((s) => s.objects);
-  const [expanded, setExpanded] = useState(false);
+  const { expanded, toggle } = useExpandableBoard(STORAGE_KEY, "tren");
   const [radarOpen, setRadarOpen] = useState(false);
-
-  useEffect(() => {
-    try {
-      setExpanded(window.localStorage.getItem(STORAGE_KEY) === "1");
-    } catch {
-      /* localStorage diblokir — biarkan default tertutup */
-    }
-  }, []);
-
-  // Tutup bila board lain terbuka di layar sempit (tanpa menimpa preferensi
-  // tersimpan — hanya state sesi ini).
-  useEffect(() => {
-    const onOther = (e: Event): void => {
-      if (
-        (e as CustomEvent<string>).detail !== "tren" &&
-        window.innerWidth < 640
-      ) {
-        setExpanded(false);
-      }
-    };
-    window.addEventListener(BOARD_EXPAND_EVENT, onOther);
-    return () => window.removeEventListener(BOARD_EXPAND_EVENT, onOther);
-  }, []);
-
-  const toggle = (): void => {
-    const next = !expanded;
-    setExpanded(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-    } catch {
-      /* abaikan storage penuh/terblokir */
-    }
-    // Dispatch di LUAR updater state: updater dijalankan dua kali di Strict
-    // Mode dan event listener yang men-setState dari dalam updater bisa
-    // tertimpa antrean batch yang sama.
-    if (next) {
-      window.dispatchEvent(
-        new CustomEvent(BOARD_EXPAND_EVENT, { detail: "tren" }),
-      );
-    }
-  };
 
   const applyStyle = (item: TrendItem): void => {
     if (!artboard) return;
@@ -94,7 +50,7 @@ export function TrendingBoard() {
       )}
 
       {expanded && (
-        <div className="scrollbar-thin max-h-[min(60vh,calc(100dvh-11rem))] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md sm:w-60">
+        <GlassPanel className="scrollbar-thin max-h-[min(60vh,calc(100dvh-11rem))] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto p-3 sm:w-60">
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Tren
@@ -155,7 +111,7 @@ export function TrendingBoard() {
               </li>
             ))}
           </ul>
-        </div>
+        </GlassPanel>
       )}
 
       <button

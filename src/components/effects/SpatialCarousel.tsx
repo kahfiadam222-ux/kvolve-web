@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Children, useEffect, useRef } from "react";
 import { getComfort } from "@/lib/comfort/comfortStore";
 
 /**
@@ -28,6 +28,13 @@ export function SpatialCarousel({
 }) {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const raf = useRef(0);
+  // Hitungan slide, bukan identitas `children` — parent (TemplateCenter)
+  // membuat elemen anak baru pada tiap render (mis. saat hover kartu ubah
+  // state), yang akan mencopot-lalu-memasang ulang listener scroll/resize
+  // dan memanggil apply() secara sinkron di setiap hover jika di-depend
+  // langsung ke `children`. Jumlah slide adalah primitif stabil yang hanya
+  // benar-benar berubah saat konten carousel berubah.
+  const slideCount = Children.count(children);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -67,7 +74,7 @@ export function SpatialCarousel({
       track.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [maxRotate, children]);
+  }, [maxRotate, slideCount]);
 
   return (
     <div ref={trackRef} className={`kv-carousel ${className}`}>

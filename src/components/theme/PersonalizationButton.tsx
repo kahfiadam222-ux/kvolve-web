@@ -1,21 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { ThemePanel } from "./ThemePanel";
+import { NAV_POPOVER_EVENT } from "@/lib/ui/navPopover";
+
+const POPOVER_ID = "personalization";
 
 /**
  * PersonalizationButton — client island kecil untuk nav dashboard (halaman
- * tetap server component). Ikon palet membuka ThemePanel (Tema/Kenyamanan).
+ * tetap server component). Ikon palet membuka ThemePanel (Tema/Kenyamanan) —
+ * saling menutup dengan SettingsButton lewat NAV_POPOVER_EVENT.
  */
 export function PersonalizationButton() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onOther = (e: Event): void => {
+      if ((e as CustomEvent<string>).detail !== POPOVER_ID) setOpen(false);
+    };
+    window.addEventListener(NAV_POPOVER_EVENT, onOther);
+    return () => window.removeEventListener(NAV_POPOVER_EVENT, onOther);
+  }, []);
+
+  const toggle = (): void => {
+    const next = !open;
+    setOpen(next);
+    if (next) {
+      window.dispatchEvent(
+        new CustomEvent(NAV_POPOVER_EVENT, { detail: POPOVER_ID }),
+      );
+    }
+  };
 
   return (
     <div className="relative">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         aria-expanded={open}
         aria-label="Personalisasi tampilan"
         title="Personalisasi tampilan (tema & kenyamanan)"

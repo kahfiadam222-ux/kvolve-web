@@ -32,6 +32,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
   const comfort = useComfort();
   const [nick, setNick] = useState("");
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -53,10 +54,18 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
   const saveNick = (e?: React.FormEvent): void => {
     e?.preventDefault();
     if (!user?.guest || !nick.trim()) return;
-    renameGuestUser(nick);
-    setSaved(true);
+    // renameGuestUser() mengembalikan null bila penulisan localStorage gagal
+    // (private mode/kuota penuh) — jangan klaim "Tersimpan" saat itu terjadi.
+    const result = renameGuestUser(nick);
     if (savedTimer.current) clearTimeout(savedTimer.current);
-    savedTimer.current = setTimeout(() => setSaved(false), 2000);
+    if (result) {
+      setSaved(true);
+      setSaveError(false);
+      savedTimer.current = setTimeout(() => setSaved(false), 2000);
+    } else {
+      setSaveError(true);
+      savedTimer.current = setTimeout(() => setSaveError(false), 2500);
+    }
   };
 
   const resetPrefs = (): void => {
@@ -154,9 +163,11 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
               <button
                 type="submit"
                 disabled={!user?.guest || !nick.trim() || nick.trim() === user?.name}
-                className="kv-cta rounded-lg px-3.5 py-2.5 text-xs font-semibold transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:py-1.5"
+                className={`rounded-lg px-3.5 py-2.5 text-xs font-semibold transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:py-1.5 ${
+                  saveError ? "bg-rose-500 text-white" : "kv-cta"
+                }`}
               >
-                {saved ? "Tersimpan ✓" : "Simpan"}
+                {saveError ? "Gagal, coba lagi" : saved ? "Tersimpan ✓" : "Simpan"}
               </button>
             </div>
             {!user?.guest && user && (

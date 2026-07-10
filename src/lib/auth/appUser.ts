@@ -76,14 +76,17 @@ export function renameGuestUser(name: string): AppUser | null {
   const clean = name.trim();
   if (!clean) return current;
   const user: AppUser = { ...current, name: clean.slice(0, 40) };
-  if (hasStorage()) {
-    try {
-      window.localStorage.setItem(GUEST_KEY, JSON.stringify(user));
-    } catch {
-      /* storage penuh: perubahan tetap berlaku in-memory */
-    }
-    window.dispatchEvent(new Event(USER_CHANGED_EVENT));
+  if (!hasStorage()) return null;
+  try {
+    window.localStorage.setItem(GUEST_KEY, JSON.stringify(user));
+  } catch {
+    // Penyimpanan gagal (private mode/kuota penuh) — jangan klaim sukses ke
+    // caller, dan jangan pancarkan USER_CHANGED_EVENT: useAuthUser membaca
+    // ulang dari localStorage saat event ini, jadi nama akan kembali ke
+    // versi lama walau UI sempat menampilkan "Tersimpan".
+    return null;
   }
+  window.dispatchEvent(new Event(USER_CHANGED_EVENT));
   cacheDisplayName(user.name);
   return user;
 }

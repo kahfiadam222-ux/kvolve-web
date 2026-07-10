@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { getActiveTheme, subscribeTheme } from "@/lib/themes/themeStore";
 import { scoreDesign, type DesignIntelResult } from "@/lib/design-intel/scoreDesign";
-import { BOARD_EXPAND_EVENT } from "./TrendingBoard";
+import { useExpandableBoard } from "@/hooks/useExpandableBoard";
 import { KvLoader } from "@/components/ui/KvLoader";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 
 const STORAGE_KEY = "kvolve:design-intel-expanded";
 const DEBOUNCE_MS = 800;
@@ -34,35 +35,12 @@ function tripletToHex(triplet: string | undefined): string | null {
 export function DesignIntelBoard() {
   const objects = useCanvasStore((s) => s.objects);
   const artboard = useCanvasStore((s) => s.artboard);
-  const [expanded, setExpanded] = useState(false);
+  const { expanded, toggle } = useExpandableBoard(STORAGE_KEY, "skor");
   const [result, setResult] = useState<DesignIntelResult | null>(null);
   const [accentHex, setAccentHex] = useState<string | null>(() =>
     tripletToHex(getActiveTheme().vars["--kv-accent"]),
   );
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    try {
-      setExpanded(window.localStorage.getItem(STORAGE_KEY) === "1");
-    } catch {
-      /* localStorage diblokir — biarkan default tertutup */
-    }
-  }, []);
-
-  // Tutup bila panel Tren dibuka di layar sempit — keduanya saling
-  // menumpuk di bawah 640px (lihat BOARD_EXPAND_EVENT di TrendingBoard).
-  useEffect(() => {
-    const onOther = (e: Event): void => {
-      if (
-        (e as CustomEvent<string>).detail !== "skor" &&
-        window.innerWidth < 640
-      ) {
-        setExpanded(false);
-      }
-    };
-    window.addEventListener(BOARD_EXPAND_EVENT, onOther);
-    return () => window.removeEventListener(BOARD_EXPAND_EVENT, onOther);
-  }, []);
 
   useEffect(
     () =>
@@ -83,22 +61,6 @@ export function DesignIntelBoard() {
     };
   }, [expanded, objects, artboard, accentHex]);
 
-  const toggle = (): void => {
-    const next = !expanded;
-    setExpanded(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-    } catch {
-      /* abaikan storage penuh/terblokir */
-    }
-    // Dispatch di luar updater — alasan sama dengan TrendingBoard.toggle.
-    if (next) {
-      window.dispatchEvent(
-        new CustomEvent(BOARD_EXPAND_EVENT, { detail: "skor" }),
-      );
-    }
-  };
-
   const refresh = (): void => {
     setResult(scoreDesign(objects, artboard, accentHex));
   };
@@ -109,7 +71,7 @@ export function DesignIntelBoard() {
       className="pointer-events-auto absolute bottom-[calc(4.5rem+var(--kv-safe-b))] left-3 flex flex-col items-start gap-2 sm:bottom-20 sm:left-4"
     >
       {expanded && (
-        <div className="scrollbar-thin max-h-[min(60vh,calc(100dvh-11rem))] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md sm:w-60">
+        <GlassPanel className="scrollbar-thin max-h-[min(60vh,calc(100dvh-11rem))] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto p-3 sm:w-60">
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Skor AI
@@ -176,7 +138,7 @@ export function DesignIntelBoard() {
               <KvLoader fullscreen={false} size="sm" label="Menghitung skor…" />
             </div>
           )}
-        </div>
+        </GlassPanel>
       )}
 
       <button

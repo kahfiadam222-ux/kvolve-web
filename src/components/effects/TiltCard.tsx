@@ -27,6 +27,12 @@ export function TiltCard({
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const raf = useRef(0);
+  // Rotasi terakhir + status tekan disimpan di ref (bukan state) supaya
+  // pointerdown/pointerup bisa menyusun ulang transform lengkap alih-alih
+  // menempel string ke transform yang bisa ditimpa rAF pointermove yang
+  // masih tertunda (race) atau menumpuk fragmen usang.
+  const rot = useRef({ x: 0, y: 0 });
+  const pressed = useRef(false);
 
   const isDisabled = (): boolean => {
     const c = getComfort();
@@ -36,6 +42,9 @@ export function TiltCard({
       window.matchMedia("(pointer: coarse)").matches
     );
   };
+
+  const composeTransform = (): string =>
+    `perspective(800px) rotateX(${rot.current.x.toFixed(2)}deg) rotateY(${rot.current.y.toFixed(2)}deg)${pressed.current ? " scale(0.985)" : ""}`;
 
   const onPointerEnter = (): void => {
     const el = ref.current;
@@ -49,9 +58,10 @@ export function TiltCard({
     const rect = el.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
+    rot.current = { x: (0.5 - py) * maxTilt * 2, y: (px - 0.5) * maxTilt * 2 };
     cancelAnimationFrame(raf.current);
     raf.current = requestAnimationFrame(() => {
-      el.style.transform = `perspective(800px) rotateX(${((0.5 - py) * maxTilt * 2).toFixed(2)}deg) rotateY(${((px - 0.5) * maxTilt * 2).toFixed(2)}deg)`;
+      el.style.transform = composeTransform();
       el.style.setProperty("--tilt-mx", `${(px * 100).toFixed(1)}%`);
       el.style.setProperty("--tilt-my", `${(py * 100).toFixed(1)}%`);
       el.style.setProperty("--tilt-glow", "1");
@@ -62,6 +72,8 @@ export function TiltCard({
     const el = ref.current;
     if (!el) return;
     cancelAnimationFrame(raf.current);
+    pressed.current = false;
+    rot.current = { x: 0, y: 0 };
     el.style.transform = "";
     el.style.setProperty("--tilt-glow", "0");
     el.style.willChange = "";
@@ -70,7 +82,15 @@ export function TiltCard({
   const onPointerDown = (): void => {
     const el = ref.current;
     if (!el || isDisabled()) return;
-    el.style.transform += " scale(0.985)"; // depth saat ditekan
+    pressed.current = true;
+    el.style.transform = composeTransform(); // depth saat ditekan, tetap tilt
+  };
+
+  const onPointerUp = (): void => {
+    const el = ref.current;
+    if (!el || isDisabled()) return;
+    pressed.current = false;
+    el.style.transform = composeTransform(); // lepas scale, tilt tetap aktif
   };
 
   return (
@@ -80,7 +100,7 @@ export function TiltCard({
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
       onPointerDown={onPointerDown}
-      onPointerUp={onPointerLeave}
+      onPointerUp={onPointerUp}
       className={`kv-tilt ${className}`}
     >
       {children}

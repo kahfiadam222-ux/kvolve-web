@@ -1,22 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { SettingsPanel } from "./SettingsPanel";
+import { NAV_POPOVER_EVENT } from "@/lib/ui/navPopover";
+
+const POPOVER_ID = "settings";
 
 /**
  * SettingsButton — client island kecil untuk nav dashboard (halaman tetap
  * server component); ikon roda gigi membuka SettingsPanel. Pola identik
- * dengan PersonalizationButton.
+ * dengan PersonalizationButton — termasuk saling menutup lewat
+ * NAV_POPOVER_EVENT supaya keduanya tidak pernah terbuka bersamaan.
  */
 export function SettingsButton() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onOther = (e: Event): void => {
+      if ((e as CustomEvent<string>).detail !== POPOVER_ID) setOpen(false);
+    };
+    window.addEventListener(NAV_POPOVER_EVENT, onOther);
+    return () => window.removeEventListener(NAV_POPOVER_EVENT, onOther);
+  }, []);
+
+  const toggle = (): void => {
+    const next = !open;
+    setOpen(next);
+    if (next) {
+      window.dispatchEvent(
+        new CustomEvent(NAV_POPOVER_EVENT, { detail: POPOVER_ID }),
+      );
+    }
+  };
 
   return (
     <div className="relative">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         aria-expanded={open}
         aria-label="Pengaturan aplikasi"
         title="Pengaturan (profil, nickname, preferensi)"

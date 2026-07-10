@@ -97,14 +97,21 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
     );
   };
 
+  // "listening" hanya menandai fokus input secara visual, bukan status
+  // sibuk — jika guard dicek terhadap "idle" saja, menekan Enter saat
+  // input masih fokus (fokus tidak lepas sebelum submit form) akan
+  // ditolak diam-diam. Yang benar-benar harus memblokir submit ulang
+  // adalah saat teater berpikir/menghasilkan sedang berjalan.
+  const busy = phase === "thinking" || phase === "generating";
+
   const handleSubmit = (e?: React.FormEvent): void => {
     e?.preventDefault();
-    if (!inputVal.trim() || phase !== "idle") return;
+    if (!inputVal.trim() || busy) return;
     runTheater();
   };
 
   const handleCommand = (cmd: AiCommand): void => {
-    if (phase !== "idle") return;
+    if (busy) return;
     setInputVal(cmd.prompt);
     runTheater();
   };
@@ -136,18 +143,26 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
       label: "Terapkan tema yang cocok",
       onAction: (): void => {
         setCustomTheme(generateTheme(inputVal || "Royal Atelier"));
+        close(); // konsisten dengan aksi lain — re-skin sudah terjadi, panel tetap terbuka terasa seperti klik tidak ngefek
       },
     },
-    {
-      id: "template",
-      label: "Buka Template Center",
-      onAction: (): void => {
-        close();
-        document
-          .getElementById("template-center")
-          ?.scrollIntoView({ behavior: skipTheater ? "auto" : "smooth" });
-      },
-    },
+    // Disembunyikan di Mode Sederhana: Template Center disembunyikan lewat
+    // data-kv-decorative saat itu, jadi scrollIntoView ke sana jadi no-op
+    // diam-diam. Lebih baik tidak menawarkan aksi yang tidak bisa terlihat.
+    ...(comfort.simpleMode
+      ? []
+      : [
+          {
+            id: "template",
+            label: "Buka Template Center",
+            onAction: (): void => {
+              close();
+              document
+                .getElementById("template-center")
+                ?.scrollIntoView({ behavior: skipTheater ? "auto" : "smooth" });
+            },
+          },
+        ]),
   ];
 
   return (

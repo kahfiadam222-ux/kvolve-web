@@ -14,6 +14,14 @@ import "./globals.css";
  */
 const THEME_BOOT_SCRIPT = `try{var t=JSON.parse(localStorage.getItem("kvolve:theme"));if(t&&t.vars){var e=document.documentElement;for(var k in t.vars)e.style.setProperty(k,t.vars[k]);e.dataset.kvTheme=t.id;if(t.dark)e.dataset.kvDark=""}}catch(_){}`;
 
+/**
+ * Skrip no-flash comfort: sama seperti THEME_BOOT_SCRIPT tapi untuk
+ * `kvolve:comfort` — tanpa ini, pengguna yang sudah mengaktifkan Kurangi
+ * Gerakan/Mode Performa akan melihat kilatan animasi/blur penuh di setiap
+ * reload sampai ComfortProvider's useEffect commit pasca-hydration.
+ */
+const COMFORT_BOOT_SCRIPT = `try{var c=JSON.parse(localStorage.getItem("kvolve:comfort"));if(c){var tk=[];if(c.reduceMotion)tk.push("reduce-motion");if(c.focusMode)tk.push("focus");if(c.simpleMode)tk.push("simple");if(c.performanceMode)tk.push("performance");if(tk.length)document.documentElement.dataset.comfort=tk.join(" ")}}catch(_){}`;
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 /**
@@ -54,6 +62,7 @@ export default function RootLayout({
     >
       <body className="h-full bg-canvas font-sans text-ink antialiased">
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: COMFORT_BOOT_SCRIPT }} />
         <ComfortProvider>{children}</ComfortProvider>
         <ThemeProvider />
         <RippleLayer />
