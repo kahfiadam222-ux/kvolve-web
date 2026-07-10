@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCanvasStore } from "@/stores/canvasStore";
 import { getActiveTheme, subscribeTheme } from "@/lib/themes/themeStore";
 import { scoreDesign, type DesignIntelResult } from "@/lib/design-intel/scoreDesign";
+import { BOARD_EXPAND_EVENT } from "./TrendingBoard";
 
 const STORAGE_KEY = "kvolve:design-intel-expanded";
 const DEBOUNCE_MS = 800;
@@ -47,6 +48,21 @@ export function DesignIntelBoard() {
     }
   }, []);
 
+  // Tutup bila panel Tren dibuka di layar sempit — keduanya saling
+  // menumpuk di bawah 640px (lihat BOARD_EXPAND_EVENT di TrendingBoard).
+  useEffect(() => {
+    const onOther = (e: Event): void => {
+      if (
+        (e as CustomEvent<string>).detail !== "skor" &&
+        window.innerWidth < 640
+      ) {
+        setExpanded(false);
+      }
+    };
+    window.addEventListener(BOARD_EXPAND_EVENT, onOther);
+    return () => window.removeEventListener(BOARD_EXPAND_EVENT, onOther);
+  }, []);
+
   useEffect(
     () =>
       subscribeTheme(() => {
@@ -67,15 +83,19 @@ export function DesignIntelBoard() {
   }, [expanded, objects, artboard, accentHex]);
 
   const toggle = (): void => {
-    setExpanded((e) => {
-      const next = !e;
-      try {
-        window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-      } catch {
-        /* abaikan storage penuh/terblokir */
-      }
-      return next;
-    });
+    const next = !expanded;
+    setExpanded(next);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+    } catch {
+      /* abaikan storage penuh/terblokir */
+    }
+    // Dispatch di luar updater — alasan sama dengan TrendingBoard.toggle.
+    if (next) {
+      window.dispatchEvent(
+        new CustomEvent(BOARD_EXPAND_EVENT, { detail: "skor" }),
+      );
+    }
   };
 
   const refresh = (): void => {
@@ -85,10 +105,10 @@ export function DesignIntelBoard() {
   return (
     <div
       data-kv-decorative
-      className="pointer-events-auto absolute bottom-20 left-4 flex flex-col items-start gap-2"
+      className="pointer-events-auto absolute bottom-[calc(4.5rem+var(--kv-safe-b))] left-3 flex flex-col items-start gap-2 sm:bottom-20 sm:left-4"
     >
       {expanded && (
-        <div className="scrollbar-thin max-h-[60vh] w-60 animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md">
+        <div className="scrollbar-thin max-h-[min(60vh,calc(100dvh-11rem))] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md sm:w-60">
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Skor AI
@@ -97,7 +117,7 @@ export function DesignIntelBoard() {
               type="button"
               onClick={refresh}
               title="Segarkan skor"
-              className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent transition-colors hover:bg-accent/20"
+              className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1.5 text-[10px] font-semibold text-accent transition-colors hover:bg-accent/20 active:scale-95 sm:py-0.5"
             >
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path
@@ -142,7 +162,7 @@ export function DesignIntelBoard() {
                 return tips.length > 0 ? (
                   <ul className="mt-3 flex flex-col gap-1 border-t border-glass-border-subtle pt-2">
                     {tips.slice(0, 4).map((tip, i) => (
-                      <li key={i} className="text-[11px] leading-snug text-ink-muted">
+                      <li key={i} className="text-xs leading-snug text-ink-muted">
                         · {tip}
                       </li>
                     ))}
@@ -161,7 +181,7 @@ export function DesignIntelBoard() {
         onClick={toggle}
         aria-expanded={expanded}
         aria-label={expanded ? "Tutup panel Skor AI" : "Buka panel Skor AI"}
-        className="flex items-center gap-1.5 rounded-full border border-glass-border bg-glass px-3 py-1.5 text-xs font-medium text-ink-muted shadow-float backdrop-blur-md transition-colors hover:text-ink"
+        className="flex items-center gap-1.5 rounded-full border border-glass-border bg-glass px-3.5 py-2 text-xs font-medium text-ink-muted shadow-float backdrop-blur-md transition-colors hover:text-ink active:scale-95 sm:px-3 sm:py-1.5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />

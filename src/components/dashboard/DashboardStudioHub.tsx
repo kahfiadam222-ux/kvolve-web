@@ -18,11 +18,14 @@ export function DashboardStudioHub() {
   const openAi = (): void => setAiOpen(true);
 
   return (
-    <>
+    // Satu klaster visual: jarak internal lebih rapat daripada jarak
+    // antar-zona halaman (space-y main) — hero, format, dan AI Studio
+    // terbaca sebagai satu unit "studio".
+    <div className="space-y-9 sm:space-y-12">
       <CreativeHero onOpenAi={openAi} />
       <StudioCards onOpenAi={openAi} />
       <AiStudioCard onOpenAi={openAi} />
       <AiOrb open={aiOpen} onOpenChange={setAiOpen} />
-    </>
+    </div>
   );
 }

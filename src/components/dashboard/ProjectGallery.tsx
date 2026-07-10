@@ -88,16 +88,16 @@ export function ProjectGallery() {
   }
 
   const iconBtn =
-    "grid h-7 w-7 place-items-center rounded-lg text-ink-subtle transition-all hover:bg-canvas-soft hover:text-ink-muted";
+    "grid h-9 w-9 place-items-center rounded-lg bg-[rgb(var(--kv-glass-rgb)/0.65)] text-ink-muted backdrop-blur-sm transition-all hover:bg-canvas-soft hover:text-ink active:scale-90";
 
   return (
     <>
       <header className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
             Proyek Terakhir
           </p>
-          <h2 className="mt-0.5 text-lg font-semibold text-ink">
+          <h2 className="mt-1 font-display text-display-md text-ink">
             {projects.length === 0
               ? "Belum ada proyek"
               : `${projects.length} proyek`}
@@ -106,7 +106,7 @@ export function ProjectGallery() {
         <button
           type="button"
           onClick={onCreate}
-          className="kv-cta inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-glow transition-all hover:shadow-glow-strong active:scale-[0.97]"
+          className="kv-cta inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold shadow-glow transition-all hover:shadow-glow-strong active:scale-[0.97]"
         >
           <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden>
             <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -135,7 +135,7 @@ export function ProjectGallery() {
                 <path d="M19 15L19.9 17.1L22 18L19.9 18.9L19 21L18.1 18.9L16 18L18.1 17.1L19 15Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
               </svg>
             </div>
-            <p className="text-lg font-semibold text-ink">Mulai kreasi pertamamu</p>
+            <p className="font-display text-display-sm text-ink">Mulai kreasi pertamamu</p>
             <p className="mt-1.5 max-w-xs text-sm text-ink-muted">
               Ruang kerjamu masih kosong — buat desain pertama dan lihat hasilnya muncul di sini.
             </p>
@@ -206,9 +206,10 @@ export function ProjectGallery() {
                   </TiltCard>
                 </Link>
 
-                {/* Card actions — outside Link */}
+                {/* Card actions — outside Link. Di perangkat tanpa hover
+                    (touch) aksi selalu terlihat; di desktop muncul on-hover. */}
                 {renamingId !== p.id && (
-                  <div className="absolute bottom-3 right-3 flex items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                  <div className="absolute bottom-3 right-3 flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 [@media(hover:none)]:opacity-100">
                     <button
                       type="button"
                       title="Ganti nama"

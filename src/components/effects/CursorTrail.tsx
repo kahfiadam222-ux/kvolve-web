@@ -39,6 +39,9 @@ export function CursorTrail() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return; // tanpa listener sama sekali, bukan sekadar tanpa animasi
     }
+    if (!window.matchMedia("(pointer: fine)").matches) {
+      return; // layar sentuh: efek kursor tak bermakna — jangan pasang apa pun
+    }
 
     const canvas = canvasRef.current;
     if (!canvas) return;

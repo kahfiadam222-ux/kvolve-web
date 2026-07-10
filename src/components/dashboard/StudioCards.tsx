@@ -160,10 +160,10 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
     <section>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
             Studio Desain
           </p>
-          <h2 className="mt-0.5 text-lg font-semibold text-ink">
+          <h2 className="mt-1 font-display text-display-md text-ink">
             Pilih format kanvasmu
           </h2>
         </div>
@@ -173,7 +173,7 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6"
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6"
       >
         {STUDIO_TYPES.map((type) => (
           <motion.button
@@ -181,17 +181,18 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
             variants={cardVariants}
             type="button"
             onClick={() => handleCardClick(type.id)}
-            className="glass-sheen group relative overflow-hidden rounded-2xl border border-glass-border-strong bg-glass p-5 text-center backdrop-blur-lg shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
+            className="glass-sheen group relative overflow-hidden rounded-2xl border border-glass-border-strong bg-glass p-5 text-center backdrop-blur-lg shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover active:scale-[0.97]"
           >
             <TiltCard className="flex flex-col items-center gap-3">
-              {/* Gradient accent background */}
+              {/* Gradient identitas kategori — tampak lembut secara default
+                  (pengguna sentuh tetap melihat warna), menguat saat hover */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-0 transition-opacity duration-200 group-hover:opacity-100`}
+                className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-60 transition-opacity duration-200 group-hover:opacity-100`}
               />
 
               {/* Icon */}
               <div
-                className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-glass-strong text-ink-muted transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
+                className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-glass-strong text-ink-strong transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
                 style={{ boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 2px 8px rgba(0,0,0,0.06)" }}
               >
                 {type.icon}
@@ -199,10 +200,10 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
 
               {/* Text */}
               <div className="relative z-10">
-                <p className="text-[13px] font-semibold leading-tight text-ink">
+                <p className="text-sm font-semibold leading-tight text-ink">
                   {type.label}
                 </p>
-                <p className="mt-0.5 text-[11px] leading-tight text-ink-muted">
+                <p className="mt-1 text-xs leading-snug text-ink-muted">
                   {type.sublabel}
                 </p>
               </div>

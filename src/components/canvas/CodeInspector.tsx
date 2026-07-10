@@ -54,7 +54,7 @@ export function CodeInspector() {
         </h3>
         <button
           type="button"
-          className="rounded-md px-2 py-0.5 text-[11px] font-medium text-accent transition-colors hover:bg-accent-soft"
+          className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-accent transition-colors hover:bg-accent-soft active:scale-95"
           onClick={() => copy(what, text)}
         >
           {copied === what ? "Tersalin ✓" : "Salin"}
@@ -67,9 +67,11 @@ export function CodeInspector() {
   );
 
   return (
-    <aside className="scrollbar-thin pointer-events-auto absolute right-4 top-4 flex max-h-[calc(100%-7.5rem)] w-80 animate-slide-in-right flex-col gap-3 overflow-y-auto rounded-2xl border border-glass-border bg-glass p-4 shadow-float backdrop-blur-md">
+    // Di ponsel: bottom sheet penuh-lebar (w-80 fixed menutupi hampir seluruh
+    // layar 375px, termasuk navbar & palet); di sm+: panel kanan seperti semula.
+    <aside className="scrollbar-thin pointer-events-auto absolute inset-x-0 bottom-0 top-auto flex max-h-[60dvh] animate-fade-up flex-col gap-3 overflow-y-auto rounded-t-2xl border border-b-0 border-glass-border bg-glass p-4 pb-[calc(1rem+var(--kv-safe-b))] shadow-float backdrop-blur-md sm:inset-x-auto sm:bottom-auto sm:right-4 sm:top-4 sm:max-h-[calc(100%-7.5rem)] sm:w-80 sm:animate-slide-in-right sm:rounded-2xl sm:border-b sm:pb-4">
       <header className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-ink">
+        <h2 className="font-display text-sm font-semibold tracking-tight text-ink">
           Inspektur
           <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
             {String(selected.data.kind ?? "block")}
@@ -78,7 +80,7 @@ export function CodeInspector() {
         <button
           type="button"
           aria-label="Tutup panel"
-          className="grid h-6 w-6 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
+          className="grid h-9 w-9 place-items-center rounded-full text-sm text-ink-muted transition-colors hover:bg-black/5 hover:text-ink active:scale-90"
           onClick={clearSelection}
         >
           ×

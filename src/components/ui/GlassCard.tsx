@@ -31,9 +31,11 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
     },
     ref,
   ) => {
+    // active:scale = umpan balik sentuh (hover:-translate-y tidak pernah
+    // aktif di touch sejak hoverOnlyWhenSupported menyala).
     const hoverCls = noHover
       ? ""
-      : "transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[3px] hover:shadow-card-hover";
+      : "transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[3px] hover:shadow-card-hover active:scale-[0.99]";
 
     const accentCls = accentHover
       ? "hover:border-accent/25"

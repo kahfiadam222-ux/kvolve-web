@@ -13,6 +13,11 @@ import { RadarPopover } from "./RadarPopover";
 
 const STORAGE_KEY = "kvolve:trending-board-expanded";
 
+/** Event koordinasi antar-board bawah (Tren ↔ Skor AI): di layar sempit
+ *  keduanya terbuka bersamaan akan saling tumpang-tindih, jadi salah satu
+ *  menutup saat yang lain dibuka. Tanpa store baru — cukup CustomEvent. */
+export const BOARD_EXPAND_EVENT = "kv:board-expand";
+
 /**
  * Micro-Trending Board — panel kaca mengambang di pojok kanan-bawah editor
  * (satu-satunya kuadran yang belum dipakai CanvasNavbar/BlockPalette/
@@ -39,16 +44,37 @@ export function TrendingBoard() {
     }
   }, []);
 
-  const toggle = (): void => {
-    setExpanded((e) => {
-      const next = !e;
-      try {
-        window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-      } catch {
-        /* abaikan storage penuh/terblokir */
+  // Tutup bila board lain terbuka di layar sempit (tanpa menimpa preferensi
+  // tersimpan — hanya state sesi ini).
+  useEffect(() => {
+    const onOther = (e: Event): void => {
+      if (
+        (e as CustomEvent<string>).detail !== "tren" &&
+        window.innerWidth < 640
+      ) {
+        setExpanded(false);
       }
-      return next;
-    });
+    };
+    window.addEventListener(BOARD_EXPAND_EVENT, onOther);
+    return () => window.removeEventListener(BOARD_EXPAND_EVENT, onOther);
+  }, []);
+
+  const toggle = (): void => {
+    const next = !expanded;
+    setExpanded(next);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+    } catch {
+      /* abaikan storage penuh/terblokir */
+    }
+    // Dispatch di LUAR updater state: updater dijalankan dua kali di Strict
+    // Mode dan event listener yang men-setState dari dalam updater bisa
+    // tertimpa antrean batch yang sama.
+    if (next) {
+      window.dispatchEvent(
+        new CustomEvent(BOARD_EXPAND_EVENT, { detail: "tren" }),
+      );
+    }
   };
 
   const applyStyle = (item: TrendItem): void => {
@@ -61,14 +87,14 @@ export function TrendingBoard() {
   return (
     <div
       data-kv-decorative
-      className="pointer-events-auto absolute bottom-20 right-4 flex flex-col items-end gap-2"
+      className="pointer-events-auto absolute bottom-[calc(4.5rem+var(--kv-safe-b))] right-3 flex flex-col items-end gap-2 sm:bottom-20 sm:right-4"
     >
       {radarOpen && radarResult && (
         <RadarPopover result={radarResult} onClose={() => setRadarOpen(false)} />
       )}
 
       {expanded && (
-        <div className="scrollbar-thin max-h-[60vh] w-60 animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md">
+        <div className="scrollbar-thin max-h-[min(60vh,calc(100dvh-11rem))] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md sm:w-60">
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               Tren
@@ -77,7 +103,7 @@ export function TrendingBoard() {
               type="button"
               onClick={() => setRadarOpen((r) => !r)}
               title="Vibe-Match Radar — cocokkan warna & teks kanvas dengan tren"
-              className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent transition-colors hover:bg-accent/20"
+              className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1.5 text-[10px] font-semibold text-accent transition-colors hover:bg-accent/20 active:scale-95 sm:py-0.5"
             >
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.7" />
@@ -109,7 +135,7 @@ export function TrendingBoard() {
                 <p className="mt-0.5 truncate text-xs font-medium text-ink">
                   {item.title}
                 </p>
-                <p className="truncate text-[11px] text-ink-muted">
+                <p className="truncate text-xs text-ink-muted">
                   {item.hashtag}
                   {item.audioLabel ? ` · ${item.audioLabel}` : ""}
                 </p>
@@ -122,7 +148,7 @@ export function TrendingBoard() {
                       ? "Terapkan warna dominan ke latar artboard"
                       : "Pilih ukuran kanvas dulu (Studio Desain)"
                   }
-                  className="mt-1.5 w-full rounded-lg bg-accent-soft px-2 py-1 text-[11px] font-semibold text-accent transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent-soft"
+                  className="mt-1.5 w-full rounded-lg bg-accent-soft px-2 py-2 text-[11px] font-semibold text-accent transition-colors hover:bg-accent/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent-soft sm:py-1"
                 >
                   Terapkan Gaya
                 </button>
@@ -137,7 +163,7 @@ export function TrendingBoard() {
         onClick={toggle}
         aria-expanded={expanded}
         aria-label={expanded ? "Tutup panel Tren" : "Buka panel Tren"}
-        className="flex items-center gap-1.5 rounded-full border border-glass-border bg-glass px-3 py-1.5 text-xs font-medium text-ink-muted shadow-float backdrop-blur-md transition-colors hover:text-ink"
+        className="flex items-center gap-1.5 rounded-full border border-glass-border bg-glass px-3.5 py-2 text-xs font-medium text-ink-muted shadow-float backdrop-blur-md transition-colors hover:text-ink active:scale-95 sm:px-3 sm:py-1.5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path

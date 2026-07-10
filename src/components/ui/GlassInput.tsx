@@ -16,10 +16,12 @@ interface GlassInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "p
   inputSize?: "sm" | "md" | "lg";
 }
 
+// Font 16px di layar sempit WAJIB: iOS Safari auto-zoom saat fokus ke input
+// dengan font-size < 16px. Desktop kembali ke ukuran padat via sm:.
 const inputSizeCls = {
-  sm: "h-8 text-xs px-3",
-  md: "h-10 text-sm px-4",
-  lg: "h-12 text-sm px-4",
+  sm: "h-9 text-base px-3 sm:h-8 sm:text-xs",
+  md: "h-11 text-base px-4 sm:h-10 sm:text-sm",
+  lg: "h-12 text-base px-4 sm:text-sm",
 };
 
 export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(

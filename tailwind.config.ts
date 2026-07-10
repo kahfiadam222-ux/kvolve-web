@@ -2,6 +2,13 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
+  future: {
+    // Semua varian hover: hanya aktif di perangkat yang benar-benar punya
+    // hover (@media (hover:hover)) — mencegah sticky-hover di layar sentuh.
+    // Konsekuensi: state yang DIBUTUHKAN di touch tidak boleh hover-only;
+    // beri fallback statis/active: (lihat StudioCards/ProjectGallery).
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {
@@ -61,6 +68,33 @@ const config: Config = {
           "Cascadia Code",
           "Consolas",
           "monospace",
+        ],
+      },
+
+      // ─── Skala display fluid ───────────────────────────────────────────
+      // clamp() = mengecil mulus di ponsel tanpa breakpoint per-halaman;
+      // tracking negatif dikalibrasi untuk Plus Jakarta Sans ukuran besar.
+      // Pakai bersama `font-display` (mis. "font-display text-display-xl").
+      fontSize: {
+        "display-2xl": [
+          "clamp(2.25rem, 1.4rem + 3.6vw, 3.75rem)",
+          { lineHeight: "1.04", letterSpacing: "-0.035em", fontWeight: "700" },
+        ],
+        "display-xl": [
+          "clamp(1.9rem, 1.35rem + 2.4vw, 3rem)",
+          { lineHeight: "1.08", letterSpacing: "-0.03em", fontWeight: "700" },
+        ],
+        "display-lg": [
+          "clamp(1.55rem, 1.3rem + 1.2vw, 2.25rem)",
+          { lineHeight: "1.12", letterSpacing: "-0.025em", fontWeight: "600" },
+        ],
+        "display-md": [
+          "clamp(1.3rem, 1.15rem + 0.7vw, 1.65rem)",
+          { lineHeight: "1.18", letterSpacing: "-0.02em", fontWeight: "600" },
+        ],
+        "display-sm": [
+          "clamp(1.125rem, 1.05rem + 0.4vw, 1.35rem)",
+          { lineHeight: "1.25", letterSpacing: "-0.015em", fontWeight: "600" },
         ],
       },
 

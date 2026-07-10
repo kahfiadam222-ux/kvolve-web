@@ -17,7 +17,7 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
  */
 
 type GlassButtonVariant = "primary" | "secondary" | "ghost" | "mint" | "danger";
-type GlassButtonSize = "xs" | "sm" | "md" | "lg";
+type GlassButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 interface GlassButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: GlassButtonVariant;
@@ -73,11 +73,14 @@ const variantCls: Record<GlassButtonVariant, string> = {
   ].join(" "),
 };
 
+// Di pointer kasar (sentuh) ukuran kecil diberi tinggi minimum ekstra agar
+// mendekati target sentuh 44px tanpa mengubah tampilan desktop yang padat.
 const sizeCls: Record<GlassButtonSize, string> = {
-  xs: "h-7 px-3 text-xs gap-1.5",
-  sm: "h-8 px-3.5 text-xs gap-1.5",
-  md: "h-9 px-4 text-sm gap-2",
+  xs: "h-7 px-3 text-xs gap-1.5 [@media(pointer:coarse)]:min-h-9",
+  sm: "h-8 px-3.5 text-xs gap-1.5 [@media(pointer:coarse)]:min-h-10",
+  md: "h-9 px-4 text-sm gap-2 [@media(pointer:coarse)]:min-h-11",
   lg: "h-11 px-5 text-sm gap-2.5",
+  xl: "h-12 px-6 text-base gap-2.5",
 };
 
 export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(

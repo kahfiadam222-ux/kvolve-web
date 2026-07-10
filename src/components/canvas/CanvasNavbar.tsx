@@ -22,7 +22,7 @@ export function CanvasNavbar({ projectId }: { projectId: string }) {
         href="/dashboard"
         title="Kembali ke dasbor"
         aria-label="Kembali ke dasbor"
-        className="grid h-7 w-7 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
+        className="grid h-9 w-9 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink active:scale-90 sm:h-7 sm:w-7"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path
@@ -36,7 +36,7 @@ export function CanvasNavbar({ projectId }: { projectId: string }) {
       </Link>
       <span className="h-4 w-px bg-glass-border-subtle" aria-hidden />
       <KvolveMark className="h-5 w-5 shrink-0" />
-      <span className="max-w-40 truncate text-[13px] font-medium text-ink">
+      <span className="max-w-[7.5rem] truncate text-[13px] font-medium text-ink sm:max-w-40">
         {name ?? "Kvolve"}
       </span>
     </div>

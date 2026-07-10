@@ -54,10 +54,10 @@ export function ProfileView({ username }: { username: string }) {
             <KvolveMark className="h-7 w-7" />
             <span className="text-[15px] font-semibold tracking-tight">Kvolve</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
-              className="rounded-full border border-glass-border bg-glass-soft px-3 py-1.5 text-xs text-stone-300 transition-colors hover:bg-white/10 hover:text-ink"
+              className="rounded-full border border-glass-border bg-glass-soft px-3.5 py-2 text-xs text-ink-muted transition-colors hover:bg-white/10 hover:text-ink"
             >
               ← Dasbor
             </Link>
@@ -66,7 +66,7 @@ export function ProfileView({ username }: { username: string }) {
                 type="button"
                 onClick={() => void signOut()}
                 title={`Keluar dari sesi ${user.name}${user.guest ? " (Tamu)" : ""}`}
-                className="rounded-full border border-glass-border bg-glass-soft px-3 py-1.5 text-xs text-stone-400 transition-colors hover:border-rose-400/40 hover:text-rose-300"
+                className="rounded-full border border-glass-border bg-glass-soft px-3.5 py-2 text-xs text-ink-muted transition-colors hover:border-rose-400/40 hover:text-rose-500"
               >
                 Keluar
               </button>
@@ -108,14 +108,14 @@ export function ProfileView({ username }: { username: string }) {
 
                   <div className="min-w-0 flex-1 pt-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-xl font-semibold tracking-tight">{profile.name}</h1>
+                      <h1 className="font-display text-display-md text-ink">{profile.name}</h1>
                       {profile.verified && <VerifiedBadge className="h-5 w-5" />}
-                      <span className="text-sm text-stone-500">@{profile.username}</span>
+                      <span className="text-sm text-ink-subtle">@{profile.username}</span>
                     </div>
                   </div>
                 </div>
 
-                <p className="mt-4 max-w-prose text-sm leading-relaxed text-stone-300">
+                <p className="mt-4 max-w-prose text-sm leading-relaxed text-ink-muted">
                   {profile.bio}
                 </p>
 
@@ -131,9 +131,9 @@ export function ProfileView({ username }: { username: string }) {
                     type="button"
                     onClick={onToggleFollow}
                     aria-pressed={following}
-                    className={`ml-auto rounded-full px-5 py-2 text-sm font-semibold transition-all active:scale-[0.98] ${
+                    className={`ml-auto rounded-full px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] ${
                       following
-                        ? "border border-glass-border bg-glass-soft text-stone-300 hover:border-rose-400/40 hover:text-rose-300"
+                        ? "border border-glass-border bg-glass-soft text-ink-muted hover:border-rose-400/40 hover:text-rose-500"
                         : "kv-cta shadow-glow"
                     }`}
                   >
@@ -155,8 +155,10 @@ export function ProfileView({ username }: { username: string }) {
 function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div>
-      <p className="text-lg font-semibold tabular-nums">{value.toLocaleString("id-ID")}</p>
-      <p className="text-xs text-stone-500">{label}</p>
+      <p className="font-display text-xl font-semibold tabular-nums tracking-tight text-ink">
+        {value.toLocaleString("id-ID")}
+      </p>
+      <p className="text-xs text-ink-subtle">{label}</p>
     </div>
   );
 }

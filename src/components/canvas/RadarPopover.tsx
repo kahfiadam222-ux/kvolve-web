@@ -12,7 +12,7 @@ export function RadarPopover({
   onClose: () => void;
 }) {
   return (
-    <div className="w-60 animate-fade-up rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md">
+    <div className="max-h-[40vh] w-[min(15rem,calc(100vw-1.5rem))] animate-fade-up overflow-y-auto rounded-2xl border border-glass-border bg-glass p-3 shadow-float backdrop-blur-md scrollbar-thin sm:w-60">
       <div className="mb-2 flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
           Vibe-Match Radar
@@ -21,7 +21,7 @@ export function RadarPopover({
           type="button"
           onClick={onClose}
           aria-label="Tutup Radar"
-          className="grid h-5 w-5 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
+          className="grid h-8 w-8 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink active:scale-90 sm:h-6 sm:w-6"
         >
           ×
         </button>

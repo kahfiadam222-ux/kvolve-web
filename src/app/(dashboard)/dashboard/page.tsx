@@ -24,27 +24,29 @@ export default function DashboardPage() {
       <CrystalBackdrop />
 
       <nav className="sticky top-0 z-10 border-b border-glass-border bg-canvas/60 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 sm:px-6">
           <div className="flex items-center gap-2.5">
             <KvolveMark className="h-7 w-7" />
-            <span className="text-[15px] font-semibold tracking-tight">
+            <span className="font-display text-base font-bold tracking-tight">
               Kvolve
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <PersonalizationButton />
             <UserBadge />
           </div>
         </div>
       </nav>
 
-      <main className="relative mx-auto max-w-6xl space-y-14 px-6 py-14">
+      {/* Ritme berkelompok: klaster studio (di dalam Hub) rapat, antar-zona
+          longgar — bukan metronom space-y seragam. */}
+      <main className="relative mx-auto max-w-6xl space-y-14 px-5 py-8 sm:space-y-20 sm:px-6 sm:py-12">
         <DashboardStudioHub />
         <TemplateCenter />
         <ProjectGallery />
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-glass-border bg-glass-soft px-4 py-2 text-xs text-ink-subtle backdrop-blur-sm">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0 text-accent">
+        <div className="inline-flex items-start gap-2 rounded-2xl border border-glass-border bg-glass-soft px-4 py-2.5 text-xs leading-relaxed text-ink-subtle backdrop-blur-sm sm:items-center sm:rounded-full sm:py-2">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden className="mt-0.5 shrink-0 text-accent sm:mt-0">
             <path
               d="M12 21c4.5-3.5 7-6.9 7-10.5A7 7 0 0 0 5 10.5C5 14.1 7.5 17.5 12 21Z"
               stroke="currentColor"

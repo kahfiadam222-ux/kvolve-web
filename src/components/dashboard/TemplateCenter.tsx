@@ -47,32 +47,32 @@ export function TemplateCenter() {
 
   return (
     <section id="template-center" data-kv-decorative>
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+      <div className="mb-5 flex items-end justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
             Template
           </p>
-          <h2 className="mt-0.5 text-lg font-semibold text-ink">
+          <h2 className="mt-1 font-display text-display-md text-ink">
             Mulai dari template siap pakai
           </h2>
         </div>
         <button
           type="button"
-          className="text-xs font-medium text-accent hover:underline"
+          className="shrink-0 whitespace-nowrap pb-1 text-xs font-medium text-accent hover:underline"
         >
           Lihat semua →
         </button>
       </div>
 
-      {/* Category pills */}
-      <div className="mb-5 flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+      {/* Pill kategori — strip geser full-bleed di mobile, tanpa scrollbar */}
+      <div className="-mx-5 mb-5 flex gap-2 overflow-x-auto px-5 py-1 scrollbar-none sm:mx-0 sm:px-0">
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
             className={[
-              "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-150",
+              "shrink-0 rounded-full px-4 py-2 text-xs font-medium transition-all duration-150 active:scale-95",
               activeCategory === cat
                 ? "bg-accent text-cta-ink shadow-glow"
                 : "bg-glass text-ink-muted border border-glass-border-strong hover:bg-glass-strong hover:text-ink backdrop-blur-md",

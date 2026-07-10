@@ -61,9 +61,14 @@
   --kv-cta-mint-from-hover: #2dd4bf;
   --kv-cta-mint-to-hover: #6ee7b7;
 
-  /* Gerak & font */
+  /* Gerak */
   --kv-motion-scale: 1;
-  --font-display: var(--font-sans);
+  /* --font-display kini di-supply next/font (Plus Jakarta Sans) di layout.tsx;
+     jangan definisikan di sini agar tidak berebut cascade dengan kelas font. */
+
+  /* Safe area (viewport-fit=cover) — elemen fixed bawah memakai
+     bottom-[calc(<offset>+var(--kv-safe-b))] agar bebas home-indicator. */
+  --kv-safe-b: env(safe-area-inset-bottom, 0px);
 
   /* Pengali comfort — HANYA dimiliki aturan CSS [data-comfort] (ThemeProvider
      tidak pernah menulisnya inline, jadi aturan performance selalu menang).
@@ -95,7 +100,8 @@
   :focus-visible {
     outline: 2px solid rgb(var(--kv-accent));
     outline-offset: 2px;
-    border-radius: 4px;
+    /* tanpa border-radius: browser modern melengkungkan outline mengikuti
+       radius elemen sendiri; radius paksa 4px merusak pill/rounded-full */
   }
 
   kbd {
@@ -235,13 +241,16 @@
     transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
                 box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .glass-card:hover {
-    transform: translateY(-3px);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
-      0 4px 8px rgba(0, 0, 0, 0.06),
-      0 12px 32px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgb(var(--kv-accent) / 0.12);
+  /* hover-lift hanya di perangkat ber-hover — cegah sticky-hover di touch */
+  @media (hover: hover) {
+    .glass-card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
+        0 4px 8px rgba(0, 0, 0, 0.06),
+        0 12px 32px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgb(var(--kv-accent) / 0.12);
+    }
   }
 
   /* Dark glass — for canvas editor overlay panels (identitas editor,
@@ -372,21 +381,33 @@
     );
   }
 
-  /* ─── Hover effects ───────────────────────────────────────────────────── */
+  /* ─── Hover effects (hanya perangkat ber-hover) ───────────────────────── */
   .hover-lift {
     transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .hover-lift:hover {
-    transform: translateY(-2px);
+  @media (hover: hover) {
+    .hover-lift:hover {
+      transform: translateY(-2px);
+    }
   }
 
-  /* Magnetic button — subtle scale on hover */
+  /* Magnetic button — subtle scale on hover; :active tetap global (touch) */
   .btn-magnetic {
     transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
                 box-shadow 150ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .btn-magnetic:hover { transform: scale(1.02); }
+  @media (hover: hover) {
+    .btn-magnetic:hover { transform: scale(1.02); }
+  }
   .btn-magnetic:active { transform: scale(0.97); }
+
+  /* ─── Scroll strip tanpa scrollbar (baris pill kategori di mobile) ────── */
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 
   /* ─── Dock active indicator ───────────────────────────────────────────── */
   .dock-indicator {
@@ -398,6 +419,16 @@
     height: 16px;
     border-radius: 0 2px 2px 0;
     background: linear-gradient(180deg, rgb(var(--kv-accent)), rgb(var(--kv-mint)));
+  }
+}
+
+/* ─── Perangkat sentuh: blur kaca otomatis lebih hemat ────────────────────────
+   backdrop-filter mahal di GPU ponsel; turunkan sebagian tanpa menunggu
+   pengguna menyalakan Mode Performa. Aturan [data-comfort~="performance"]
+   (0.2) tetap menang karena selektor atributnya lebih spesifik. */
+@media (pointer: coarse) {
+  :root {
+    --kv-perf-scale: 0.6;
   }
 }
 

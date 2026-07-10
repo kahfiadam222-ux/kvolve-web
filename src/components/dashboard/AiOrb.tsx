@@ -152,8 +152,8 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
 
   return (
     <>
-      {/* Floating Orb Button */}
-      <div className="fixed bottom-8 right-8 z-40">
+      {/* Floating Orb Button — offset aman dari home-indicator iOS */}
+      <div className="fixed bottom-[calc(1.25rem+var(--kv-safe-b))] right-5 z-40 sm:bottom-8 sm:right-8">
         <AnimatePresence>
           {!open && (
             <motion.button
@@ -164,8 +164,8 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
               type="button"
               onClick={() => setOpen(true)}
               className="group relative flex h-14 w-14 items-center justify-center rounded-full"
-              title="Kvovle AI Studio"
-              aria-label="Buka Kvovle AI Studio"
+              title="Kvolve AI Studio"
+              aria-label="Buka Kvolve AI Studio"
             >
               {/* Orb glow rings — warna aksen/sekunder ikut tema aktif */}
               <div className="absolute inset-0 animate-breathe rounded-full opacity-40"
@@ -201,22 +201,23 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
       <AnimatePresence>
         {open && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop — redup tipis supaya keadaan modal terbaca di touch */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40"
+              className="fixed inset-0 z-40 bg-ink/10"
               onClick={close}
             />
 
-            {/* Glass Panel */}
+            {/* Glass Panel — bottom sheet penuh-lebar di ponsel,
+                kartu pojok kanan-bawah di desktop */}
             <motion.div
               initial={{ opacity: 0, y: 24, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.97 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed bottom-8 right-8 z-50 w-80 overflow-hidden rounded-3xl"
+              className="fixed inset-x-4 bottom-[calc(1rem+var(--kv-safe-b))] z-50 overflow-hidden rounded-3xl sm:inset-x-auto sm:bottom-8 sm:right-8 sm:w-80"
               style={{
                 background: "rgb(var(--kv-glass-rgb) / var(--kv-glass-strong-a))",
                 backdropFilter: "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
@@ -251,14 +252,16 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-ink">Kvovle AI</p>
-                    <p className="text-[10px] text-ink-muted">Crystal Creative Studio</p>
+                    <p className="font-display text-base font-semibold tracking-tight text-ink">
+                      Kvolve AI
+                    </p>
+                    <p className="text-[11px] text-ink-muted">Crystal Creative Studio</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={close}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-canvas-soft/80 text-xs text-ink-muted transition-colors hover:bg-canvas-soft"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-canvas-soft/80 text-sm text-ink-muted transition-colors hover:bg-canvas-soft active:scale-90"
                   aria-label="Tutup AI Studio"
                 >
                   ×
@@ -277,11 +280,11 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                         onFocus={() => setPhase("listening")}
                         onBlur={() => setPhase((p) => (p === "listening" ? "idle" : p))}
                         placeholder="Apa yang ingin kamu buat?"
-                        className="w-full rounded-xl border border-glass-border-subtle bg-[rgb(var(--kv-glass-rgb)/0.6)] px-4 py-2.5 text-sm text-ink placeholder:text-ink-subtle outline-none backdrop-blur-sm transition-all focus:border-accent/40 focus:bg-[rgb(var(--kv-glass-rgb)/0.8)] focus:ring-2 focus:ring-accent/10"
+                        className="w-full rounded-xl border border-glass-border-subtle bg-[rgb(var(--kv-glass-rgb)/0.6)] px-4 py-3 pr-12 text-base text-ink placeholder:text-ink-subtle outline-none backdrop-blur-sm transition-all focus:border-accent/40 focus:bg-[rgb(var(--kv-glass-rgb)/0.8)] focus:ring-2 focus:ring-accent/10 sm:py-2.5 sm:text-sm"
                       />
                       <button
                         type="submit"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-cta-ink shadow-glow transition-all hover:bg-accent-light active:scale-95 disabled:opacity-40"
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-cta-ink shadow-glow transition-all hover:bg-accent-light active:scale-95 disabled:opacity-40"
                         disabled={!inputVal.trim()}
                         aria-label="Kirim"
                       >
@@ -310,7 +313,7 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                           </span>
                           <span>
                             <span className="block text-xs font-semibold text-ink">{cmd.label}</span>
-                            <span className="block text-[10px] text-ink-muted">{cmd.desc}</span>
+                            <span className="block text-[11px] text-ink-muted">{cmd.desc}</span>
                           </span>
                         </button>
                       ))}
@@ -318,8 +321,8 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                   </div>
 
                   <div className="border-t border-glass-border-subtle px-5 py-3">
-                    <p className="text-center text-[10px] text-ink-subtle">
-                      AI Crystal Studio · Kvovle
+                    <p className="text-center text-[11px] text-ink-subtle">
+                      AI Crystal Studio · Kvolve
                     </p>
                   </div>
                 </>
@@ -350,19 +353,25 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                     className="mb-3 rounded-xl border border-glass-border-subtle bg-accent-soft p-3"
                   >
                     <p className="text-xs font-semibold text-ink">
-                      Kvovle AI penuh sedang disiapkan
+                      Kvolve AI penuh sedang disiapkan
                     </p>
                     <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">
                       Sementara itu, ini langkah yang bisa langsung kamu ambil:
                     </p>
                   </motion.div>
+                  {/* Aksi pertama = CTA utama (terisi); sisanya baris tenang —
+                      hierarki primer/sekunder, bukan tiga kartu kembar */}
                   <div className="flex flex-col gap-1.5">
-                    {successActions.map((a) => (
+                    {successActions.map((a, i) => (
                       <button
                         key={a.id}
                         type="button"
                         onClick={a.onAction}
-                        className="rounded-xl border border-glass-border-strong bg-glass px-3 py-2.5 text-left text-xs font-medium text-ink transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
+                        className={
+                          i === 0
+                            ? "kv-cta rounded-xl px-3 py-3 text-left text-xs font-semibold shadow-glow transition-all hover:shadow-glow-strong active:scale-[0.98]"
+                            : "rounded-xl border border-glass-border-strong bg-glass px-3 py-3 text-left text-xs font-medium text-ink transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent active:scale-[0.98]"
+                        }
                       >
                         {a.label}
                       </button>
@@ -371,7 +380,7 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                   <button
                     type="button"
                     onClick={resetToIdle}
-                    className="mt-3 w-full text-center text-[11px] font-medium text-ink-subtle transition-colors hover:text-ink-muted"
+                    className="mt-2 w-full py-2.5 text-center text-[11px] font-medium text-ink-subtle transition-colors hover:text-ink-muted"
                   >
                     Coba lagi
                   </button>

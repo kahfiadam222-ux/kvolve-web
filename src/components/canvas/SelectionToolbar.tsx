@@ -45,12 +45,17 @@ export function SelectionToolbar() {
   const bottomY = bbox.maxY * s + camera.y;
   // Default di atas kotak; bila terlalu dekat tepi atas, taruh di bawah.
   const above = topY > 52;
-  const y = above ? topY - 44 : bottomY + 12;
+  const y = above ? topY - 48 : bottomY + 12;
 
   return (
+    // clamp(): toolbar tetap terlihat saat objek dekat/di luar tepi layar
+    // (umum di ponsel saat zoom-in — dulu bisa hilang total dari viewport)
     <div
       className="pointer-events-auto absolute z-10 flex -translate-x-1/2 animate-fade-in items-center gap-0.5 rounded-full border border-glass-border bg-glass px-1.5 py-1 shadow-float backdrop-blur-md"
-      style={{ left: `${centerX}px`, top: `${y}px` }}
+      style={{
+        left: `clamp(6rem, ${centerX}px, calc(100vw - 6rem))`,
+        top: `clamp(0.5rem, ${y}px, calc(100dvh - 4rem))`,
+      }}
     >
       {bbox.count > 1 && (
         <span className="px-2 text-[11px] font-medium text-ink-muted">
@@ -62,7 +67,7 @@ export function SelectionToolbar() {
         title="Duplikat (Ctrl/Cmd + D)"
         aria-label="Duplikat objek terpilih"
         onClick={() => duplicateSelected()}
-        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
+        className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium text-ink-muted transition-colors hover:bg-black/5 hover:text-ink active:scale-95 sm:px-2.5 sm:py-1"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
           <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.7" />
@@ -76,7 +81,7 @@ export function SelectionToolbar() {
         title="Hapus (Del)"
         aria-label="Hapus objek terpilih"
         onClick={() => deleteSelected()}
-        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-rose-300 transition-colors hover:bg-rose-500/15"
+        className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium text-rose-500 transition-colors hover:bg-rose-500/15 active:scale-95 sm:px-2.5 sm:py-1"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path

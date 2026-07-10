@@ -35,21 +35,40 @@ export function CreativeHero({ onOpenAi }: { onOpenAi: () => void }) {
       <GlassPanel
         variant="strong"
         rounded="3xl"
-        className="relative overflow-hidden px-6 py-10 sm:px-10 sm:py-12"
+        className="relative overflow-hidden px-6 py-9 sm:px-10 sm:py-12"
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        {/* Cahaya ambient sudut — kedalaman lembut, ikut warna tema */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full opacity-60 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle, rgb(var(--kv-accent) / 0.18), rgb(var(--kv-mint) / 0.10) 55%, transparent 75%)",
+          }}
+        />
+
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
           Selamat datang di ruang kerja kreatifmu
         </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-          Mau membuat apa hari ini?
+        <h1 className="mt-2.5 font-display text-display-xl text-ink">
+          Mau membuat apa{" "}
+          <span className="text-gradient">hari ini?</span>
         </h1>
 
-        <div className="mt-7 max-w-xl">
+        {/* Enter/kirim = buka AI Studio (AiOrb) — input bukan lagi hiasan */}
+        <form
+          className="relative mt-7 max-w-xl"
+          onSubmit={(e) => {
+            e.preventDefault();
+            onOpenAi();
+          }}
+        >
           <GlassInput
             inputSize="lg"
             placeholder="Jelaskan ide desainmu..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
+            className="pr-14"
             prefixIcon={
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path
@@ -61,14 +80,30 @@ export function CreativeHero({ onOpenAi }: { onOpenAi: () => void }) {
               </svg>
             }
           />
-        </div>
+          <button
+            type="submit"
+            aria-label="Buat dengan AI"
+            className="kv-cta absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg shadow-glow transition-all hover:shadow-glow-strong active:scale-95"
+          >
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden>
+              <path
+                d="M2 6h8M6 2l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
           <GlassButton
             variant="primary"
             size="lg"
             pill
             onClick={createAndOpen}
+            className="col-span-2 sm:col-span-1"
             icon={
               <svg width="15" height="15" viewBox="0 0 14 14" aria-hidden>
                 <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />

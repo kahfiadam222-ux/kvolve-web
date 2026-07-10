@@ -38,14 +38,14 @@ export function AiStudioCard({ onOpenAi }: { onOpenAi: () => void }) {
     >
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-mint">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-mint">
             AI Studio
           </p>
-          <h2 className="mt-0.5 text-lg font-semibold text-ink">
-            Kvovle AI, asisten desainmu
+          <h2 className="mt-1 font-display text-display-md text-ink">
+            Kvolve AI, asisten desainmu
           </h2>
         </div>
-        <GlassButton variant="mint" size="sm" pill onClick={onOpenAi}>
+        <GlassButton variant="mint" size="md" pill onClick={onOpenAi}>
           Buka AI Studio
         </GlassButton>
       </div>
@@ -81,7 +81,7 @@ export function AiStudioCard({ onOpenAi }: { onOpenAi: () => void }) {
                   key={s}
                   type="button"
                   onClick={onOpenAi}
-                  className="rounded-full border border-glass-border-strong bg-glass px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent"
+                  className="rounded-full border border-glass-border-strong bg-glass px-3.5 py-2 text-xs font-medium text-ink-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent active:scale-95"
                 >
                   {s}
                 </button>

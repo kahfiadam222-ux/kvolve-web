@@ -19,7 +19,7 @@ export function PersonalizationButton() {
         aria-expanded={open}
         aria-label="Personalisasi tampilan"
         title="Personalisasi tampilan (tema & kenyamanan)"
-        className="grid h-8 w-8 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink"
+        className="grid h-10 w-10 place-items-center rounded-full text-ink-muted transition-colors hover:bg-black/5 hover:text-ink active:scale-90"
       >
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path
