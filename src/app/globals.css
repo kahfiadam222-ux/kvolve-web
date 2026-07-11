@@ -4,11 +4,13 @@
 
 /* ─── Liquid Intelligence — kontrak CSS variable ─────────────────────────────
  * Default = tema "Royal Atelier" (rebrand premium dari Crystal Intelligence):
- * safir royal #2E4FC3 + emas antik #9E752B + jembatan amethyst #7D5AD1 di
+ * safir royal #2E4FC3 + emas antik #84601F + jembatan amethyst #7D5AD1 di
  * atas porselen hangat, ink midnight bernuansa violet — sengaja menjauh dari
  * hex standar Tailwind. Kontras dihitung manual: ink/canvas 15.9:1,
- * ink-muted 6.2:1, aksen-sebagai-teks 6.4:1, emas-sebagai-teks-bold 3.9:1,
- * putih di seluruh rentang gradient CTA ≥ 3.2:1.
+ * ink-muted 6.2:1, aksen-sebagai-teks 6.4:1, emas-sebagai-teks 5.25:1 (AA teks
+ * normal, diperdalam dari #9E752B/3.83:1 yang gagal AA di label kecil semibold
+ * — lihat CanvasToolbar.tsx & AiStudioCard.tsx), putih di seluruh rentang
+ * gradient CTA ≥ 3.2:1.
  * Nilai di sini HARUS identik dengan spec "crystal-intelligence" di
  * themeData.ts (first paint tanpa JS == tema default). ThemeProvider
  * menimpa variabel ini di <html> saat tema lain aktif.
@@ -27,7 +29,7 @@
   --kv-accent-deep: 34 57 143;
   --kv-accent-wash: 226 230 247;
   --kv-wash-soft: 242 244 251;
-  --kv-mint: 158 117 43;
+  --kv-mint: 132 96 31;
   --kv-mint-light: 201 163 86;
   --kv-mint-wash: 243 238 230;
   --kv-grad-mid: 125 90 209;

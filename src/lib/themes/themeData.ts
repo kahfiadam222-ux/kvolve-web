@@ -239,7 +239,9 @@ const THEME_SPECS: ThemeSpec[] = [
   // 1. Default — "Royal Atelier": safir royal + emas antik + amethyst di
   //    porselen hangat. Nilai HARUS identik dengan :root globals.css
   //    (first paint tanpa JS == tema default). Kontras terverifikasi:
-  //    ink 15.9:1 · inkMuted 6.2:1 · accent 6.4:1 · emas (teks bold) 3.9:1 ·
+  //    ink 15.9:1 · inkMuted 6.2:1 · accent 6.4:1 · emas (teks) 5.25:1 (AA
+  //    teks normal — diperdalam dari #9E752B/3.83:1 yang gagal AA di label
+  //    kecil semibold, lihat CanvasToolbar.tsx & AiStudioCard.tsx) ·
   //    putih di rentang gradient CTA ≥ 3.2:1.
   {
     id: DEFAULT_THEME_ID,
@@ -258,7 +260,7 @@ const THEME_SPECS: ThemeSpec[] = [
     accentDeep: "#22398F",
     accentWash: "#E2E6F7",
     washSoft: "#F2F4FB",
-    secondary: "#9E752B",
+    secondary: "#84601F",
     secondaryLight: "#C9A356",
     secondaryWash: "#F3EEE6",
     gradMid: "#7D5AD1",
