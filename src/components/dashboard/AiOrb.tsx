@@ -195,7 +195,7 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
               <div className="relative h-14 w-14 overflow-hidden rounded-full shadow-glow transition-transform duration-200 group-hover:scale-110"
                 style={{
                   background: "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgb(var(--kv-accent-wash) / 0.6) 25%, rgb(var(--kv-accent) / 0.5) 60%, rgb(var(--kv-mint) / 0.7) 100%)",
-                  boxShadow: "0 0 0 1px rgba(255,255,255,0.5) inset, 0 0 24px rgb(var(--kv-accent) / 0.3), 0 8px 32px rgba(0,0,0,0.12)",
+                  boxShadow: "0 0 0 1px rgba(255,255,255,0.5) inset, 0 0 24px rgb(var(--kv-accent) / 0.3), 0 8px 32px rgb(var(--kv-shadow-rgb) / 0.14)",
                 }}>
                 {/* Inner crystal shine */}
                 <div className="absolute left-2 top-1.5 h-5 w-5 rounded-full bg-white/60 blur-[6px]" />
@@ -241,7 +241,7 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
                 backdropFilter: "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
                 WebkitBackdropFilter: "blur(calc(40px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(2)",
                 border: "1px solid rgb(var(--kv-glass-border-rgb) / 0.85)",
-                boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 8px 32px rgba(0,0,0,0.12), 0 32px 64px rgba(0,0,0,0.10), 0 0 0 1px rgb(var(--kv-accent) / 0.08)",
+                boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 8px 32px rgb(var(--kv-shadow-rgb) / 0.14), 0 32px 64px rgb(var(--kv-shadow-rgb) / 0.12), 0 0 0 1px rgb(var(--kv-accent) / 0.08)",
               }}
             >
               {/* Header */}

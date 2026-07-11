@@ -127,6 +127,10 @@ export interface ThemeSpec {
   glassBorderRgbHex?: string;
   glassBorderA?: number;
   glassBorderStrongHex?: string;
+  /** Warna bayangan (tinted shadow). Default: campuran ink→accent di tema
+   *  terang (bayangan "mahal" bernuansa lingkungan, bukan abu-abu kotor),
+   *  hitam murni di tema gelap. */
+  shadowHex?: string;
   insetA?: number;
   noiseA?: number;
   blobs?: [string, string, string, string, string, string, string, string, string];
@@ -170,6 +174,11 @@ export function buildTheme(spec: ThemeSpec): KvTheme {
 
   const glassRgbHex = spec.glassRgbHex ?? "#ffffff";
   const borderRgbHex = spec.glassBorderRgbHex ?? "#ffffff";
+  // Bayangan ber-tint: tema terang memakai navy/ungu dalam dari keluarga
+  // ink+accent (bayangan hitam murni terlihat abu-abu "murahan" di kanvas
+  // hangat); tema gelap tetap hitam (benar secara fisika di kanvas gelap).
+  const shadowHex =
+    spec.shadowHex ?? (d ? "#000000" : mixHex(spec.ink, spec.accent, 0.35));
   const borderStrongHex =
     spec.glassBorderStrongHex ?? (d ? mixHex(borderRgbHex, spec.canvas, 0.5) : "#cbd5e1");
   const blobs = spec.blobs ?? deriveBlobs(spec, gradMid);
@@ -204,6 +213,7 @@ export function buildTheme(spec: ThemeSpec): KvTheme {
       "--kv-glass-border-rgb": tri(borderRgbHex),
       "--kv-glass-border-a": String(spec.glassBorderA ?? m.borderA),
       "--kv-glass-border-strong-rgb": tri(borderStrongHex),
+      "--kv-shadow-rgb": tri(shadowHex),
       "--kv-inset-a": String(spec.insetA ?? (d ? 0.08 : 0.9)),
       "--kv-blur-scale": String(m.blurScale),
       "--kv-sheen-a": String(m.sheenA),
@@ -269,6 +279,9 @@ const THEME_SPECS: ThemeSpec[] = [
     ctaFromHover: "#3E5ED3",
     ctaToHover: "#6D67E4",
     ctaMint: ["#8F6A26", "#B08A45", "#9E752B", "#B98F49"],
+    // Kaca putih hangat (bukan #FFFFFF murni) — menyatu dengan porselen
+    // hangat; putih murni terlihat seperti stiker dingin di kanvas ini.
+    glassRgbHex: "#FFFDF9",
     glassBorderStrongHex: "#D3CCC0",
     insetA: 0.9,
     noiseA: 0.018,

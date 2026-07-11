@@ -193,7 +193,7 @@ export function StudioCards({ onOpenAi }: { onOpenAi?: () => void }) {
               {/* Icon */}
               <div
                 className="relative z-10 flex h-14 w-14 items-center justify-center rounded-xl bg-glass-strong text-ink-strong transition-all duration-200 group-hover:scale-110 group-hover:text-accent"
-                style={{ boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 2px 8px rgba(0,0,0,0.06)" }}
+                style={{ boxShadow: "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset, 0 2px 8px rgb(var(--kv-shadow-rgb) / 0.07)" }}
               >
                 {type.icon}
               </div>

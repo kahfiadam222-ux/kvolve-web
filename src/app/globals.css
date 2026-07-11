@@ -35,14 +35,20 @@
   --kv-grad-mid: 125 90 209;
   --kv-cta-ink: 255 255 255;
 
-  /* Material kaca */
-  --kv-glass-rgb: 255 255 255;
+  /* Material kaca — glass putih HANGAT (255 253 249, bukan putih murni)
+     supaya menyatu dengan porselen; harus identik dengan glassRgbHex
+     "crystal-intelligence" di themeData.ts. */
+  --kv-glass-rgb: 255 253 249;
   --kv-glass-a: 0.55;
   --kv-glass-soft-a: 0.35;
   --kv-glass-strong-a: 0.72;
   --kv-glass-border-rgb: 255 255 255;
   --kv-glass-border-a: 0.7;
   --kv-glass-border-strong-rgb: 211 204 192;
+  /* Bayangan ber-tint (navy dalam dari ink+accent) — bayangan hitam murni
+     terlihat abu-abu kotor di kanvas hangat. = mixHex(ink, accent, 0.35)
+     yang dihitung buildTheme untuk tema default. */
+  --kv-shadow-rgb: 32 45 91;
   --kv-inset-a: 0.9;
   --kv-blur-scale: 1;
   --kv-sheen-a: 0.35;
@@ -191,9 +197,9 @@
     border: 1px solid rgb(var(--kv-glass-border-rgb) / var(--kv-glass-border-a));
     box-shadow:
       0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
-      0 2px 4px rgba(0, 0, 0, 0.04),
-      0 8px 24px rgba(0, 0, 0, 0.06),
-      0 24px 48px rgba(0, 0, 0, 0.08);
+      0 2px 4px rgb(var(--kv-shadow-rgb) / 0.05),
+      0 8px 24px rgb(var(--kv-shadow-rgb) / 0.07),
+      0 24px 48px rgb(var(--kv-shadow-rgb) / 0.1);
   }
 
   .crystal-panel-soft {
@@ -203,8 +209,8 @@
     border: 1px solid rgb(var(--kv-glass-border-rgb) / 0.6);
     box-shadow:
       0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
-      0 1px 2px rgba(0, 0, 0, 0.03),
-      0 4px 16px rgba(0, 0, 0, 0.05);
+      0 1px 2px rgb(var(--kv-shadow-rgb) / 0.04),
+      0 4px 16px rgb(var(--kv-shadow-rgb) / 0.06);
   }
 
   /* Glass reflection — diagonal light streak across panels */
@@ -244,8 +250,8 @@
     border-radius: 20px;
     box-shadow:
       0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 4px 16px rgba(0, 0, 0, 0.06);
+      0 1px 2px rgb(var(--kv-shadow-rgb) / 0.05),
+      0 4px 16px rgb(var(--kv-shadow-rgb) / 0.07);
     transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
                 box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -255,8 +261,8 @@
       transform: translateY(-3px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
-        0 4px 8px rgba(0, 0, 0, 0.06),
-        0 12px 32px rgba(0, 0, 0, 0.1),
+        0 4px 8px rgb(var(--kv-shadow-rgb) / 0.07),
+        0 12px 32px rgb(var(--kv-shadow-rgb) / 0.12),
         0 0 0 1px rgb(var(--kv-accent) / 0.12);
     }
   }
@@ -276,8 +282,21 @@
 
   /* ─── CTA gradients (var-driven; menggantikan pasangan from-blue-600/
      to-blue-500 dkk. supaya ikut tema) ──────────────────────────────────── */
+  /* Deklarasi ganda = progressive enhancement: baris pertama (2-stop)
+     dipakai browser tanpa color-mix(); baris kedua menimpanya dengan
+     versi lux — titik tengah oklab (transisi hue lebih kaya daripada
+     interpolasi sRGB) + lapisan "cahaya atas" tipis, memberi kesan tombol
+     kaca tersinari tanpa menyentuh box-shadow (bebas konflik shadow-glow). */
   .kv-cta {
     background-image: linear-gradient(to right, var(--kv-cta-from), var(--kv-cta-to));
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.16), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-from),
+        color-mix(in oklab, var(--kv-cta-from) 45%, var(--kv-cta-to)) 52%,
+        var(--kv-cta-to)
+      );
     color: rgb(var(--kv-cta-ink));
   }
   .kv-cta:not(:disabled):hover {
@@ -286,6 +305,14 @@
       var(--kv-cta-from-hover),
       var(--kv-cta-to-hover)
     );
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-from-hover),
+        color-mix(in oklab, var(--kv-cta-from-hover) 45%, var(--kv-cta-to-hover)) 52%,
+        var(--kv-cta-to-hover)
+      );
   }
   .kv-cta-mint {
     background-image: linear-gradient(
@@ -293,6 +320,14 @@
       var(--kv-cta-mint-from),
       var(--kv-cta-mint-to)
     );
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.14), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-mint-from),
+        color-mix(in oklab, var(--kv-cta-mint-from) 45%, var(--kv-cta-mint-to)) 52%,
+        var(--kv-cta-mint-to)
+      );
     color: rgb(var(--kv-cta-ink));
   }
   .kv-cta-mint:not(:disabled):hover {
@@ -301,6 +336,14 @@
       var(--kv-cta-mint-from-hover),
       var(--kv-cta-mint-to-hover)
     );
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.18), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-mint-from-hover),
+        color-mix(in oklab, var(--kv-cta-mint-from-hover) 45%, var(--kv-cta-mint-to-hover)) 52%,
+        var(--kv-cta-mint-to-hover)
+      );
   }
 
   /* ─── Scrollbars ──────────────────────────────────────────────────────── */

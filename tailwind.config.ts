@@ -105,34 +105,37 @@ const config: Config = {
         // Rim-light putih memakai --kv-inset-a agar tema gelap bisa
         // meredupkannya (pola sama dengan float-dark).
 
-        // Floating glass panels — toolbar, dock, modal
+        // Floating glass panels — toolbar, dock, modal. Bayangan ber-tint
+        // via --kv-shadow-rgb (navy-ink di tema terang, hitam di tema
+        // gelap) — bayangan hitam murni terlihat abu-abu kotor di kanvas
+        // hangat.
         float: [
           "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
-          "0 2px 4px rgba(0,0,0,0.04)",
-          "0 8px 24px rgba(0,0,0,0.06)",
-          "0 24px 48px rgba(0,0,0,0.08)",
+          "0 2px 4px rgb(var(--kv-shadow-rgb) / 0.05)",
+          "0 8px 24px rgb(var(--kv-shadow-rgb) / 0.07)",
+          "0 24px 48px rgb(var(--kv-shadow-rgb) / 0.10)",
         ].join(", "),
 
         // Cards — project cards, studio cards, template cards
         card: [
           "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
-          "0 1px 2px rgba(0,0,0,0.04)",
-          "0 4px 16px rgba(0,0,0,0.06)",
+          "0 1px 2px rgb(var(--kv-shadow-rgb) / 0.05)",
+          "0 4px 16px rgb(var(--kv-shadow-rgb) / 0.07)",
         ].join(", "),
 
         // Hovered cards — lift effect
         "card-hover": [
           "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
-          "0 4px 8px rgba(0,0,0,0.06)",
-          "0 12px 32px rgba(0,0,0,0.10)",
+          "0 4px 8px rgb(var(--kv-shadow-rgb) / 0.07)",
+          "0 12px 32px rgb(var(--kv-shadow-rgb) / 0.12)",
           "0 0 0 1px rgb(var(--kv-accent) / 0.15)",
         ].join(", "),
 
         // Glass panels — sidebars, inspectors
         glass: [
           "0 1px 0 rgba(255,255,255,var(--kv-inset-a)) inset",
-          "0 1px 2px rgba(0,0,0,0.03)",
-          "0 8px 32px rgba(0,0,0,0.08)",
+          "0 1px 2px rgb(var(--kv-shadow-rgb) / 0.04)",
+          "0 8px 32px rgb(var(--kv-shadow-rgb) / 0.10)",
         ].join(", "),
 
         // Primary CTA glow
