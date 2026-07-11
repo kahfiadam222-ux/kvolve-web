@@ -354,7 +354,10 @@ const THEME_SPECS: ThemeSpec[] = [
     // Cyan-600 hanya ~3.9:1 di kanvas ini — aman untuk elemen besar/tebal;
     // teks aksen kecil memakai accent-deep (cyan-700) via ::selection dsb.
     accentDeep: "#0E7490",
-    secondary: "#10B981",
+    // secondary asli #10B981 cuma 2.37:1 di kanvas ini (--kv-mint dipakai
+    // sebagai teks kecil semibold, lihat CanvasToolbar.tsx & AiStudioCard.tsx)
+    // — diperdalam ke 4.88:1, hue/saturation sama (teal-emerald), lebih gelap.
+    secondary: "#0B7C56",
     secondaryLight: "#34D399",
     ctaFrom: "#0891B2",
     ctaTo: "#06B6D4",
@@ -377,7 +380,10 @@ const THEME_SPECS: ThemeSpec[] = [
     inkStrong: "#44543C",
     accent: "#16A34A",
     accentLight: "#22C55E",
-    secondary: "#D97706",
+    // secondary asli #D97706 cuma 3.02:1 di kanvas ini (--kv-mint dipakai
+    // sebagai teks kecil semibold) — diperdalam ke 4.90:1, hue/saturation
+    // sama (amber), lebih gelap.
+    secondary: "#A55A05",
     secondaryLight: "#F59E0B",
     ctaFrom: "#16A34A",
     ctaTo: "#22C55E",
@@ -399,7 +405,10 @@ const THEME_SPECS: ThemeSpec[] = [
     inkStrong: "#64445A",
     accent: "#DB2777",
     accentLight: "#F472B6",
-    secondary: "#F97316",
+    // secondary asli #F97316 cuma 2.65:1 di kanvas ini (--kv-mint dipakai
+    // sebagai teks kecil semibold) — diperdalam ke 4.90:1, hue/saturation
+    // sama (oranye), lebih gelap.
+    secondary: "#B64D05",
     secondaryLight: "#FB923C",
     ctaFrom: "#DB2777",
     ctaTo: "#F97316",
@@ -447,7 +456,10 @@ const THEME_SPECS: ThemeSpec[] = [
     inkStrong: "#374151",
     accent: "#1F2937",
     accentLight: "#4B5563",
-    secondary: "#0D9488",
+    // secondary asli #0D9488 cuma 3.74:1 di kanvas putih murni ini
+    // (--kv-mint dipakai sebagai teks kecil semibold) — diperdalam ke
+    // 4.88:1, hue/saturation sama (teal), lebih gelap.
+    secondary: "#0B7F75",
     secondaryLight: "#2DD4BF",
     ctaFrom: "#111827",
     ctaTo: "#374151",
