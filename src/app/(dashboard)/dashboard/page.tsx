@@ -43,7 +43,11 @@ export default function DashboardPage() {
 
       {/* Ritme berkelompok: klaster studio (di dalam Hub) rapat, antar-zona
           longgar — bukan metronom space-y seragam. */}
-      <main className="relative mx-auto max-w-6xl space-y-14 px-5 pt-8 pb-[calc(4.5rem+var(--kv-safe-b))] sm:space-y-20 sm:px-6 sm:py-12">
+      {/* pb mobile: MobileBottomNav (3.5rem) + margin apung CreativeHeroSheet
+          (12px) + tinggi minimumnya saat Collapsed (64px) + sedikit napas,
+          supaya konten terakhir (tips banner) tidak tertutup sheet yang
+          selalu mengambang. */}
+      <main className="relative mx-auto max-w-6xl space-y-14 px-5 pt-8 pb-[calc(8.75rem+var(--kv-safe-b))] sm:space-y-20 sm:px-6 sm:py-12">
         <Suspense fallback={null}>
           <DashboardStudioHub />
         </Suspense>

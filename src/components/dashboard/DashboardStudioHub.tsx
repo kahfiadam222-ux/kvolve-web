@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CreativeHero } from "./CreativeHero";
+import { CreativeHeroSheet } from "./CreativeHeroSheet";
 import { StudioCards } from "./StudioCards";
 import { AiStudioCard } from "./AiStudioCard";
 import { AiOrb } from "./AiOrb";
@@ -37,6 +38,7 @@ export function DashboardStudioHub() {
     // terbaca sebagai satu unit "studio".
     <div className="space-y-9 sm:space-y-12">
       <CreativeHero onOpenAi={openAi} />
+      <CreativeHeroSheet onOpenAi={openAi} />
       <StudioCards onOpenAi={openAi} />
       <AiStudioCard onOpenAi={openAi} />
       <AiOrb open={aiOpen} onOpenChange={setAiOpen} />

@@ -500,6 +500,39 @@ const THEME_SPECS: ThemeSpec[] = [
     noiseA: 0.028,
     motionScale: 1.2,
   },
+
+  // 10. Alat kerja fokus premium — obsidian pekat, emas & cyan sebagai aksen
+  // langka (bukan warna dasar). Kontras diverifikasi: ink 18.18:1 · inkMuted
+  // 7.77:1 · inkSubtle 4.18:1 (tingkat terendah, sama seperti preset lain) ·
+  // accent (emas) 9.47:1 · secondary (cyan, dipakai --kv-mint teks kecil)
+  // 14.35:1 · putih-di-emas ~2.1:1 gagal, makanya ctaInk gelap sama seperti
+  // Luxury Gold.
+  {
+    id: "obsidian-studio",
+    name: "Obsidian Studio",
+    tagline: "Gelap pekat, emas & cyan — fokus premium",
+    dark: true,
+    material: "diamond",
+    canvas: "#07090E",
+    canvasSoft: "#10131B",
+    ink: "#F1F5F9",
+    inkMuted: "#94A3B8",
+    inkSubtle: "#64748B",
+    inkStrong: "#E2E8F0",
+    accent: "#D4AF37",
+    accentLight: "#E8C96A",
+    secondary: "#00F2FE",
+    secondaryLight: "#67E8F9",
+    ctaFrom: "#D4AF37",
+    ctaTo: "#E8C96A",
+    ctaInk: "#1A1408",
+    glassRgbHex: "#121624",
+    glassA: 0.8,
+    glassBorderRgbHex: "#FFFFFF",
+    glassBorderA: 0.08,
+    noiseA: 0.025,
+    motionScale: 1,
+  },
 ];
 
 export const THEME_PRESETS: KvTheme[] = THEME_SPECS.map(buildTheme);
