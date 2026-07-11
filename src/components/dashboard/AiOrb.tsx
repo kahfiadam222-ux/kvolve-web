@@ -167,8 +167,11 @@ export function AiOrb({ open: controlledOpen, onOpenChange }: AiOrbProps = {}) {
 
   return (
     <>
-      {/* Floating Orb Button — offset aman dari home-indicator iOS */}
-      <div className="fixed bottom-[calc(1.25rem+var(--kv-safe-b))] right-5 z-40 sm:bottom-8 sm:right-8">
+      {/* Floating Orb Button — offset aman dari home-indicator iOS.
+          Disembunyikan di mobile: MobileBottomNav's tab "AI Studio" sudah
+          mengambil alih peran ini di layar sentuh (menghindari dua entry
+          point AI yang tumpang tindih); panel & state di bawah tetap utuh. */}
+      <div className="fixed bottom-[calc(1.25rem+var(--kv-safe-b))] right-5 z-40 hidden sm:block sm:bottom-8 sm:right-8">
         <AnimatePresence>
           {!open && (
             <motion.button

@@ -75,7 +75,7 @@ export function ProfileView({ username }: { username: string }) {
         </div>
       </nav>
 
-      <main className="relative mx-auto max-w-3xl px-6 py-8">
+      <main className="relative mx-auto max-w-3xl px-6 pt-8 pb-[calc(4.5rem+var(--kv-safe-b))] sm:pb-8">
         {profile === null ? (
           <ProfileSkeleton />
         ) : (

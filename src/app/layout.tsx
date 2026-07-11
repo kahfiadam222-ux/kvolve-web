@@ -4,6 +4,7 @@ import { RippleLayer } from "@/components/effects/RippleLayer";
 import { CursorTrail } from "@/components/effects/CursorTrail";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ComfortProvider } from "@/components/comfort/ComfortProvider";
+import { MobileBottomNav } from "@/components/nav/MobileBottomNav";
 import "./globals.css";
 
 /**
@@ -67,6 +68,7 @@ export default function RootLayout({
         <ThemeProvider />
         <RippleLayer />
         <CursorTrail />
+        <MobileBottomNav />
       </body>
     </html>
   );

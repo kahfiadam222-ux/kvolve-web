@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { KvolveMark } from "@/components/brand/KvolveMark";
 import { CrystalBackdrop } from "@/components/brand/CrystalBackdrop";
 import { UserBadge } from "@/components/auth/UserBadge";
@@ -42,8 +43,10 @@ export default function DashboardPage() {
 
       {/* Ritme berkelompok: klaster studio (di dalam Hub) rapat, antar-zona
           longgar — bukan metronom space-y seragam. */}
-      <main className="relative mx-auto max-w-6xl space-y-14 px-5 py-8 sm:space-y-20 sm:px-6 sm:py-12">
-        <DashboardStudioHub />
+      <main className="relative mx-auto max-w-6xl space-y-14 px-5 pt-8 pb-[calc(4.5rem+var(--kv-safe-b))] sm:space-y-20 sm:px-6 sm:py-12">
+        <Suspense fallback={null}>
+          <DashboardStudioHub />
+        </Suspense>
         <TemplateCenter />
         <ProjectGallery />
 

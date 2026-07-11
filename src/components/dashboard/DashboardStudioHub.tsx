@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CreativeHero } from "./CreativeHero";
 import { StudioCards } from "./StudioCards";
 import { AiStudioCard } from "./AiStudioCard";
@@ -14,8 +15,21 @@ import { AiOrb } from "./AiOrb";
  * tiap file tetap fokus pada tanggung jawabnya sendiri, satu titik masuk AI.
  */
 export function DashboardStudioHub() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [aiOpen, setAiOpen] = useState(false);
   const openAi = (): void => setAiOpen(true);
+
+  // Handoff dari MobileBottomNav (tab "AI Studio" di halaman lain, mis.
+  // /profile/*): `?ai=1` membuka panel ini begitu tiba. Pola sama persis
+  // dengan `?studio=` di StudioCards -> InfiniteCanvas — dibaca sekali lalu
+  // param dibersihkan agar reload tidak membuka ulang.
+  useEffect(() => {
+    if (searchParams.get("ai") !== "1") return;
+    setAiOpen(true);
+    router.replace("/dashboard", { scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     // Satu klaster visual: jarak internal lebih rapat daripada jarak
