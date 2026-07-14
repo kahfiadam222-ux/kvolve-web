@@ -8,8 +8,17 @@ import {
   type FederatedPointerEvent,
   type Texture,
 } from "pixi.js";
+import Rbush from "rbush";
 import type { CanvasObject } from "@/types/canvas";
 import { useCanvasStore } from "@/stores/canvasStore";
+
+interface BBox {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+  id: string;
+}
 
 interface RendererDeps {
   /** Stage dipakai untuk menangkap pointermove global saat drag objek. */
@@ -75,12 +84,9 @@ function cssPx(css: unknown, fallback: number): number {
 export class ObjectRenderer {
   private nodes = new Map<string, Container>();
   private selectionRings = new Map<string, Graphics>();
-  /**
-   * Tanda-tangan KONTEN per node (label/style/ukuran/jenis) — dipakai untuk
-   * membangun ulang visual saat properti diedit (W-FR-3.2 panel properti),
-   * tanpa rebuild saat hanya posisi/rotasi berubah (drag 60fps tetap murah).
-   */
   private signatures = new Map<string, string>();
+  /** Spatial index untuk viewport culling O(log n + k) alih-alih O(n). */
+  private spatialIndex = new Rbush<BBox>();
 
   constructor(
     private world: Container,
@@ -93,7 +99,7 @@ export class ObjectRenderer {
     // 1) Hapus node yang objeknya sudah tidak ada.
     for (const [id, node] of this.nodes) {
       if (!objects.has(id)) {
-        node.destroy({ children: true }); // ring (child) ikut hancur
+        node.destroy({ children: true });
         this.nodes.delete(id);
         this.selectionRings.delete(id);
         this.signatures.delete(id);
@@ -102,11 +108,11 @@ export class ObjectRenderer {
 
     // 2) Tambah / perbarui / bangun ulang bila konten berubah.
     let rebuilt = false;
+    const indexEntries: BBox[] = [];
     for (const obj of objects.values()) {
       let node = this.nodes.get(obj.id);
       const sig = contentSignature(obj);
 
-      // Konten (label/style/ukuran) berubah -> buang node lama, bangun ulang.
       if (node && this.signatures.get(obj.id) !== sig) {
         node.destroy({ children: true });
         this.nodes.delete(obj.id);
@@ -125,31 +131,43 @@ export class ObjectRenderer {
       node.position.set(obj.x, obj.y);
       node.rotation = obj.rotation;
       node.zIndex = obj.zIndex;
+
+      // Masukkan ke spatial index (rotasi diabaikan → AABB kasar, cukup MVP).
+      indexEntries.push({
+        minX: obj.x,
+        minY: obj.y,
+        maxX: obj.x + obj.width,
+        maxY: obj.y + obj.height,
+        id: obj.id,
+      });
     }
 
-    // Node yang dibangun ulang kehilangan cincin seleksinya (child ikut
-    // hancur) — pasang kembali sesuai seleksi terkini.
+    // Rebuild spatial index (bulk load untuk O(n log n)).
+    this.spatialIndex.clear();
+    if (indexEntries.length > 0) this.spatialIndex.load(indexEntries);
+
     if (rebuilt) this.setSelection(useCanvasStore.getState().selectedIds);
   }
 
   // ---------------------------------------------------------------- cull
 
   /**
-   * AABB check sederhana objek vs viewport (keduanya world space).
-   * `visible=false` melewati tahap transform, `renderable=false`
-   * melewati draw call GPU. Untuk puluhan ribu objek, langkah lanjut:
-   * spatial index (mis. RBush/quadtree) agar tidak O(n) per frame.
+   * Viewport culling O(log n + k) menggunakan spatial index RBush.
+   * Query AABB viewport → dapat daftar objek yang overlap → yang lain
+   * di-set `visible=false, renderable=false` (melewati transform + GPU draw).
    */
   cull(view: Rectangle): void {
-    const objects = useCanvasStore.getState().objects;
+    const visibleSet = new Set<string>();
+    const candidates = this.spatialIndex.search({
+      minX: view.x,
+      minY: view.y,
+      maxX: view.x + view.width,
+      maxY: view.y + view.height,
+    });
+    for (const c of candidates) visibleSet.add(c.id);
+
     for (const [id, node] of this.nodes) {
-      const o = objects.get(id);
-      if (!o) continue;
-      const visible =
-        o.x < view.x + view.width &&
-        o.x + o.width > view.x &&
-        o.y < view.y + view.height &&
-        o.y + o.height > view.y;
+      const visible = visibleSet.has(id);
       node.visible = visible;
       node.renderable = visible;
     }
@@ -387,5 +405,6 @@ export class ObjectRenderer {
   destroy(): void {
     for (const node of this.nodes.values()) node.destroy({ children: true });
     this.nodes.clear();
+    this.spatialIndex.clear();
   }
 }

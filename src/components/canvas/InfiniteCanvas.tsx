@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { nanoid } from "nanoid";
 import { CanvasEngine } from "@/lib/engine/CanvasEngine";
 import { CollabProvider } from "@/lib/collab/CollabProvider";
 import { getCachedDisplayName } from "@/lib/auth/appUser";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import { useAssetDrop } from "@/hooks/useAssetDrop";
 import {
   loadArtboard,
@@ -44,6 +45,14 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
   const [studioOpen, setStudioOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user } = useAuthUser();
+
+  // Identitas kursor stabil: berubah hanya saat user berubah (bukan setiap render).
+  const cursorUser = useMemo(() => ({
+    id: user?.id ?? nanoid(8),
+    name: user?.name ?? getCachedDisplayName() ?? `Tamu ${Math.floor(Math.random() * 90 + 10)}`,
+    color: randomCursorColor(),
+  }), [user?.id, user?.name]);
 
   // Handoff dari kartu Studio Desain di dashboard: `?studio=<kategori>`
   // membuka Studio Desain langsung ke kategori itu. Dibaca SEKALI (lazy
@@ -109,14 +118,8 @@ export default function InfiniteCanvas({ projectId }: { projectId: string }) {
         // Kolaborasi opsional: tanpa URL WS, kanvas berjalan mode offline.
         const wsUrl = process.env.NEXT_PUBLIC_COLLAB_WS_URL;
         if (wsUrl) {
-          // Identitas kursor: nama pengguna (sesi Supabase / tamu) bila ada.
-          collabRef.current = new CollabProvider(wsUrl, projectId, {
-            id: nanoid(8),
-            name:
-              getCachedDisplayName() ??
-              `Tamu ${Math.floor(Math.random() * 90 + 10)}`,
-            color: randomCursorColor(),
-          });
+          // Identitas kursor dari sesi Supabase / tamu.
+          collabRef.current = new CollabProvider(wsUrl, projectId, cursorUser);
         }
 
         setReady(true);
