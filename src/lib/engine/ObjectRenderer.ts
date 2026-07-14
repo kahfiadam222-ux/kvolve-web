@@ -8,14 +8,65 @@ import {
   type FederatedPointerEvent,
   type Texture,
 } from "pixi.js";
+import Rbush from "rbush";
 import type { CanvasObject } from "@/types/canvas";
 import { useCanvasStore } from "@/stores/canvasStore";
+
+interface BBox {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+  id: string;
+}
 
 interface RendererDeps {
   /** Stage dipakai untuk menangkap pointermove global saat drag objek. */
   stage: Container;
   /** true bila spacebar/klik-kanan sedang aktif — drag objek dinonaktifkan. */
   isPanGesture: () => boolean;
+}
+
+/**
+ * Tanda-tangan konten: berubah bila label/style/ukuran/jenis berubah, TIDAK
+ * bila hanya posisi/rotasi/z berubah (agar drag tidak memicu rebuild).
+ */
+function contentSignature(obj: CanvasObject): string {
+  if (obj.type === "html-block") {
+    return JSON.stringify([
+      obj.data.kind,
+      obj.data.label,
+      obj.data.styles,
+      obj.width,
+      obj.height,
+    ]);
+  }
+  // image/pdf-page: hanya rebuild bila sumber/ukuran berubah (jarang).
+  return JSON.stringify([obj.data.src, obj.width, obj.height]);
+}
+
+/** Warna CSS (#rgb / #rrggbb) -> angka Pixi; fallback bila bukan hex. */
+function cssHex(css: unknown, fallback: number): number {
+  if (typeof css !== "string") return fallback;
+  const m = css.trim().match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+  if (!m) return fallback;
+  let hex = m[1];
+  if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+  return Number.parseInt(hex, 16);
+}
+
+/** Ambil hex dari string border "1px solid #d6d3d1" -> angka; else fallback. */
+function borderHex(css: unknown, fallback: number): number {
+  if (typeof css !== "string") return fallback;
+  const m = css.match(/#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})/);
+  return m ? cssHex(m[0], fallback) : fallback;
+}
+
+/** Ambil angka px dari string CSS "8px" -> 8; else fallback. */
+function cssPx(css: unknown, fallback: number): number {
+  if (typeof css !== "string") return fallback;
+  const n = Number.parseFloat(css);
+  return Number.isFinite(n) ? n : fallback;
 }
 
 /**
@@ -33,6 +84,9 @@ interface RendererDeps {
 export class ObjectRenderer {
   private nodes = new Map<string, Container>();
   private selectionRings = new Map<string, Graphics>();
+  private signatures = new Map<string, string>();
+  /** Spatial index untuk viewport culling O(log n + k) alih-alih O(n). */
+  private spatialIndex = new Rbush<BBox>();
 
   constructor(
     private world: Container,
@@ -45,45 +99,75 @@ export class ObjectRenderer {
     // 1) Hapus node yang objeknya sudah tidak ada.
     for (const [id, node] of this.nodes) {
       if (!objects.has(id)) {
-        node.destroy({ children: true }); // ring (child) ikut hancur
+        node.destroy({ children: true });
         this.nodes.delete(id);
         this.selectionRings.delete(id);
+        this.signatures.delete(id);
       }
     }
 
-    // 2) Tambah / perbarui.
+    // 2) Tambah / perbarui / bangun ulang bila konten berubah.
+    let rebuilt = false;
+    const indexEntries: BBox[] = [];
     for (const obj of objects.values()) {
       let node = this.nodes.get(obj.id);
+      const sig = contentSignature(obj);
+
+      if (node && this.signatures.get(obj.id) !== sig) {
+        node.destroy({ children: true });
+        this.nodes.delete(obj.id);
+        this.selectionRings.delete(obj.id);
+        node = undefined;
+        rebuilt = true;
+      }
+
       if (!node) {
         node = this.build(obj);
         this.makeDraggable(node, obj.id);
         this.nodes.set(obj.id, node);
+        this.signatures.set(obj.id, sig);
         this.world.addChild(node);
       }
       node.position.set(obj.x, obj.y);
       node.rotation = obj.rotation;
       node.zIndex = obj.zIndex;
+
+      // Masukkan ke spatial index (rotasi diabaikan → AABB kasar, cukup MVP).
+      indexEntries.push({
+        minX: obj.x,
+        minY: obj.y,
+        maxX: obj.x + obj.width,
+        maxY: obj.y + obj.height,
+        id: obj.id,
+      });
     }
+
+    // Rebuild spatial index (bulk load untuk O(n log n)).
+    this.spatialIndex.clear();
+    if (indexEntries.length > 0) this.spatialIndex.load(indexEntries);
+
+    if (rebuilt) this.setSelection(useCanvasStore.getState().selectedIds);
   }
 
   // ---------------------------------------------------------------- cull
 
   /**
-   * AABB check sederhana objek vs viewport (keduanya world space).
-   * `visible=false` melewati tahap transform, `renderable=false`
-   * melewati draw call GPU. Untuk puluhan ribu objek, langkah lanjut:
-   * spatial index (mis. RBush/quadtree) agar tidak O(n) per frame.
+   * Viewport culling O(log n + k) menggunakan spatial index RBush.
+   * Query AABB viewport → dapat daftar objek yang overlap → yang lain
+   * di-set `visible=false, renderable=false` (melewati transform + GPU draw).
    */
   cull(view: Rectangle): void {
-    const objects = useCanvasStore.getState().objects;
+    const visibleSet = new Set<string>();
+    const candidates = this.spatialIndex.search({
+      minX: view.x,
+      minY: view.y,
+      maxX: view.x + view.width,
+      maxY: view.y + view.height,
+    });
+    for (const c of candidates) visibleSet.add(c.id);
+
     for (const [id, node] of this.nodes) {
-      const o = objects.get(id);
-      if (!o) continue;
-      const visible =
-        o.x < view.x + view.width &&
-        o.x + o.width > view.x &&
-        o.y < view.y + view.height &&
-        o.y + o.height > view.y;
+      const visible = visibleSet.has(id);
       node.visible = visible;
       node.renderable = visible;
     }
@@ -152,7 +236,7 @@ export class ObjectRenderer {
         fontFamily: "system-ui, sans-serif",
         fontSize: 11,
         fontWeight: "700",
-        fill: 0xf97316,
+        fill: 0x2563eb,
         letterSpacing: 1,
       },
     });
@@ -177,22 +261,33 @@ export class ObjectRenderer {
 
   /**
    * Visual Layout Block (W-FR-3.2) — representasi kanvas dari elemen web.
-   * Visual dibangun dari preset kind saat node dibuat; perubahan label/style
-   * pasca-buat belum tercermin (menyusul bersama panel edit properti).
+   * Membaca `data.styles` (backgroundColor/color/borderRadius/fontSize/border)
+   * sehingga perubahan dari panel properti langsung tercermin di kanvas —
+   * sync() membangun ulang node ini saat tanda-tangan kontennya berubah.
    */
   private buildHtmlBlock(obj: CanvasObject): Container {
     const node = new Container();
     const kind = String(obj.data.kind ?? "container");
     const label = String(obj.data.label ?? "");
+    const styles = (obj.data.styles ?? {}) as Record<string, string>;
     const font = "system-ui, sans-serif";
+    const radius = cssPx(styles.borderRadius, kind === "container" ? 12 : 8);
+    const fontSize = cssPx(styles.fontSize, kind === "container" ? 10 : 14);
 
     if (kind === "button") {
       node.addChild(
-        new Graphics().roundRect(0, 0, obj.width, obj.height, 8).fill(0xf97316),
+        new Graphics()
+          .roundRect(0, 0, obj.width, obj.height, radius)
+          .fill(cssHex(styles.backgroundColor, 0x2563eb)),
       );
       const text = new Text({
         text: label,
-        style: { fontFamily: font, fontSize: 14, fontWeight: "600", fill: 0xffffff },
+        style: {
+          fontFamily: font,
+          fontSize,
+          fontWeight: "600",
+          fill: cssHex(styles.color, 0xffffff),
+        },
       });
       text.anchor.set(0.5);
       text.position.set(obj.width / 2, obj.height / 2);
@@ -200,13 +295,17 @@ export class ObjectRenderer {
     } else if (kind === "input") {
       node.addChild(
         new Graphics()
-          .roundRect(0, 0, obj.width, obj.height, 8)
-          .fill(0xffffff)
-          .stroke({ width: 1, color: 0xd6d3d1 }),
+          .roundRect(0, 0, obj.width, obj.height, radius)
+          .fill(cssHex(styles.backgroundColor, 0xffffff))
+          .stroke({ width: 1, color: borderHex(styles.border, 0xd6d3d1) }),
       );
       const placeholder = new Text({
         text: label,
-        style: { fontFamily: font, fontSize: 14, fill: 0xa8a29e },
+        style: {
+          fontFamily: font,
+          fontSize,
+          fill: cssHex(styles.color, 0xa8a29e),
+        },
       });
       placeholder.anchor.set(0, 0.5);
       placeholder.position.set(12, obj.height / 2);
@@ -214,9 +313,9 @@ export class ObjectRenderer {
     } else {
       node.addChild(
         new Graphics()
-          .roundRect(0, 0, obj.width, obj.height, 12)
-          .fill({ color: 0xfafaf9, alpha: 0.85 })
-          .stroke({ width: 1, color: 0xd6d3d1 }),
+          .roundRect(0, 0, obj.width, obj.height, radius)
+          .fill({ color: cssHex(styles.backgroundColor, 0xfafaf9), alpha: 0.85 })
+          .stroke({ width: 1, color: borderHex(styles.border, 0xd6d3d1) }),
       );
       const tag = new Text({
         text: label.toUpperCase(),
@@ -258,7 +357,7 @@ export class ObjectRenderer {
       if (!node || !o) continue;
       const ring = new Graphics()
         .roundRect(-3, -3, o.width + 6, o.height + 6, 6)
-        .stroke({ width: 2, color: 0xf97316, alpha: 0.9 });
+        .stroke({ width: 2, color: 0x2563eb, alpha: 0.9 });
       this.selectionRings.set(id, ring);
       node.addChild(ring);
     }
@@ -306,5 +405,6 @@ export class ObjectRenderer {
   destroy(): void {
     for (const node of this.nodes.values()) node.destroy({ children: true });
     this.nodes.clear();
+    this.spatialIndex.clear();
   }
 }

@@ -7,6 +7,7 @@ import {
   type Texture,
 } from "pixi.js";
 import { useCanvasStore } from "@/stores/canvasStore";
+import type { ArtboardState } from "@/types/canvas";
 import { clamp, mod } from "@/lib/utils";
 import { deleteSelected, duplicateSelected } from "@/lib/canvas/objectActions";
 import { ObjectRenderer } from "./ObjectRenderer";
@@ -184,7 +185,11 @@ export class CanvasEngine {
    * kamera di-pas-kan agar seluruh artboard terlihat.
    */
   setArtboard(width: number, height: number): void {
-    useCanvasStore.getState().setArtboard({ width, height });
+    // Pertahankan backgroundColor yang sudah diterapkan (mis. dari Micro-
+    // Trending Board) — tanpa ini, resize lewat Studio Desain akan diam-diam
+    // mengembalikannya ke putih.
+    const prevColor = useCanvasStore.getState().artboard?.backgroundColor;
+    useCanvasStore.getState().setArtboard({ width, height, backgroundColor: prevColor });
     this.fitToArtboard(width, height);
   }
 
@@ -447,9 +452,7 @@ export class CanvasEngine {
     this.cleanups.push(unsubArtboard);
   }
 
-  private drawArtboard(
-    ab: { width: number; height: number } | null,
-  ): void {
+  private drawArtboard(ab: ArtboardState | null): void {
     if (!ab) {
       this.artboardG?.destroy();
       this.artboardG = null;
@@ -464,12 +467,13 @@ export class CanvasEngine {
       this.world.addChild(this.artboardG);
     }
 
-    // Halaman putih ala design studio + garis tepi halus agar terangkat
-    // dari latar gelap. Objek di atasnya tetap interaktif seperti biasa.
+    // Halaman ala design studio (putih, atau warna hasil "Terapkan Gaya"
+    // dari Micro-Trending Board) + garis tepi halus agar terangkat dari
+    // latar gelap. Objek di atasnya tetap interaktif seperti biasa.
     this.artboardG
       .clear()
       .rect(0, 0, ab.width, ab.height)
-      .fill(0xffffff)
+      .fill(ab.backgroundColor ?? 0xffffff)
       .stroke({ width: 1, color: 0x000000, alpha: 0.35 });
     this.viewDirty = true;
   }

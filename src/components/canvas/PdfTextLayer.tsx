@@ -133,7 +133,7 @@ export function PdfTextLayer() {
 
       {/* Panel kontrol — muncul saat halaman PDF terpilih. */}
       <div className="pointer-events-auto absolute left-1/2 top-4 flex -translate-x-1/2 animate-fade-in items-center gap-2 rounded-full border border-glass-border bg-glass px-2 py-1.5 shadow-float backdrop-blur-md">
-        <span className="flex items-center gap-1.5 pl-2 text-[11px] text-stone-400">
+        <span className="flex items-center gap-1.5 pl-2 text-[11px] text-ink-muted">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path
               d="M7 3h7l4 4v14H7z M14 3v4h4"
@@ -146,12 +146,12 @@ export function PdfTextLayer() {
           {Number(page.data.pageIndex ?? 0) + 1}/
           {Number(page.data.totalPages ?? 1)}
         </span>
-        <span className="h-4 w-px bg-white/10" aria-hidden />
+        <span className="h-4 w-px bg-glass-border-subtle" aria-hidden />
         {annotating ? (
           <button
             type="button"
             onClick={stopAnnotate}
-            className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-orange-950 transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white transition-opacity hover:opacity-90"
           >
             Selesai
           </button>

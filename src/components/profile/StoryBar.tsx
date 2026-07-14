@@ -5,10 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProject } from "@/lib/projects/localProjects";
 import {
+  sendReaction,
   storyTimeLeft,
   type Story,
   type UserProfile,
 } from "@/lib/profile/profileData";
+
+const REACTION_EMOJIS = ["👍", "❤️", "😂", "😢", "😮", "🔥"];
 
 /**
  * StoryBar (PRD 3 — Ephemeral Stories) — barisan Story Bubbles dengan cincin
@@ -49,7 +52,7 @@ export function StoryBar({
                 className="absolute inset-0 rounded-full animate-[spin_5s_linear_infinite] motion-reduce:animate-none"
                 style={{
                   background:
-                    "conic-gradient(from 0deg, #fde68a, #fb923c, #ea580c, #f59e0b, #fde68a)",
+                    "conic-gradient(from 0deg, rgb(var(--kv-accent-light)), rgb(var(--kv-accent)), rgb(var(--kv-mint-light)), rgb(var(--kv-accent-light)))",
                 }}
               />
               <span className="absolute inset-[2px] rounded-full bg-canvas" />
@@ -76,7 +79,7 @@ export function StoryBar({
                 )}
               </span>
             </span>
-            <span className="max-w-16 truncate text-[10px] text-stone-400">
+            <span className="max-w-16 truncate text-[11px] text-ink-muted">
               {s.projectName ?? (s.kind === "text" ? "Status" : "Snapshot")}
             </span>
           </button>
@@ -102,12 +105,13 @@ function AddStoryBubble() {
       className="group flex w-16 shrink-0 flex-col items-center gap-1.5"
       title="Buka proyek, lalu klik tombol Story di toolbar kanvas untuk membagikan snapshot"
     >
-      <span className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-white/15 text-stone-400 transition-all duration-200 group-hover:scale-105 group-hover:border-accent/50 group-hover:text-accent">
+      <span className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-ink-subtle/50 text-ink-subtle transition-all duration-200 group-hover:scale-105 group-hover:border-accent/50 group-hover:text-accent">
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
           <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
       </span>
-      <span className="text-[10px] text-stone-500">Kamu</span>
+      {/* Label aksional — hint yang dulu hanya hidup di tooltip hover */}
+      <span className="text-[11px] text-ink-subtle">Buat story</span>
     </Link>
   );
 }
@@ -128,7 +132,26 @@ function StoryViewer({
   const router = useRouter();
   const [index, setIndex] = useState(startIndex);
   const [progress, setProgress] = useState(0);
+  const [bursts, setBursts] = useState<
+    { id: string; emoji: string; offsetX: number }[]
+  >([]);
   const story = stories[index];
+
+  // Reset letupan reaksi saat pindah story — cegah sisa emoji story
+  // sebelumnya nyangkut di atas konten yang baru.
+  useEffect(() => setBursts([]), [index]);
+
+  const handleReact = (emoji: string): void => {
+    const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    const offsetX = Math.round((Math.random() - 0.5) * 80);
+    setBursts((b) => [...b, { id, emoji, offsetX }]);
+    setTimeout(() => removeBurst(id), 1200); // jaring pengaman bila animationend tak terpicu
+    // "Background thread": fire-and-forget, tidak pernah memblokir UI.
+    void sendReaction(story.id, emoji).catch(() => {});
+  };
+
+  const removeBurst = (id: string): void =>
+    setBursts((b) => b.filter((x) => x.id !== id));
 
   const next = useRef<() => void>(() => {});
   next.current = () => {
@@ -147,11 +170,19 @@ function StoryViewer({
     }
   };
 
+  // Tekan-tahan untuk jeda (interaksi standar stories di layar sentuh) —
+  // ref, bukan state: dibaca loop RAF tanpa memicu render.
+  const pausedRef = useRef(false);
+
   // Auto-advance: progress bar terisi lalu pindah story berikutnya.
+  // Saat dijeda, titik start digeser maju sehingga progress membeku.
   useEffect(() => {
-    const start = performance.now();
+    let start = performance.now();
+    let last = start;
     let raf = 0;
     const tick = (t: number): void => {
+      if (pausedRef.current) start += t - last;
+      last = t;
       const p = Math.min(1, (t - start) / STORY_DURATION_MS);
       setProgress(p);
       if (p >= 1) next.current();
@@ -181,14 +212,28 @@ function StoryViewer({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/80 p-4"
+      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/95 p-4 pb-[max(1rem,var(--kv-safe-b))]"
       role="dialog"
       aria-modal="true"
       aria-label={`Story ${profile.name}`}
     >
       <div className="absolute inset-0" onClick={onClose} aria-hidden />
 
-      <div className="relative flex aspect-[9/16] max-h-[calc(100dvh-2rem)] w-auto max-w-[min(28rem,100%)] flex-col overflow-hidden rounded-3xl border border-glass-border shadow-float">
+      <div
+        className="relative flex aspect-[9/16] max-h-[calc(100dvh-2rem)] w-auto max-w-[min(28rem,100%)] flex-col overflow-hidden rounded-3xl border border-glass-border shadow-float"
+        onPointerDown={() => {
+          pausedRef.current = true;
+        }}
+        onPointerUp={() => {
+          pausedRef.current = false;
+        }}
+        onPointerLeave={() => {
+          pausedRef.current = false;
+        }}
+        onPointerCancel={() => {
+          pausedRef.current = false;
+        }}
+      >
         {/* Latar story: snapshot kanvas asli bila ada, selain itu gradient */}
         {story.image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -206,8 +251,10 @@ function StoryViewer({
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
 
-        {/* Progress bars per story */}
-        <div className="relative z-10 flex gap-1 p-3">
+        {/* Progress bars per story — pointer-events-none: lapisan pasif tidak
+            boleh menghalangi zona tap kiri/kanan di bawahnya (bug touch lama:
+            semua layer z-10 menutupi zona z-0 sehingga tap-nav mati total). */}
+        <div className="pointer-events-none relative z-10 flex gap-1 p-3">
           {stories.map((s, i) => (
             <span key={s.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/25">
               <span
@@ -220,8 +267,8 @@ function StoryViewer({
           ))}
         </div>
 
-        {/* Header */}
-        <div className="relative z-10 flex items-center gap-2 px-3">
+        {/* Header — wadah pasif tembus-tap; hanya tombol tutup interaktif */}
+        <div className="pointer-events-none relative z-10 flex items-center gap-2 px-3">
           <span
             className="grid h-8 w-8 place-items-center rounded-full text-xs font-bold text-white ring-2 ring-white/20"
             style={{ background: profile.avatarGradient }}
@@ -234,14 +281,14 @@ function StoryViewer({
             type="button"
             aria-label="Tutup story"
             onClick={onClose}
-            className="ml-auto grid h-8 w-8 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
+            className="pointer-events-auto ml-auto grid h-10 w-10 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white active:scale-90"
           >
             ×
           </button>
         </div>
 
-        {/* Konten */}
-        <div className="relative z-10 flex flex-1 items-center justify-center p-6 text-center">
+        {/* Konten — pasif, tap menembus ke zona navigasi di bawahnya */}
+        <div className="pointer-events-none relative z-10 flex flex-1 items-center justify-center p-6 text-center">
           {story.kind === "text" ? (
             <p className="text-xl font-semibold leading-snug text-white drop-shadow-lg">
               {story.text}
@@ -272,13 +319,42 @@ function StoryViewer({
           className="absolute inset-y-0 right-0 z-0 w-1/3"
         />
 
-        {/* Aksi: Remix from Story */}
+        {/* Bilah reaksi mengambang (6 emoji wajib) — tiap emoji diberi
+            kotak sentuh 40px agar tidak salah ketuk di ponsel */}
+        <div className="pointer-events-auto absolute bottom-20 left-1/2 z-20 flex -translate-x-1/2 gap-0.5 rounded-full border border-white/20 bg-white/15 px-2 py-1 backdrop-blur-md">
+          {REACTION_EMOJIS.map((emoji) => (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => handleReact(emoji)}
+              aria-label={`Reaksi ${emoji}`}
+              className="grid h-10 w-10 place-items-center text-2xl leading-none transition-transform duration-200 ease-in-out hover:scale-[1.25] active:scale-95"
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+
+        {/* Partikel letupan emoji — naik lalu memudar, self-cleaning */}
+        {bursts.map((b) => (
+          <span
+            key={b.id}
+            aria-hidden
+            className="kv-reaction-burst pointer-events-none absolute bottom-32 left-1/2 z-20 text-2xl"
+            style={{ marginLeft: `${b.offsetX}px` }}
+            onAnimationEnd={() => removeBurst(b.id)}
+          >
+            {b.emoji}
+          </span>
+        ))}
+
+        {/* Aksi: Remix from Story — wadah pasif, tombolnya saja interaktif */}
         {story.projectId && (
-          <div className="relative z-10 p-4">
+          <div className="pointer-events-none relative z-10 p-4">
             <button
               type="button"
               onClick={remix}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/15 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/25 active:scale-[0.98]"
+              className="pointer-events-auto inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/15 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/25 active:scale-[0.98]"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path

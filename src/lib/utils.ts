@@ -20,7 +20,7 @@ export function throttle<T extends (...args: never[]) => void>(
 }
 
 const CURSOR_COLORS = [
-  "#ea580c", // oren (aksen Kvolve)
+  "#14B8A6", // mint (aksen Kvolve — Crystal OS)
   "#e11d48",
   "#7c3aed",
   "#d97706",

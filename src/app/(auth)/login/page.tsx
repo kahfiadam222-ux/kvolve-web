@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { KvolveMark } from "@/components/brand/KvolveMark";
-import { LiquidBackdrop } from "@/components/brand/LiquidBackdrop";
+import { CrystalBackdrop } from "@/components/brand/CrystalBackdrop";
 import { getGuestUser, signInAsGuest } from "@/lib/auth/appUser";
 import {
   createBrowserSupabase,
@@ -121,27 +121,29 @@ export default function LoginPage() {
   };
 
   const providerBtn =
-    "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-2.5 text-sm font-medium text-ink transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-glass-border disabled:hover:bg-glass-soft";
+    "inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-glass-border bg-glass-soft py-3 text-sm font-medium text-ink transition-all hover:border-accent/30 hover:bg-black/[0.03] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-glass-border disabled:hover:bg-glass-soft";
 
   return (
-    <main className="relative grid min-h-dvh place-items-center px-6 py-10 text-ink">
-      <LiquidBackdrop />
+    <main className="relative grid min-h-dvh place-items-center px-4 py-8 text-ink sm:px-6 sm:py-10">
+      <CrystalBackdrop />
 
       <div className="glass-sheen relative grid w-full max-w-4xl animate-fade-up overflow-hidden rounded-3xl border border-glass-border bg-glass shadow-float backdrop-blur-xl backdrop-saturate-150 lg:grid-cols-2">
-        {/* ------------------------------------------------ Panel branding */}
-        <div className="relative flex flex-col justify-between gap-8 border-b border-glass-border bg-black/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
+        {/* ------------------------------------------------ Panel branding
+            Di bawah lg menyusut jadi header ringkas (fitur disembunyikan)
+            supaya CTA tamu tetap di viewport pertama ponsel. */}
+        <div className="relative flex flex-col justify-between gap-8 border-b border-glass-border bg-canvas-soft p-6 lg:border-b-0 lg:border-r lg:p-10">
           <div>
-            <KvolveMark className="h-10 w-10" />
-            <h1 className="mt-6 text-2xl font-semibold tracking-tight sm:text-3xl">
+            <KvolveMark className="h-9 w-9 lg:h-10 lg:w-10" />
+            <h1 className="mt-4 font-display text-display-lg lg:mt-6">
               Satu kanvas, <span className="text-gradient">tanpa batas</span>
             </h1>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-stone-400">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted">
               Desain, PDF, dan layout HTML berbaur dalam satu ruang kerja
               kolaboratif — seperti warna yang membaur di air.
             </p>
           </div>
 
-          <ul className="space-y-4">
+          <ul className="hidden space-y-4 lg:block">
             {FEATURES.map((f) => (
               <li key={f.title} className="flex items-start gap-3">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
@@ -151,7 +153,7 @@ export default function LoginPage() {
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink">{f.title}</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-stone-400">
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink-muted">
                     {f.desc}
                   </p>
                 </div>
@@ -161,17 +163,17 @@ export default function LoginPage() {
         </div>
 
         {/* ------------------------------------------------ Panel form */}
-        <div className="p-8 lg:p-10">
-          <h2 className="text-lg font-semibold tracking-tight">
+        <div className="p-6 sm:p-8 lg:p-10">
+          <h2 className="font-display text-display-sm text-ink">
             Masuk ke ruang kerja
           </h2>
-          <p className="mt-1 text-sm text-stone-400">
+          <p className="mt-1 text-sm text-ink-muted">
             Coba tanpa akun, atau masuk dengan email/sosial media.
           </p>
 
           {/* ------------------------------------------------ Mode Tamu */}
           <div className="mt-6">
-            <label className="text-xs text-stone-400">
+            <label className="text-xs text-ink-muted">
               Nama tampilan (untuk kursor kolaborasi)
               <input
                 type="text"
@@ -180,13 +182,13 @@ export default function LoginPage() {
                 onKeyDown={(e) => e.key === "Enter" && enterAsGuest()}
                 placeholder={existingGuest ?? "mis. Kahfi"}
                 maxLength={40}
-                className="mt-1.5 w-full rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20"
+                className="mt-1.5 w-full rounded-xl border border-glass-border bg-[rgb(var(--kv-glass-rgb)/0.6)] px-3 py-3 text-base text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20 sm:py-2.5 sm:text-sm"
               />
             </label>
             <button
               type="button"
               onClick={enterAsGuest}
-              className="mt-3 w-full rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 px-4 py-2.5 text-sm font-semibold text-orange-950 shadow-card transition-all hover:shadow-glow active:scale-[0.98]"
+              className="kv-cta mt-3 w-full rounded-xl px-4 py-3 text-sm font-semibold shadow-glow transition-all hover:shadow-glow-strong active:scale-[0.98]"
             >
               {existingGuest && !guestName
                 ? `Lanjut sebagai ${existingGuest}`
@@ -194,10 +196,10 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="my-6 flex items-center gap-3 text-xs text-stone-500">
-            <span className="h-px flex-1 bg-white/10" />
+          <div className="my-6 flex items-center gap-3 text-xs text-ink-subtle">
+            <span className="h-px flex-1 bg-glass-border-subtle" />
             atau dengan akun
-            <span className="h-px flex-1 bg-white/10" />
+            <span className="h-px flex-1 bg-glass-border-subtle" />
           </div>
 
           {/* ------------------------------------------------ OAuth */}
@@ -246,7 +248,7 @@ export default function LoginPage() {
               Lanjutkan dengan GitHub
             </button>
 
-            <div className="flex gap-2 pt-1">
+            <div className="flex flex-col gap-2 pt-1 sm:flex-row">
               <input
                 type="email"
                 value={email}
@@ -254,13 +256,13 @@ export default function LoginPage() {
                 onKeyDown={(e) => e.key === "Enter" && void signInWithEmail()}
                 placeholder="nama@perusahaan.com"
                 disabled={!isSupabaseConfigured}
-                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-black/25 px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-stone-500 focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35"
+                className="min-w-0 flex-1 rounded-xl border border-glass-border bg-[rgb(var(--kv-glass-rgb)/0.6)] px-3 py-3 text-base text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent/60 focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-35 sm:py-2.5 sm:text-sm"
               />
               <button
                 type="button"
                 onClick={() => void signInWithEmail()}
                 disabled={!isSupabaseConfigured || sending || !email}
-                className="rounded-xl border border-glass-border bg-glass-soft px-4 py-2.5 text-sm font-semibold text-ink transition-all hover:bg-white/10 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
+                className="rounded-xl border border-glass-border bg-glass-soft px-4 py-3 text-sm font-semibold text-ink transition-all hover:bg-white/10 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:py-2.5"
               >
                 {sending ? "Mengirim…" : "Kirim tautan"}
               </button>
@@ -268,14 +270,14 @@ export default function LoginPage() {
           </div>
 
           {!isSupabaseConfigured && (
-            <p className="mt-3 rounded-lg bg-white/[0.04] px-3 py-2 text-[11px] leading-relaxed text-stone-500">
+            <p className="mt-3 rounded-lg bg-canvas-soft px-3 py-2 text-[11px] leading-relaxed text-ink-subtle">
               Login akun belum aktif — isi{" "}
-              <code className="text-stone-400">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
+              <code className="text-ink-strong">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
               &{" "}
-              <code className="text-stone-400">
+              <code className="text-ink-strong">
                 NEXT_PUBLIC_SUPABASE_ANON_KEY
               </code>{" "}
-              di <code className="text-stone-400">.env.local</code> untuk
+              di <code className="text-ink-strong">.env.local</code> untuk
               mengaktifkan Google/GitHub/email.
             </p>
           )}
@@ -285,14 +287,14 @@ export default function LoginPage() {
               className={`mt-3 rounded-lg px-3 py-2 text-xs ${
                 status.ok
                   ? "bg-accent-soft text-accent"
-                  : "bg-rose-500/10 text-rose-300"
+                  : "bg-rose-500/10 text-rose-500"
               }`}
             >
               {status.msg}
             </p>
           )}
 
-          <p className="mt-5 text-center text-xs text-stone-500">
+          <p className="mt-5 text-center text-xs text-ink-subtle">
             Dengan masuk, Anda menyetujui Ketentuan Layanan Kvolve.
           </p>
         </div>

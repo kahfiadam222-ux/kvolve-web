@@ -70,6 +70,8 @@ export interface CameraState {
 export interface ArtboardState {
   width: number;
   height: number;
+  /** Warna latar artboard (hex CSS) — opsional, default putih. */
+  backgroundColor?: string;
 }
 
 /** Kursor pengguna lain (W-FR-2.2), posisi dalam world space. */

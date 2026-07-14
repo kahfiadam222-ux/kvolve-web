@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { getComfort } from "@/lib/comfort/comfortStore";
 
 /**
  * RippleLayer — efek riak air global setiap tombol ditekan, mensimulasikan
@@ -24,6 +25,11 @@ export function RippleLayer() {
     document.body.appendChild(root);
 
     const onPointerDown = (e: PointerEvent): void => {
+      // Comfort mode dibaca saat klik (murah — objek ter-cache), bukan via
+      // subscription: efek riak berikutnya langsung mengikuti setelan baru.
+      const comfort = getComfort();
+      if (comfort.reduceMotion || comfort.performanceMode) return;
+
       const target = e.target as HTMLElement | null;
       const btn = target?.closest<HTMLElement>('button, [role="button"]');
       if (

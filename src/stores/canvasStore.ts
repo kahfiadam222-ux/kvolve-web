@@ -33,6 +33,8 @@ interface CanvasStore {
 
   setCamera: (camera: CameraState) => void;
   setArtboard: (artboard: ArtboardState | null) => void;
+  /** Terapkan warna latar ke artboard aktif — no-op bila belum ada artboard. */
+  setArtboardBackgroundColor: (color: string) => void;
 
   addObject: (obj: CanvasObject) => void;
   updateObject: (id: string, patch: Partial<CanvasObject>) => void;
@@ -56,6 +58,10 @@ export const useCanvasStore = create<CanvasStore>()(
 
     setCamera: (camera) => set({ camera }),
     setArtboard: (artboard) => set({ artboard }),
+    setArtboardBackgroundColor: (color) =>
+      set((s) =>
+        s.artboard ? { artboard: { ...s.artboard, backgroundColor: color } } : s,
+      ),
 
     addObject: (obj) =>
       set((s) => {

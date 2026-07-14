@@ -82,8 +82,8 @@ export function BlockPalette({
   };
 
   return (
-    <div className="pointer-events-auto absolute left-4 top-1/2 flex -translate-y-1/2 animate-fade-in flex-col gap-0.5 rounded-2xl border border-glass-border bg-glass p-1.5 shadow-float backdrop-blur-md">
-      <p className="pb-1 pt-0.5 text-center text-[9px] font-bold uppercase tracking-widest text-stone-500">
+    <div className="pointer-events-auto absolute left-3 top-1/2 flex -translate-y-1/2 animate-fade-in flex-col gap-1 rounded-2xl border border-glass-border bg-glass p-1.5 shadow-float backdrop-blur-md sm:left-4">
+      <p className="pb-1 pt-0.5 text-center text-[10px] font-bold uppercase tracking-wide text-ink-subtle">
         Blok
       </p>
       {ITEMS.map(({ kind, title, icon }) => (
@@ -92,7 +92,7 @@ export function BlockPalette({
           type="button"
           title={`Sisipkan ${title}`}
           aria-label={`Sisipkan ${title}`}
-          className="grid h-10 w-10 place-items-center rounded-xl text-stone-400 transition-all hover:bg-accent-soft hover:text-accent active:scale-90"
+          className="grid h-11 w-11 place-items-center rounded-xl text-ink-muted transition-all hover:bg-accent-soft hover:text-accent active:scale-90"
           onClick={() => insert(kind)}
         >
           {icon}

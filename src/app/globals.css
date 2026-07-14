@@ -2,6 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Liquid Intelligence — kontrak CSS variable ─────────────────────────────
+ * Default = tema "Royal Atelier" (rebrand premium dari Crystal Intelligence):
+ * safir royal #2E4FC3 + emas antik #84601F + jembatan amethyst #7D5AD1 di
+ * atas porselen hangat, ink midnight bernuansa violet — sengaja menjauh dari
+ * hex standar Tailwind. Kontras dihitung manual: ink/canvas 15.9:1,
+ * ink-muted 6.2:1, aksen-sebagai-teks 6.4:1, emas-sebagai-teks 5.25:1 (AA teks
+ * normal, diperdalam dari #9E752B/3.83:1 yang gagal AA di label kecil semibold
+ * — lihat CanvasToolbar.tsx & AiStudioCard.tsx), putih di seluruh rentang
+ * gradient CTA ≥ 3.2:1.
+ * Nilai di sini HARUS identik dengan spec "crystal-intelligence" di
+ * themeData.ts (first paint tanpa JS == tema default). ThemeProvider
+ * menimpa variabel ini di <html> saat tema lain aktif.
+ * Warna komposabel = triplet RGB spasi (dipakai rgb(var(--x) / alpha)).
+ */
+:root {
+  /* Warna inti */
+  --kv-canvas: 247 245 242;
+  --kv-canvas-soft: 239 236 230;
+  --kv-ink: 25 26 35;
+  --kv-ink-muted: 93 90 102;
+  --kv-ink-subtle: 143 140 151;
+  --kv-ink-strong: 68 66 78;
+  --kv-accent: 46 79 195;
+  --kv-accent-light: 90 118 224;
+  --kv-accent-deep: 34 57 143;
+  --kv-accent-wash: 226 230 247;
+  --kv-wash-soft: 242 244 251;
+  --kv-mint: 132 96 31;
+  --kv-mint-light: 201 163 86;
+  --kv-mint-wash: 243 238 230;
+  --kv-grad-mid: 125 90 209;
+  --kv-cta-ink: 255 255 255;
+
+  /* Material kaca — glass putih HANGAT (255 253 249, bukan putih murni)
+     supaya menyatu dengan porselen; harus identik dengan glassRgbHex
+     "crystal-intelligence" di themeData.ts. */
+  --kv-glass-rgb: 255 253 249;
+  --kv-glass-a: 0.55;
+  --kv-glass-soft-a: 0.35;
+  --kv-glass-strong-a: 0.72;
+  --kv-glass-border-rgb: 255 255 255;
+  --kv-glass-border-a: 0.7;
+  --kv-glass-border-strong-rgb: 211 204 192;
+  /* Bayangan ber-tint (navy dalam dari ink+accent) — bayangan hitam murni
+     terlihat abu-abu kotor di kanvas hangat. = mixHex(ink, accent, 0.35)
+     yang dihitung buildTheme untuk tema default. */
+  --kv-shadow-rgb: 32 45 91;
+  --kv-inset-a: 0.9;
+  --kv-blur-scale: 1;
+  --kv-sheen-a: 0.35;
+
+  /* Atmosfer (CrystalBackdrop) — safir/amethyst/emas pastel di porselen */
+  --kv-blob-1a: rgba(90, 118, 224, 0.5);
+  --kv-blob-1b: rgba(46, 79, 195, 0.26);
+  --kv-blob-2a: rgba(125, 90, 209, 0.28);
+  --kv-blob-2b: rgba(125, 90, 209, 0.14);
+  --kv-blob-3a: rgba(158, 117, 43, 0.24);
+  --kv-blob-3b: rgba(201, 163, 86, 0.13);
+  --kv-blob-4a: rgba(90, 118, 224, 0.32);
+  --kv-blob-4b: rgba(46, 79, 195, 0.16);
+  --kv-blob-5a: rgba(173, 187, 240, 0.5);
+  --kv-noise-a: 0.018;
+
+  /* Gradient CTA (dipakai .kv-cta / .kv-cta-mint) */
+  --kv-cta-from: #2e4fc3;
+  --kv-cta-to: #5a54d9;
+  --kv-cta-from-hover: #3e5ed3;
+  --kv-cta-to-hover: #6d67e4;
+  --kv-cta-mint-from: #8f6a26;
+  --kv-cta-mint-to: #b08a45;
+  --kv-cta-mint-from-hover: #9e752b;
+  --kv-cta-mint-to-hover: #b98f49;
+
+  /* Gerak */
+  --kv-motion-scale: 1;
+  /* --font-display kini di-supply next/font (Plus Jakarta Sans) di layout.tsx;
+     jangan definisikan di sini agar tidak berebut cascade dengan kelas font. */
+
+  /* Safe area (viewport-fit=cover) — elemen fixed bawah memakai
+     bottom-[calc(<offset>+var(--kv-safe-b))] agar bebas home-indicator. */
+  --kv-safe-b: env(safe-area-inset-bottom, 0px);
+
+  /* Pengali comfort — HANYA dimiliki aturan CSS [data-comfort] (ThemeProvider
+     tidak pernah menulisnya inline, jadi aturan performance selalu menang).
+     Semua blur kaca = radius × --kv-blur-scale (tema) × --kv-perf-scale. */
+  --kv-perf-scale: 1;
+  --kv-perf-noise: 1;
+}
+
 @layer base {
   html,
   body {
@@ -9,141 +98,472 @@
   }
 
   body {
+    background-color: rgb(var(--kv-canvas));
+    color: rgb(var(--kv-ink));
     text-rendering: optimizeLegibility;
-    /* Alternates Inter yang lebih ramah UI (a & g satu tingkat, angka rapi). */
     font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background: rgb(249 115 22 / 0.28);
-    color: #fed7aa;
+    background: rgb(var(--kv-accent) / 0.15);
+    color: rgb(var(--kv-accent-deep));
   }
 
   :focus-visible {
-    outline: 2px solid theme("colors.accent.DEFAULT");
+    outline: 2px solid rgb(var(--kv-accent));
     outline-offset: 2px;
+    /* tanpa border-radius: browser modern melengkungkan outline mengikuti
+       radius elemen sendiri; radius paksa 4px merusak pill/rounded-full */
   }
 
   kbd {
-    padding: 1px 6px;
+    padding: 2px 7px;
     border-radius: 6px;
-    border: 1px solid rgb(255 255 255 / 0.14);
+    border: 1px solid rgb(var(--kv-ink-subtle) / 0.4);
     border-bottom-width: 2px;
-    background: rgb(255 255 255 / 0.08);
+    background: rgb(var(--kv-glass-rgb) / 0.7);
     font-family: inherit;
-    font-size: 0.85em;
+    font-size: 0.82em;
     font-weight: 500;
-    color: #d6d3d1;
+    color: rgb(var(--kv-ink-strong));
+    backdrop-filter: blur(8px);
   }
 }
 
 @layer utilities {
-  /* Motif identitas Kvolve: grid titik kanvas gelap (workspace editor). */
+  /* ─── Background patterns ─────────────────────────────────────────────── */
+
+  /* Crystal dot grid for canvas workspace (light version) */
   .bg-dotgrid {
     background-image: radial-gradient(
       circle,
-      rgb(255 255 255 / 0.09) 1px,
+      rgb(var(--kv-ink-subtle) / 0.25) 1px,
       transparent 1px
     );
     background-size: 22px 22px;
   }
 
-  /* Teks gradasi — kata kunci judul, warna bercampur ala kaca oren cair
-     (amber → oranye → rust), TANPA sentuhan teal/violet/fuchsia. */
+  /* Subtle graph paper grid */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(var(--kv-ink-subtle) / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--kv-ink-subtle) / 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* ─── Typography ──────────────────────────────────────────────────────── */
+
+  /* Crystal gradient text — accent ke mint mengikuti tema aktif */
   .text-gradient {
-    background-image: linear-gradient(90deg, #fbbf24, #f97316 55%, #c2410c);
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--kv-accent)) 0%,
+      rgb(var(--kv-grad-mid)) 45%,
+      rgb(var(--kv-mint)) 100%
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Kilau kaca "glossy" — highlight diagonal lembut di sudut kiri-atas
-     panel, mensimulasikan cahaya memantul di permukaan air/kaca. Statis
-     (murah): ::before, bukan animasi. Pasang bersama class relative. */
+  /* Subtle muted gradient text */
+  .text-gradient-soft {
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--kv-ink-strong)) 0%,
+      rgb(var(--kv-ink-muted)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ─── Crystal Glass System ───────────────────────────────────────────── */
+  /*
+   * Crystal Glass panels simulate real glass:
+   * - Translucent base (warna & opasitas dari material tema)
+   * - Backdrop blur for depth (radius × --kv-blur-scale)
+   * - Top edge highlight (light reflection, --kv-inset-a)
+   * - Subtle border for glass edge
+   * - Multi-layer shadow for elevation
+   */
+
+  .crystal-panel {
+    background: rgb(var(--kv-glass-rgb) / var(--kv-glass-a));
+    backdrop-filter: blur(calc(30px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(1.8);
+    -webkit-backdrop-filter: blur(calc(30px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(1.8);
+    border: 1px solid rgb(var(--kv-glass-border-rgb) / var(--kv-glass-border-a));
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
+      0 2px 4px rgb(var(--kv-shadow-rgb) / 0.05),
+      0 8px 24px rgb(var(--kv-shadow-rgb) / 0.07),
+      0 24px 48px rgb(var(--kv-shadow-rgb) / 0.1);
+  }
+
+  .crystal-panel-soft {
+    background: rgb(var(--kv-glass-rgb) / var(--kv-glass-soft-a));
+    backdrop-filter: blur(calc(20px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(1.6);
+    -webkit-backdrop-filter: blur(calc(20px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(1.6);
+    border: 1px solid rgb(var(--kv-glass-border-rgb) / 0.6);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
+      0 1px 2px rgb(var(--kv-shadow-rgb) / 0.04),
+      0 4px 16px rgb(var(--kv-shadow-rgb) / 0.06);
+  }
+
+  /* Glass reflection — diagonal light streak across panels */
   .glass-sheen {
     position: relative;
     isolation: isolate;
+    overflow: hidden;
   }
   .glass-sheen::before {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     border-radius: inherit;
     background: linear-gradient(
       135deg,
-      rgb(255 255 255 / 0.14),
-      transparent 45%
+      rgb(var(--kv-glass-rgb) / var(--kv-sheen-a)) 0%,
+      rgb(var(--kv-glass-rgb) / 0.05) 40%,
+      transparent 60%
     );
     pointer-events: none;
   }
 
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #3c3c50 transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #3c3c50;
-    border-radius: 3px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
+  /* Edge highlight — bright top+left rim of glass */
+  .glass-edge {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
+      -1px 0 0 rgba(255, 255, 255, calc(var(--kv-inset-a) * 0.55)) inset;
   }
 
-  /* Skeleton shimmer — kilau lembut yang lebih hidup daripada pulse;
-     hanya menganimasikan background-position (murah). */
+  /* Glass card — interactive elevated panel */
+  .glass-card {
+    background: rgb(var(--kv-glass-rgb) / var(--kv-glass-a));
+    backdrop-filter: blur(calc(24px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(1.8);
+    -webkit-backdrop-filter: blur(calc(24px * var(--kv-blur-scale) * var(--kv-perf-scale))) saturate(1.8);
+    border: 1px solid rgb(var(--kv-glass-border-rgb) / var(--kv-glass-border-a));
+    border-radius: 20px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
+      0 1px 2px rgb(var(--kv-shadow-rgb) / 0.05),
+      0 4px 16px rgb(var(--kv-shadow-rgb) / 0.07);
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* hover-lift hanya di perangkat ber-hover — cegah sticky-hover di touch */
+  @media (hover: hover) {
+    .glass-card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, var(--kv-inset-a)) inset,
+        0 4px 8px rgb(var(--kv-shadow-rgb) / 0.07),
+        0 12px 32px rgb(var(--kv-shadow-rgb) / 0.12),
+        0 0 0 1px rgb(var(--kv-accent) / 0.12);
+    }
+  }
+
+  /* Dark glass — for canvas editor overlay panels (identitas editor,
+     SENGAJA tidak ikut tema — tema menjangkau editor lewat kelas token) */
+  .glass-dark {
+    background: rgba(17, 24, 39, 0.65);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.07) inset,
+      0 2px 4px rgba(0, 0, 0, 0.4),
+      0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ─── CTA gradients (var-driven; menggantikan pasangan from-blue-600/
+     to-blue-500 dkk. supaya ikut tema) ──────────────────────────────────── */
+  /* Deklarasi ganda = progressive enhancement: baris pertama (2-stop)
+     dipakai browser tanpa color-mix(); baris kedua menimpanya dengan
+     versi lux — titik tengah oklab (transisi hue lebih kaya daripada
+     interpolasi sRGB) + lapisan "cahaya atas" tipis, memberi kesan tombol
+     kaca tersinari tanpa menyentuh box-shadow (bebas konflik shadow-glow). */
+  .kv-cta {
+    background-image: linear-gradient(to right, var(--kv-cta-from), var(--kv-cta-to));
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.16), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-from),
+        color-mix(in oklab, var(--kv-cta-from) 45%, var(--kv-cta-to)) 52%,
+        var(--kv-cta-to)
+      );
+    color: rgb(var(--kv-cta-ink));
+  }
+  .kv-cta:not(:disabled):hover {
+    background-image: linear-gradient(
+      to right,
+      var(--kv-cta-from-hover),
+      var(--kv-cta-to-hover)
+    );
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-from-hover),
+        color-mix(in oklab, var(--kv-cta-from-hover) 45%, var(--kv-cta-to-hover)) 52%,
+        var(--kv-cta-to-hover)
+      );
+  }
+  .kv-cta-mint {
+    background-image: linear-gradient(
+      to right,
+      var(--kv-cta-mint-from),
+      var(--kv-cta-mint-to)
+    );
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.14), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-mint-from),
+        color-mix(in oklab, var(--kv-cta-mint-from) 45%, var(--kv-cta-mint-to)) 52%,
+        var(--kv-cta-mint-to)
+      );
+    color: rgb(var(--kv-cta-ink));
+  }
+  .kv-cta-mint:not(:disabled):hover {
+    background-image: linear-gradient(
+      to right,
+      var(--kv-cta-mint-from-hover),
+      var(--kv-cta-mint-to-hover)
+    );
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.18), rgb(255 255 255 / 0) 45%),
+      linear-gradient(
+        105deg,
+        var(--kv-cta-mint-from-hover),
+        color-mix(in oklab, var(--kv-cta-mint-from-hover) 45%, var(--kv-cta-mint-to-hover)) 52%,
+        var(--kv-cta-mint-to-hover)
+      );
+  }
+
+  /* ─── Scrollbars ──────────────────────────────────────────────────────── */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--kv-ink-subtle) / 0.4) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(var(--kv-ink-subtle) / 0.4);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+
+  /* Dark scrollbar for canvas editor (identitas editor — statis) */
+  .scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(71, 85, 105, 0.5) transparent;
+  }
+  .scrollbar-dark::-webkit-scrollbar { width: 5px; height: 5px; }
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.5);
+    border-radius: 3px;
+  }
+
+  /* ─── Shimmer loading ─────────────────────────────────────────────────── */
   .bg-shimmer {
     background-image: linear-gradient(
       100deg,
-      transparent 30%,
-      rgb(255 255 255 / 0.06) 50%,
-      transparent 70%
+      rgb(var(--kv-canvas) / 0) 30%,
+      rgb(var(--kv-glass-rgb) / 0.8) 50%,
+      rgb(var(--kv-canvas) / 0) 70%
     );
     background-size: 200% 100%;
-    animation: shimmer 1.8s ease-in-out infinite;
+    animation: shimmer 2s ease-in-out infinite;
   }
   @keyframes shimmer {
-    from {
-      background-position: 200% 0;
-    }
-    to {
-      background-position: -200% 0;
-    }
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
   }
 
-  /* Riak air saat tombol ditekan (lihat RippleLayer) — lingkaran yang
-     membesar dari titik klik lalu memudar, warna oren keemasan bening
-     seperti tetes air kena cahaya. Transform+opacity saja: murah di GPU. */
+  /* ─── Ripple (water click) ────────────────────────────────────────────── */
   .kv-water-ripple {
     position: absolute;
     border-radius: 9999px;
     background: radial-gradient(
       circle,
-      rgb(255 237 213 / 0.7) 0%,
-      rgb(251 146 60 / 0.4) 45%,
+      rgb(var(--kv-accent-wash) / 0.8) 0%,
+      rgb(var(--kv-accent) / 0.3) 45%,
       transparent 72%
     );
     transform: scale(0);
     animation: kv-water-ripple 0.65s ease-out forwards;
   }
   @keyframes kv-water-ripple {
-    0% {
-      transform: scale(0);
-      opacity: 0.9;
+    0%  { transform: scale(0); opacity: 0.8; }
+    100%{ transform: scale(1); opacity: 0; }
+  }
+
+  /* ─── Completion wave (AiOrb sukses) — cincin mengembang sekali lalu
+     memudar; transform/opacity murni, 600ms, tanpa loop ─────────────────── */
+  .kv-complete-wave {
+    animation: kv-complete-wave 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes kv-complete-wave {
+    0%   { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(1.9); opacity: 0; }
+  }
+
+  /* ─── Hairline gradient bawah (nav Vision-Pro) ────────────────────────── */
+  .kv-hairline-b {
+    position: relative;
+  }
+  .kv-hairline-b::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--kv-accent) / 0.25) 30%,
+      rgb(var(--kv-mint) / 0.3) 70%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  /* ─── Reaction burst (Story Viewer emoji) ─────────────────────────────── */
+  .kv-reaction-burst {
+    animation: kv-reaction-burst 0.9s ease-out forwards;
+  }
+  @keyframes kv-reaction-burst {
+    0%   { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-60px) scale(1.4); opacity: 0; }
+  }
+
+  /* ─── Tilt card (fisika kartu — lihat components/effects/TiltCard.tsx) ── */
+  .kv-tilt {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .kv-tilt-light {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--tilt-glow, 0);
+    transition: opacity 200ms ease;
+    background: radial-gradient(
+      280px circle at var(--tilt-mx, 50%) var(--tilt-my, 50%),
+      rgb(var(--kv-glass-rgb) / 0.35),
+      transparent 65%
+    );
+  }
+
+  /* ─── Hover effects (hanya perangkat ber-hover) ───────────────────────── */
+  .hover-lift {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) {
+    .hover-lift:hover {
+      transform: translateY(-2px);
     }
-    100% {
-      transform: scale(1);
-      opacity: 0;
-    }
+  }
+
+  /* Magnetic button — subtle scale on hover; :active tetap global (touch) */
+  .btn-magnetic {
+    transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) {
+    .btn-magnetic:hover { transform: scale(1.02); }
+  }
+  .btn-magnetic:active { transform: scale(0.97); }
+
+  /* ─── Scroll strip tanpa scrollbar (baris pill kategori di mobile) ────── */
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ─── Lux ring — border hairline gradient (kaca premium) ──────────────────
+     Teknik mask-composite: gradient hanya mengisi cincin 1px, konten bebas.
+     Murah: satu elemen pseudo, tanpa filter/shadow tambahan. */
+  .kv-lux-ring {
+    position: relative;
+  }
+  .kv-lux-ring::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, calc(var(--kv-inset-a) * 0.95)) 0%,
+      rgb(var(--kv-accent) / 0.35) 35%,
+      rgb(var(--kv-mint) / 0.4) 65%,
+      rgba(255, 255, 255, calc(var(--kv-inset-a) * 0.5)) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ─── Spatial carousel (slide 3D ala Vision Pro) ──────────────────────────
+     Transform per-slide dihitung SpatialCarousel.tsx (rAF, tanpa state React).
+     Di sini hanya kerangka snap + perspektif. */
+  .kv-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    perspective: 1200px;
+    scrollbar-width: none;
+  }
+  .kv-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .kv-carousel > * {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  /* ─── Dock active indicator ───────────────────────────────────────────── */
+  .dock-indicator {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, rgb(var(--kv-accent)), rgb(var(--kv-mint)));
   }
 }
 
-/* Aksesibilitas: pengguna yang memilih reduksi gerak mendapat UI tenang —
-   semua animasi/transisi dipersingkat hingga praktis nonaktif. */
+/* ─── Perangkat sentuh: blur kaca otomatis lebih hemat ────────────────────────
+   backdrop-filter mahal di GPU ponsel; turunkan sebagian tanpa menunggu
+   pengguna menyalakan Mode Performa. Aturan [data-comfort~="performance"]
+   (0.2) tetap menang karena selektor atributnya lebih spesifik. */
+@media (pointer: coarse) {
+  :root {
+    --kv-perf-scale: 0.6;
+  }
+}
+
+/* ─── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -152,4 +572,45 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ─── Comfort modes (toggle in-app, ComfortProvider menulis data-comfort) ─── */
+
+/* Reduce Motion — duplikat aturan media query di atas untuk toggle in-app */
+html[data-comfort~="reduce-motion"] *,
+html[data-comfort~="reduce-motion"] *::before,
+html[data-comfort~="reduce-motion"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Performance — pangkas blur kaca & noise (backdrop-filter itu mahal).
+   Memakai --kv-perf-* (bukan --kv-blur-scale) karena var tema di-set inline
+   di <html> oleh ThemeProvider dan akan mengalahkan aturan ini. */
+html[data-comfort~="performance"] {
+  --kv-perf-scale: 0.2;
+  --kv-perf-noise: 0;
+}
+
+/* Clamp blur utilitas Tailwind (rantai --tw-backdrop-* tidak bisa dilewati
+   var, lihat komentar backdropBlur di tailwind.config.ts). !important juga
+   mengalahkan style inline (AiOrb) — semua permukaan kaca ikut hemat. */
+html[data-comfort~="performance"] [class*="backdrop-blur-"],
+html[data-comfort~="performance"] .crystal-panel,
+html[data-comfort~="performance"] .crystal-panel-soft,
+html[data-comfort~="performance"] .glass-card {
+  backdrop-filter: blur(4px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(4px) saturate(1.4) !important;
+}
+
+/* Focus — jeda & redupkan blob atmosfer, ruang kerja jadi tenang */
+html[data-comfort~="focus"] .kv-blob {
+  animation-play-state: paused;
+  opacity: 0.4;
+}
+
+/* Simple — sembunyikan section dekoratif (AI Studio card, Template, Tren) */
+html[data-comfort~="simple"] [data-kv-decorative] {
+  display: none;
 }

@@ -46,14 +46,15 @@ export const PLATFORM_LABEL: Record<SocialPlatform, string> = {
   x: "X (Twitter)",
 };
 
-/** Lencana Verified Creator glossy (Ide Tambahan B) — emas/oren. */
+/** Lencana Verified Creator glossy (Ide Tambahan B) — biru Crystal. */
 export function VerifiedBadge({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-label="Kreator terverifikasi" role="img">
       <defs>
         <linearGradient id="kv-verified" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fde68a" />
-          <stop offset="1" stopColor="#d97706" />
+          {/* stop-color via CSS var — lencana ikut aksen tema aktif */}
+          <stop offset="0" style={{ stopColor: "rgb(var(--kv-accent-light))" }} />
+          <stop offset="1" style={{ stopColor: "rgb(var(--kv-accent))" }} />
         </linearGradient>
       </defs>
       <path
@@ -63,7 +64,7 @@ export function VerifiedBadge({ className = "h-4 w-4" }: { className?: string })
       <path
         d="m8.5 12 2.3 2.3 4.7-4.7"
         fill="none"
-        stroke="#4a2c0a"
+        stroke="#ffffff"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"

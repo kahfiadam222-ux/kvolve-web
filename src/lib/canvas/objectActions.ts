@@ -1,6 +1,17 @@
 import { nanoid } from "nanoid";
 import { useCanvasStore } from "@/stores/canvasStore";
 import type { CanvasObject } from "@/types/canvas";
+import { deleteFromStorage, isSupabaseConfigured } from "@/lib/supabase/client";
+
+/** Ekstrak path Storage dari URL publik Supabase (bila ada). */
+function extractStoragePath(url: string | undefined): string | null {
+  if (!url || !isSupabaseConfigured) return null;
+  // URL pattern: .../storage/v1/object/public/assets/{path}
+  const marker = "/object/public/assets/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  return url.slice(idx + marker.length);
+}
 
 /**
  * objectActions — aksi manajemen objek kanvas (hapus & duplikat) yang
@@ -21,6 +32,9 @@ export function deleteSelected(): number {
   for (const id of ids) {
     const o = store.objects.get(id);
     if (!o || o.locked) continue;
+    // Cleanup aset dari Supabase Storage (best-effort, async).
+    const path = extractStoragePath(o.data?.src as string | undefined);
+    if (path) void deleteFromStorage(path);
     store.removeObject(id);
     removed++;
   }

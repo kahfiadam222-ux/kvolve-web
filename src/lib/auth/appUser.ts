@@ -20,6 +20,11 @@ export interface AppUser {
 const GUEST_KEY = "kvolve:guest";
 const NAME_CACHE_KEY = "kvolve:display-name";
 
+/** Event yang dipancarkan saat identitas tamu berubah (mis. ganti nickname
+ *  dari menu Settings) — useAuthUser mendengarkannya agar UserBadge dkk.
+ *  ikut segar tanpa reload. */
+export const USER_CHANGED_EVENT = "kv:user-changed";
+
 const hasStorage = (): boolean => typeof window !== "undefined";
 
 export function getGuestUser(): AppUser | null {
@@ -56,6 +61,32 @@ export function signInAsGuest(name: string): AppUser {
       /* storage penuh: sesi tamu tetap jalan in-memory */
     }
   }
+  cacheDisplayName(user.name);
+  return user;
+}
+
+/**
+ * Ganti nickname tamu TANPA mengganti id (berbeda dengan signInAsGuest yang
+ * membuat identitas baru) — riwayat kursor kolaborasi tetap milik orang
+ * yang sama. No-op bila tidak ada sesi tamu.
+ */
+export function renameGuestUser(name: string): AppUser | null {
+  const current = getGuestUser();
+  if (!current) return null;
+  const clean = name.trim();
+  if (!clean) return current;
+  const user: AppUser = { ...current, name: clean.slice(0, 40) };
+  if (!hasStorage()) return null;
+  try {
+    window.localStorage.setItem(GUEST_KEY, JSON.stringify(user));
+  } catch {
+    // Penyimpanan gagal (private mode/kuota penuh) — jangan klaim sukses ke
+    // caller, dan jangan pancarkan USER_CHANGED_EVENT: useAuthUser membaca
+    // ulang dari localStorage saat event ini, jadi nama akan kembali ke
+    // versi lama walau UI sempat menampilkan "Tersimpan".
+    return null;
+  }
+  window.dispatchEvent(new Event(USER_CHANGED_EVENT));
   cacheDisplayName(user.name);
   return user;
 }
